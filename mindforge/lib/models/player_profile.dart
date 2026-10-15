@@ -12,6 +12,11 @@ class PlayerProfile {
     required this.soundOn,
     required this.musicOn,
     required this.hapticsOn,
+    this.language = 'en',
+    this.musicVolume = 0.65,
+    this.soundVolume = 0.75,
+    this.readKanjiAloud = false,
+    this.showFurigana = true,
   });
 
   factory PlayerProfile.newPlayer() => const PlayerProfile(
@@ -25,6 +30,11 @@ class PlayerProfile {
         soundOn: true,
         musicOn: true,
         hapticsOn: true,
+        language: 'en',
+        musicVolume: 0.65,
+        soundVolume: 0.75,
+        readKanjiAloud: false,
+        showFurigana: true,
       );
 
   factory PlayerProfile.fromJson(Map<String, dynamic> json) => PlayerProfile(
@@ -40,6 +50,11 @@ class PlayerProfile {
         soundOn: json['soundOn'] as bool? ?? true,
         musicOn: json['musicOn'] as bool? ?? true,
         hapticsOn: json['hapticsOn'] as bool? ?? true,
+        language: json['language'] as String? ?? 'en',
+        musicVolume: (json['musicVolume'] as num?)?.toDouble() ?? 0.65,
+        soundVolume: (json['soundVolume'] as num?)?.toDouble() ?? 0.75,
+        readKanjiAloud: json['readKanjiAloud'] as bool? ?? false,
+        showFurigana: json['showFurigana'] as bool? ?? true,
       );
 
   final String nickname;
@@ -52,6 +67,11 @@ class PlayerProfile {
   final bool soundOn;
   final bool musicOn;
   final bool hapticsOn;
+  final String language;
+  final double musicVolume;
+  final double soundVolume;
+  final bool readKanjiAloud;
+  final bool showFurigana;
 
   bool get hasDiscovered => discoveredElements.length >= AppConstants.baseElements;
 
@@ -76,6 +96,11 @@ class PlayerProfile {
     bool? soundOn,
     bool? musicOn,
     bool? hapticsOn,
+    String? language,
+    double? musicVolume,
+    double? soundVolume,
+    bool? readKanjiAloud,
+    bool? showFurigana,
   }) =>
       PlayerProfile(
         nickname: nickname ?? this.nickname,
@@ -88,6 +113,11 @@ class PlayerProfile {
         soundOn: soundOn ?? this.soundOn,
         musicOn: musicOn ?? this.musicOn,
         hapticsOn: hapticsOn ?? this.hapticsOn,
+        language: language ?? this.language,
+        musicVolume: musicVolume ?? this.musicVolume,
+        soundVolume: soundVolume ?? this.soundVolume,
+        readKanjiAloud: readKanjiAloud ?? this.readKanjiAloud,
+        showFurigana: showFurigana ?? this.showFurigana,
       );
 
   Map<String, dynamic> toJson() => {
@@ -101,5 +131,10 @@ class PlayerProfile {
         'soundOn': soundOn,
         'musicOn': musicOn,
         'hapticsOn': hapticsOn,
+        'language': language,
+        'musicVolume': musicVolume,
+        'soundVolume': soundVolume,
+        'readKanjiAloud': readKanjiAloud,
+        'showFurigana': showFurigana,
       };
 }

@@ -67,6 +67,13 @@ class HomeScreen extends ConsumerWidget {
                       onTap: () => context.go('/chapter/1'),
                     ),
                     _MenuCard(
+                      icon: Icons.ramen_dining_rounded,
+                      label: 'Kanji Bento',
+                      subtitle: 'Build kanji from pictures',
+                      color: const Color(0xFFE27F69),
+                      onTap: () => context.go('/kanji-bento'),
+                    ),
+                    _MenuCard(
                       icon: Icons.science_rounded,
                       label: 'Alchemy Lab',
                       subtitle: '${profile?.discoveredElements.length ?? 0} elements',

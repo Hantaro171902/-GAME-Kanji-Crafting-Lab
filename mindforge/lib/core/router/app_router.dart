@@ -9,6 +9,7 @@ import '../../screens/home_screen.dart';
 import '../../screens/puzzle_screen.dart';
 import '../../screens/settings_screen.dart';
 import '../../screens/splash_screen.dart';
+import '../../kanji_bento/screens/kanji_bento_routes.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -52,6 +53,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'settings',
         builder: (context, state) => const SettingsScreen(),
       ),
+      ...kanjiBentoRoutes(),
     ],
   );
 });
