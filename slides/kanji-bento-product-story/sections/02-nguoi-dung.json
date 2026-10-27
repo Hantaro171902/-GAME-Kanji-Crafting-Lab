@@ -1,0 +1,19 @@
+{"title": "Người dùng",
+ "slides": [
+  {"id": "s-users", "kind": "bullets", "title": "Ba nhóm người dùng chính",
+   "bullets": [
+    "N5 cần trực quan",
+    "Game cần động lực",
+    "Lớp nhập môn cần mở bài"
+   ],
+   "companion": {"kind": "table", "place": "bottom",
+    "columns": ["Nhóm", "Nhu cầu"],
+    "rows": [
+     ["N5", "Trực quan, phiên ngắn"],
+     ["N5", "Phân biệt chữ"],
+     ["Game", "Thao tác, sưu tập"],
+     ["Game", "Tiến bộ, điện thoại"],
+     ["Giáo viên", "Chiếu web"]
+    ]},
+   "notes": "Nhóm 1: người mới học tiếng Nhật trình độ N5 cần một lối vào trực quan trước khi học nhiều âm On/Kun và từ vựng; khó phân biệt các chữ gần giống, ngại số lượng Kanji lớn, muốn học trong phiên ngắn. Nhóm 2: người học thích tương tác không duy trì được động lực với danh sách, sách chép hoặc flashcard tĩnh; thích thao tác, phản hồi và sưu tập; cần cảm giác tiến bộ rõ ràng; ưu tiên trải nghiệm trên điện thoại. Nhóm 3: giáo viên và lớp nhập môn dùng trò chơi như hoạt động mở bài, ôn nhanh hoặc minh hoạ quan hệ giữa hình, bộ phận và nghĩa; dễ chiếu trên web, dễ thảo luận mnemonic, dễ mở rộng theo chủ đề."}
+ ]}

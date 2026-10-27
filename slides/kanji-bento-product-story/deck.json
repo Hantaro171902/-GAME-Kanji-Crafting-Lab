@@ -1,0 +1,22 @@
+{"schema": "slide-craft/deck@1",
+ "meta": {"title": "Kanji Bento — Product Story",
+  "subtitle": "Học Kanji bằng cách lắp ghép ý nghĩa",
+  "lang": "vi",
+  "audience": "Product team, nhà đầu tư, giáo viên tiếng Nhật",
+  "style": "pitch",
+  "date": "2026-10-22",
+  "target_slides": {"min": 10, "max": 14},
+  "agenda": true,
+  "sources": ["/tmp/vibeflow/user/a1c81416-e9d7-4dc9-b044-5e4a0d1b4645/Kanji_Mochi_Presentation_VI.bc3a3e54.html"]},
+ "sections": [
+  {"include": "sections/01-pain-point.json"},
+  {"include": "sections/02-nguoi-dung.json"},
+  {"include": "sections/03-bai-toan.json"},
+  {"include": "sections/04-giai-phap.json"},
+  {"include": "sections/05-co-che-doc-dao.json"},
+  {"include": "sections/06-vi-sao-lego.json"},
+  {"include": "sections/07-trai-nghiem-cam-xuc.json"},
+  {"include": "sections/08-ket-qua.json"},
+  {"include": "sections/09-hanh-trinh-san-pham.json"},
+  {"include": "sections/10-ket-luan.json"}
+ ]}

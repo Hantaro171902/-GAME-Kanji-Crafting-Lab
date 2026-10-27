@@ -1,0 +1,149 @@
+{
+ "ok": true,
+ "tool": "slide-craft 2.0.0",
+ "deck": "slides/kanji-bento-product-story",
+ "errors": [],
+ "warnings": [
+  {
+   "file": "deck.json",
+   "path": "meta.sources",
+   "rule": "W-SRC-UNREAD",
+   "check": "unsupported",
+   "src": [],
+   "class": "model-fixable",
+   "got": "/tmp/vibeflow/user/a1c81416-e9d7-4dc9-b044-5e4a0d1b4645/Kanji_Mochi_Presentation_VI.bc3a3e54.html: .html",
+   "limit": "not checked against the deck: the build reads .md, .markdown, .txt, .text, .pdf, .docx, .pptx, .xlsx only (.md, .markdown, .txt, .text, .pdf, .docx, .pptx, .xlsx)",
+   "hint": [
+    "the slides built from /tmp/vibeflow/user/a1c81416-e9d7-4dc9-b044-5e4a0d1b4645/Kanji_Mochi_Presentation_VI.bc3a3e54.html were not compared with it: re-read it yourself and check their words and numbers",
+    "the build has no reader for .html files: you read it with your own tools; say in your report that the deck was not checked against it",
+    "do not write code or install anything to convert it"
+   ]
+  }
+ ],
+ "deliverables": {
+  "deck.pptx": {
+   "path": "slides/kanji-bento-product-story/deck.pptx",
+   "bytes": 4830534
+  },
+  "deck.pdf": {
+   "path": "slides/kanji-bento-product-story/deck.pdf",
+   "bytes": 1479234
+  },
+  "deck.html": {
+   "path": "slides/kanji-bento-product-story/deck.html",
+   "bytes": 1254883
+  }
+ },
+ "slides": 13,
+ "mode": "default",
+ "mode_source": "auto",
+ "lang": "vi",
+ "dropped_sources": [],
+ "report": "slides/kanji-bento-product-story/report.json",
+ "splits": {
+  "series": {},
+  "split_from": {}
+ },
+ "fill": [
+  {
+   "slide": 2,
+   "kind": "agenda",
+   "tier": "base",
+   "fill": 0.963,
+   "max_gap_in": 0.2,
+   "gate": "exempt"
+  },
+  {
+   "slide": 3,
+   "kind": "diagram",
+   "tier": "base",
+   "fill": 1.0,
+   "max_gap_in": 0.0
+  },
+  {
+   "slide": 4,
+   "kind": "bullets",
+   "tier": "very-sparse",
+   "fill": 0.939,
+   "max_gap_in": 0.32
+  },
+  {
+   "slide": 5,
+   "kind": "diagram",
+   "tier": "base",
+   "fill": 1.0,
+   "max_gap_in": 0.0
+  },
+  {
+   "slide": 6,
+   "kind": "diagram",
+   "tier": "base",
+   "fill": 1.0,
+   "max_gap_in": 0.0
+  },
+  {
+   "slide": 7,
+   "kind": "bullets",
+   "tier": "very-sparse",
+   "fill": 0.939,
+   "max_gap_in": 0.32
+  },
+  {
+   "slide": 8,
+   "kind": "bullets",
+   "tier": "very-sparse",
+   "fill": 0.939,
+   "max_gap_in": 0.32
+  },
+  {
+   "slide": 9,
+   "kind": "bullets",
+   "tier": "very-sparse",
+   "fill": 0.939,
+   "max_gap_in": 0.32
+  },
+  {
+   "slide": 10,
+   "kind": "diagram",
+   "tier": "base",
+   "fill": 1.0,
+   "max_gap_in": 0.0
+  },
+  {
+   "slide": 11,
+   "kind": "bullets",
+   "tier": "very-sparse",
+   "fill": 0.939,
+   "max_gap_in": 0.32
+  },
+  {
+   "slide": 12,
+   "kind": "diagram",
+   "tier": "base",
+   "fill": 1.0,
+   "max_gap_in": 0.0
+  }
+ ],
+ "warnings_total": 1,
+ "pdf_fonts": [
+  {
+   "name": "BAAAAA+NotoSansCJKjp-Bold",
+   "embedded": true
+  },
+  {
+   "name": "CAAAAA+NotoSansCJKjp-Regular",
+   "embedded": true
+  },
+  {
+   "name": "DAAAAA+DejaVuSans",
+   "embedded": true
+  }
+ ],
+ "pdf_fonts_gate": "P-3 enforced",
+ "html_logo": "fpt-base",
+ "seconds": 11.7,
+ "next": [
+  "tell the user the paths and sizes above, the slide count, the mode (default, auto) and every dropped source with its reason",
+  "look at slides: slide-craft render slides/kanji-bento-product-story --png --slides N (or --describe)"
+ ]
+}

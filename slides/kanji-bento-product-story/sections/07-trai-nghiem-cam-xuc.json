@@ -1,0 +1,19 @@
+{"title": "Trải nghiệm cảm xúc",
+ "slides": [
+  {"id": "s-emotion", "kind": "bullets", "title": "Âm thanh và chuyển động thành nghi thức",
+   "bullets": [
+    "Mỗi thao tác một âm",
+    "Chuyển động xác nhận không gian",
+    "Giải thích trạng thái"
+   ],
+   "companion": {"kind": "table", "place": "bottom",
+    "columns": ["Thao tác", "Phản hồi"],
+    "rows": [
+     ["Chạm nút", "Click mềm"],
+     ["Đặt mảnh", "Mạt chược"],
+     ["Đúng", "Chuông + mochi"],
+     ["Sai", "Gõ rỗng"],
+     ["Hợp nhất", "Phần → toàn thể"]
+    ]},
+   "notes": "Âm thanh: chạm nút — tiếng 'click' mềm; nhấc mảnh — tiếng gỗ nhẹ; đặt mảnh — tiếng quân mạt chược; đúng — chuông ngắn + phần thưởng mochi; sai — tiếng gõ rỗng, không gây áp lực. Chuyển động: lật thẻ tạo khoảnh khắc khám phá; mảnh khớp ô xác nhận quan hệ không gian; ô sai rung nhẹ chỉ ra nơi cần sửa; kanji hợp nhất cho thấy 'phần → toàn thể'; 5 mochi sáng dần biến tiến độ thành sưu tập. Âm thanh và animation phải giải thích trạng thái, không chỉ trang trí. Luôn có chế độ tắt âm và giảm chuyển động."}
+ ]}

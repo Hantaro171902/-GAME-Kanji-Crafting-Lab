@@ -1,0 +1,15 @@
+{"title": "Pain point",
+ "slides": [
+  {"id": "s-pain", "kind": "diagram", "title": "Kanji như hàng nghìn hình vẽ rời rạc",
+   "lead": "Ba nguyên nhân khiến Kanji khó học.",
+   "diagram": {"type": "fishbone", "focus": ["b-ngu-canh"],
+    "alt": "Biểu đồ xương cá: ba nhóm nguyên nhân — quá nhiều nét, chép máy móc, thiếu ngữ cảnh — dẫn đến việc không hiểu chữ.",
+    "body": {"effect": {"name": "Kanji như hình vẽ rời rạc", "sub": "không biết bắt đầu phân tích"},
+     "bones": [
+      {"name": "Quá nhiều nét", "causes": ["Khối phức tạp", "Không biết bắt đầu"]},
+      {"name": "Chép máy móc", "causes": ["Quen tay", "Không hiểu cấu trúc"]},
+      {"id": "b-ngu-canh", "name": "Thiếu ngữ cảnh", "causes": ["Flashcard tĩnh", "Âm, từ tách rời"]}
+     ]}},
+   "footnote": "Ghi nhớ ký hiệu, chưa hiểu chữ.",
+   "notes": "Người mới dễ nhìn Kanji như một khối phức tạp, không biết bắt đầu phân tích từ đâu. Viết lặp lại có thể tạo sự quen tay nhưng chưa chắc giúp hiểu cấu trúc và gợi lại ý nghĩa. Flashcard chỉ đưa 'chữ ↔ nghĩa' nên việc nhớ cách cấu tạo, cách đọc và từ vựng vẫn tách rời. Cảm giác cốt lõi của người học: 'Tôi đang ghi nhớ ký hiệu, chứ chưa thật sự hiểu chữ.'"}
+ ]}
