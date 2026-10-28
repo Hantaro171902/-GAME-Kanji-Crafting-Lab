@@ -6,6 +6,9 @@ import { Furigana } from "./Furigana";
 import moriImg from "@/assets/mori.png";
 import tanukiImg from "@/assets/tanuki.png";
 import memoryImg from "@/assets/memory-rest.jpg";
+import timeImg from "@/assets/time.jpg";
+import maleImg from "@/assets/male.jpg";
+import snowImg from "@/assets/snow.jpg";
 
 export function Modal({ title, onClose, children, wide }: { title: string; onClose?: () => void; children: ReactNode; wide?: boolean }) {
   const t = useT();
@@ -91,6 +94,15 @@ function MemoryScene({ scene }: { scene: Chapter["scene"] }) {
         <path d="M0 250 Q120 220 240 250 T400 245 L400 300 L0 300 Z" fill="#6E8B6A" />
       </svg>
     );
+  }
+  if (scene === "time") {
+    return <img src={timeImg} alt="The sun casting a shadow beside a temple" className="w-full rounded-xl border-4 border-wood" />;
+  }
+  if (scene === "field") {
+    return <img src={maleImg} alt="A person working in a green rice field" className="w-full rounded-xl border-4 border-wood" />;
+  }
+  if (scene === "snow") {
+    return <img src={snowImg} alt="A snowy forest with falling snow" className="w-full rounded-xl border-4 border-wood" />;
   }
   return (
     <svg viewBox="0 0 400 300" className="w-full rounded-xl border-4 border-wood" role="img" aria-label="A mountain standing on stone">

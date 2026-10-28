@@ -262,7 +262,9 @@ const UI: Record<Lang, Record<string, string>> = {
   },
 };
 
-let current: Lang = readStoredLang();
+// Deterministic default so the first client render matches the SSR HTML.
+// The stored language is applied after hydration in useLang's effect.
+let current: Lang = "en";
 
 function readStoredLang(): Lang {
   try {
@@ -294,6 +296,13 @@ export function setLang(lang: Lang): void {
 export function useLang(): Lang {
   const [lang, setLangState] = useState(current);
   useEffect(() => {
+    // Apply the persisted language only after hydration so the first
+    // client render matches the server-rendered HTML.
+    const stored = readStoredLang();
+    if (stored !== current) {
+      current = stored;
+      setLangState(stored);
+    }
     const fn = () => setLangState(current);
     listeners.add(fn);
     return () => {
