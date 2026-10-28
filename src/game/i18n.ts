@@ -1,0 +1,324 @@
+import { useCallback, useEffect, useState } from "react";
+
+export type Lang = "en" | "ja" | "vi";
+
+export const LANGS: { id: Lang; label: string }[] = [
+  { id: "en", label: "English" },
+  { id: "ja", label: "日本語" },
+  { id: "vi", label: "Tiếng Việt" },
+];
+
+export const LANG_KEY = "kanji-bento-language";
+
+/** A value available in every display language. */
+export type Localized<T> = { en: T; ja: T; vi: T };
+
+const UI: Record<Lang, Record<string, string>> = {
+  en: {
+    settings: "Settings",
+    sound: "Sound effects",
+    language: "Language",
+    furigana: "Furigana",
+    volume: "Volume",
+    progress: "Progress",
+    resetProgress: "Reset progress",
+    eraseAll: "Erase all progress?",
+    yesErase: "Yes, erase",
+    keep: "Keep",
+    play: "Play",
+    tagline:
+      "Words have vanished from Kotoba Forest. A little tanuki who knows no Japanese sets out to find them, piece by piece.",
+    walkHint: "Walk with WASD / arrows · press E or Space to interact",
+    glowingRock: "A strange glowing rock… maybe ask Mori first.",
+    sealedCard: "The memory card is sealed. Find radical pieces first.",
+    bentoEmpty: "Your Bento Box is empty and cracked…",
+    inkDry: "The ink is dry. Learn a Kanji first.",
+    foundPiece: "Found a radical piece: {char}!",
+    signUnknown: "??? (Tanuki can't read this yet)",
+    signKnown: "{char} — {meaning} area ahead",
+    levelUpAll: "✦ Level {level} reached! Every word is restored",
+    levelUpNext: "✦ Level {level} reached — Chapter {chapter} begins!",
+    tanuki: "Tanuki",
+    levelKnowsNone: "Level {level} · knows no words",
+    levelKanji: "Level {level} · {count} kanji",
+    chapterLabel: "Chapter {num} · {title}",
+    journal: "Journal",
+    catalog: "Catalog",
+    restartChapter: "Restart chapter",
+    restartConfirm: "Restart this chapter?",
+    pouch: "Pouch",
+    empty: "empty",
+    rotateLandscape: "Please rotate to landscape",
+    close: "Close",
+    moriTitle: "Mori · Keeper of the Kanji Tree",
+    tanukiTitle: "Tanuki · Lv 0",
+    tapSpace: "tap / space ▸",
+    shrineTitle: "Picture Shrine · Memory",
+    memoryOpens: "The sealed memory opens… ",
+    whichPieces: "Which pieces do you see in this picture?",
+    remember: "Remember!",
+    bentoTitle: "Kanji Bento",
+    bentoHint: "Tap a piece, then tap a compartment. {left} on the left, {right} on the right?",
+    trayEmpty: "Tray empty",
+    closeLid: "Close the lid ✦",
+    newKanji: "New Kanji discovered!",
+    strokeOrder: "Stroke order · {n} strokes",
+    on: "On:",
+    kun: "Kun:",
+    builtFrom: "Built from:",
+    backToForest: "Back to the forest",
+    deskTitle: "Calligraphy Desk",
+    trace: "1 · Trace",
+    freeWrite: "2 · Free write",
+    followStroke: "Follow the glowing stroke from the dot. Stroke {cur} of {total}.",
+    greatNowWrite: "Great! Now write it yourself →",
+    writeFromMemory: "Write {char} from memory. Strokes: {cur} / {total}",
+    favoriteOn: "♥ Favorite",
+    favoriteOff: "♡ Favorite",
+    savedToJournal: "Saved to journal ✓",
+    saveToJournal: "Save to memory journal",
+    returnToForest: "Return to the forest",
+    undo: "↶ Undo",
+    clear: "Clear",
+    hideGuide: "Hide guide",
+    showGuide: "Show guide",
+    memoryJournal: "Memory journal",
+    toggleFavorite: "Toggle favorite",
+    journalTitle: "Tanuki's Journal",
+    radicalPouch: "Radical pouch",
+    emptyGoDig: "Empty… go dig!",
+    kanjiLearned: "Kanji learned",
+    noneYet: "None yet.",
+    calligraphy: "Calligraphy",
+    favorites: "♥ Favorites",
+    noWritings: "No writings saved.",
+    catalogTitle: "Mori's Conversation Catalog",
+    lv: "Lv {n}",
+    reachLevel: "🔒 Reach Level {n} to unlock.",
+  },
+  ja: {
+    settings: "設定",
+    sound: "効果音",
+    language: "言語",
+    furigana: "ふりがな",
+    volume: "音量",
+    progress: "進行状況",
+    resetProgress: "進行をリセット",
+    eraseAll: "すべての進行を消しますか？",
+    yesErase: "はい、消す",
+    keep: "残す",
+    play: "プレイ",
+    tagline:
+      "ことばの森から言葉が消えてしまった。日本語を知らない小さなタヌキが、一つずつ言葉を取り戻す旅に出る。",
+    walkHint: "WASD / 矢印キーで移動 · Eまたはスペースで操作",
+    glowingRock: "変な光る岩だ……まずモリに聞いてみよう。",
+    sealedCard: "記憶カードは封印されている。先に部首の破片を見つけて。",
+    bentoEmpty: "弁当箱は空っぽでひび割れている……",
+    inkDry: "墨が乾いている。先に漢字を覚えよう。",
+    foundPiece: "部首の破片を見つけた：{char}！",
+    signUnknown: "？？？（タヌキはまだ読めない）",
+    signKnown: "{char} ——前方は{meaning}エリア",
+    levelUpAll: "✦ レベル{level}到達！すべての言葉が戻った",
+    levelUpNext: "✦ レベル{level}到達——第{chapter}章スタート！",
+    tanuki: "タヌキ",
+    levelKnowsNone: "レベル{level} · まだ言葉を知らない",
+    levelKanji: "レベル{level} · {count}漢字",
+    chapterLabel: "第{num}章 · {title}",
+    journal: "手帳",
+    catalog: "カタログ",
+    restartChapter: "章をやり直す",
+    restartConfirm: "この章をやり直しますか？",
+    pouch: "ポーチ",
+    empty: "空",
+    rotateLandscape: "横向きにしてください",
+    close: "閉じる",
+    moriTitle: "モリ · 大漢字の木の番人",
+    tanukiTitle: "タヌキ · Lv 0",
+    tapSpace: "タップ / スペース ▸",
+    shrineTitle: "絵神社 · 記憶",
+    memoryOpens: "封印された記憶が開く…… ",
+    whichPieces: "この絵にどの破片が見える？",
+    remember: "思い出す！",
+    bentoTitle: "漢字弁当",
+    bentoHint: "破片をタップして、それから仕切りをタップ。左に{left}、右に{right}？",
+    trayEmpty: "トレーは空",
+    closeLid: "蓋を閉める ✦",
+    newKanji: "新しい漢字を発見！",
+    strokeOrder: "書き順 · {n}画",
+    on: "音読み：",
+    kun: "訓読み：",
+    builtFrom: "成り立ち：",
+    backToForest: "森に戻る",
+    deskTitle: "書道机",
+    trace: "1 · なぞる",
+    freeWrite: "2 · 自由に書く",
+    followStroke: "点から光る線をなぞろう。{cur}画目 / {total}画。",
+    greatNowWrite: "上手！今度は自分で書いてみよう →",
+    writeFromMemory: "{char}を記憶から書こう。画数：{cur} / {total}",
+    favoriteOn: "♥ お気に入り",
+    favoriteOff: "♡ お気に入り",
+    savedToJournal: "手帳に保存 ✓",
+    saveToJournal: "記憶の手帳に保存",
+    returnToForest: "森に戻る",
+    undo: "↶ 元に戻す",
+    clear: "消去",
+    hideGuide: "ガイドを隠す",
+    showGuide: "ガイドを表示",
+    memoryJournal: "記憶の手帳",
+    toggleFavorite: "お気に入り切替",
+    journalTitle: "タヌキの手帳",
+    radicalPouch: "部首ポーチ",
+    emptyGoDig: "空だ……掘りに行こう！",
+    kanjiLearned: "覚えた漢字",
+    noneYet: "まだない",
+    calligraphy: "書道",
+    favorites: "♥ お気に入り",
+    noWritings: "保存した作品はありません。",
+    catalogTitle: "モリの会話カタログ",
+    lv: "Lv {n}",
+    reachLevel: "🔒 レベル{n}で解放",
+  },
+  vi: {
+    settings: "Cài đặt",
+    sound: "Hiệu ứng âm thanh",
+    language: "Ngôn ngữ",
+    furigana: "Furigana",
+    volume: "Âm lượng",
+    progress: "Tiến trình",
+    resetProgress: "Đặt lại tiến trình",
+    eraseAll: "Xóa toàn bộ tiến trình?",
+    yesErase: "Có, xóa",
+    keep: "Giữ lại",
+    play: "Chơi",
+    tagline:
+      "Những từ ngữ đã biến mất khỏi Rừng Kotoba. Một chú tanuki nhỏ chưa biết tiếng Nhật lên đường tìm lại chúng, từng mảnh một.",
+    walkHint: "Di chuyển bằng WASD / phím mũi tên · nhấn E hoặc Space để tương tác",
+    glowingRock: "Một tảng đá phát sáng kỳ lạ… hãy hỏi Mori trước đã.",
+    sealedCard: "Thẻ ký ức đang bị phong ấn. Hãy tìm các mảnh bộ thủ trước.",
+    bentoEmpty: "Hộp Bento của bạn trống rỗng và nứt vỡ…",
+    inkDry: "Mực đã khô. Hãy học một chữ Kanji trước.",
+    foundPiece: "Đã tìm thấy mảnh bộ thủ: {char}!",
+    signUnknown: "??? (Tanuki chưa đọc được)",
+    signKnown: "{char} — phía trước là khu vực {meaning}",
+    levelUpAll: "✦ Đã đạt Cấp {level}! Mọi từ ngữ đã được phục hồi",
+    levelUpNext: "✦ Đã đạt Cấp {level} — Chương {chapter} bắt đầu!",
+    tanuki: "Tanuki",
+    levelKnowsNone: "Cấp {level} · chưa biết từ nào",
+    levelKanji: "Cấp {level} · {count} chữ kanji",
+    chapterLabel: "Chương {num} · {title}",
+    journal: "Nhật ký",
+    catalog: "Danh mục",
+    restartChapter: "Chơi lại chương",
+    restartConfirm: "Chơi lại chương này?",
+    pouch: "Túi đựng",
+    empty: "trống",
+    rotateLandscape: "Vui lòng xoay ngang thiết bị",
+    close: "Đóng",
+    moriTitle: "Mori · Người trông giữ Cây Kanji",
+    tanukiTitle: "Tanuki · Cấp 0",
+    tapSpace: "chạm / space ▸",
+    shrineTitle: "Miếu Tranh · Ký ức",
+    memoryOpens: "Ký ức bị phong ấn mở ra… ",
+    whichPieces: "Bạn thấy những mảnh nào trong bức tranh này?",
+    remember: "Nhớ ra!",
+    bentoTitle: "Bento Kanji",
+    bentoHint: "Chạm vào một mảnh, rồi chạm vào ngăn. {left} bên trái, {right} bên phải?",
+    trayEmpty: "Khay trống",
+    closeLid: "Đóng nắp ✦",
+    newKanji: "Đã khám phá Kanji mới!",
+    strokeOrder: "Thứ tự nét · {n} nét",
+    on: "Âm On:",
+    kun: "Âm Kun:",
+    builtFrom: "Được tạo từ:",
+    backToForest: "Quay lại khu rừng",
+    deskTitle: "Bàn Thư Pháp",
+    trace: "1 · Tô theo",
+    freeWrite: "2 · Viết tự do",
+    followStroke: "Tô theo nét sáng từ chấm tròn. Nét {cur} / {total}.",
+    greatNowWrite: "Tuyệt! Giờ hãy tự viết nhé →",
+    writeFromMemory: "Viết {char} theo trí nhớ. Nét: {cur} / {total}",
+    favoriteOn: "♥ Yêu thích",
+    favoriteOff: "♡ Yêu thích",
+    savedToJournal: "Đã lưu vào nhật ký ✓",
+    saveToJournal: "Lưu vào nhật ký ký ức",
+    returnToForest: "Quay lại khu rừng",
+    undo: "↶ Hoàn tác",
+    clear: "Xóa",
+    hideGuide: "Ẩn hướng dẫn",
+    showGuide: "Hiện hướng dẫn",
+    memoryJournal: "Nhật ký ký ức",
+    toggleFavorite: "Chuyển yêu thích",
+    journalTitle: "Nhật ký của Tanuki",
+    radicalPouch: "Túi bộ thủ",
+    emptyGoDig: "Trống… đi đào thôi!",
+    kanjiLearned: "Kanji đã học",
+    noneYet: "Chưa có.",
+    calligraphy: "Thư pháp",
+    favorites: "♥ Yêu thích",
+    noWritings: "Chưa có bài viết nào được lưu.",
+    catalogTitle: "Danh Mục Hội Thoại của Mori",
+    lv: "Cấp {n}",
+    reachLevel: "🔒 Đạt Cấp {n} để mở khóa.",
+  },
+};
+
+let current: Lang = readStoredLang();
+
+function readStoredLang(): Lang {
+  try {
+    const v = localStorage.getItem(LANG_KEY);
+    if (v === "ja" || v === "vi" || v === "en") return v;
+  } catch {
+    /* storage unavailable */
+  }
+  return "en";
+}
+
+const listeners = new Set<() => void>();
+
+export function getLang(): Lang {
+  return current;
+}
+
+export function setLang(lang: Lang): void {
+  current = lang;
+  try {
+    localStorage.setItem(LANG_KEY, lang);
+  } catch {
+    /* storage unavailable */
+  }
+  listeners.forEach((fn) => fn());
+}
+
+/** Subscribes the calling component to language changes. */
+export function useLang(): Lang {
+  const [lang, setLangState] = useState(current);
+  useEffect(() => {
+    const fn = () => setLangState(current);
+    listeners.add(fn);
+    return () => {
+      listeners.delete(fn);
+    };
+  }, []);
+  return lang;
+}
+
+/** Returns a translator bound to the current language. */
+export function useT() {
+  const lang = useLang();
+  return useCallback(
+    (key: string, params?: Record<string, string | number>) => {
+      let s = UI[lang][key] ?? UI.en[key] ?? key;
+      if (params) {
+        for (const [k, v] of Object.entries(params)) s = s.replaceAll(`{${k}}`, String(v));
+      }
+      return s;
+    },
+    [lang],
+  );
+}
+
+/** Picks the localized variant of a value. */
+export function pick<T>(value: Localized<T>, lang: Lang): T {
+  return value[lang] ?? value.en;
+}
