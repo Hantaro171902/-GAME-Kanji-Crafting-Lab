@@ -1,0 +1,19 @@
+{"title": "Hành trình sản phẩm",
+ "slides": [
+  {"id": "s-roadmap", "kind": "bullets", "title": "Từ prototype 5 chữ đến 214 bộ thủ",
+   "bullets": [
+    "Kiểm chứng vòng chơi",
+    "Nhóm chủ đề, độ khó",
+    "4 giai đoạn"
+   ],
+   "companion": {"kind": "table", "place": "bottom",
+    "columns": ["Giai đoạn", "Quy mô"],
+    "rows": [
+     ["Prototype", "5 Kanji"],
+     ["Level packs", "80–100 Kanji"],
+     ["Mastery", "Ôn lại thông minh"],
+     ["Creation", "214 bộ thủ"],
+     ["Mục tiêu", "Tra cứu biến thể"]
+    ]},
+   "notes": "Prototype: 5 Kanji — kiểm chứng vòng chơi, cảm giác ghép và mức độ dễ hiểu. Level packs: 80–100 Kanji cơ bản — nhóm theo chủ đề hình ảnh, mẫu cấu tạo và độ khó. Mastery: ôn lại thông minh — đưa chữ hay sai trở lại trong câu đố khác và trong từ vựng. Creation: thư viện 214 bộ thủ — tra cứu, so sánh biến thể, vị trí thường gặp và chữ ví dụ."}
+ ]}

@@ -1,0 +1,19 @@
+{"title": "Cơ chế độc đáo",
+ "slides": [
+  {"id": "s-mechanism", "kind": "bullets", "title": "Bộ thủ trở thành LEGO",
+   "bullets": [
+    "Học bằng hành động",
+    "Sai là tín hiệu",
+    "Kiến thức cũ → mới"
+   ],
+   "companion": {"kind": "table", "place": "bottom",
+    "columns": ["Cơ chế", "Ý nghĩa"],
+    "rows": [
+     ["Hữu hình hoá", "Thấy chữ xây"],
+     ["Không gian", "Trái–phải, bao"],
+     ["Tái dùng", "木 → 林, 森"],
+     ["Hành động", "Chọn, kéo, đặt"],
+     ["Ví dụ", "亻 + 木 = 休"]
+    ]},
+   "notes": "Bộ thủ không còn là danh sách; bộ thủ trở thành LEGO. Hữu hình hoá cấu trúc: mỗi thành phần là một vật thể có kích thước và vị trí, giúp người học thấy chữ được 'xây' như thế nào. Học bằng hành động: chọn, kéo, đặt, tháo và thử lại; sai không phải kết thúc mà là tín hiệu để điều chỉnh mô hình trong đầu. Ngữ pháp không gian: khung bento dạy quan hệ trái–phải, trên–dưới, bao–trong, thay vì chỉ dạy tên bộ thủ. Tái sử dụng mảnh ghép: một mảnh như 木 quay lại trong 林 và 森; kiến thức cũ trở thành vật liệu tạo kiến thức mới. Ví dụ: 亻 (người) + 木 (cây) = 休 (nghỉ)."}
+ ]}

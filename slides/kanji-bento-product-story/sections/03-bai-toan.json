@@ -1,0 +1,16 @@
+{"title": "Bài toán",
+ "slides": [
+  {"id": "s-problem", "kind": "diagram", "title": "Từ nhìn – nhớ sang quan sát – tái tạo",
+   "lead": "Bốn bước, một vòng truy hồi liên tục.",
+   "diagram": {"type": "loop",
+    "alt": "Vòng học bốn bước: Nhìn, Phân tích, Lắp ghép, Giải thích, quanh trung tâm là Kanji được hiểu.",
+    "body": {"hub": {"name": "Kanji được hiểu", "sub": "hình · cấu tạo · âm · từ vựng"},
+     "stations": [
+      {"name": "Nhìn", "sub": "neo nghĩa bằng cảnh"},
+      {"name": "Phân tích", "sub": "nhận phần quen thuộc"},
+      {"name": "Lắp ghép", "sub": "đặt đúng vị trí"},
+      {"name": "Giải thích", "sub": "liên kết chữ, âm, từ"}
+     ]}},
+   "footnote": "Ví dụ: 亻 + 木 = 休 (người + cây = nghỉ). Nhiều điểm truy hồi: hình, vị trí, thao tác, câu chuyện.",
+   "notes": "Trò chơi chuyển cách học từ 'nhìn và nhớ' sang quan sát, phân rã và tái tạo: 1) Nhìn — neo ý nghĩa bằng một cảnh trực quan; 2) Phân tích — nhận ra các phần quen thuộc; 3) Lắp ghép — đặt đúng phần vào đúng vị trí; 4) Giải thích — liên kết chữ, cách đọc và từ vựng. Ví dụ: Người + cây = nghỉ, 亻 + 木 = 休. Giá trị học tập: trò chơi tạo nhiều điểm truy hồi cho cùng một Kanji — hình ảnh, vị trí không gian, thao tác tay, câu chuyện cấu tạo, âm đọc và ví dụ từ vựng."}
+ ]}

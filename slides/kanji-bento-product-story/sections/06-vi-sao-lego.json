@@ -1,0 +1,19 @@
+{"title": "Vì sao LEGO",
+ "slides": [
+  {"id": "s-why-lego", "kind": "bullets", "title": "Mỗi lần ghép là giả thuyết",
+   "bullets": [
+    "Truy hồi chủ động",
+    "Khó hơn nhận diện",
+    "Gợi ý cụ thể"
+   ],
+   "companion": {"kind": "table", "place": "bottom",
+    "columns": ["Nguyên lý", "Ý nghĩa"],
+    "rows": [
+     ["Chunking", "Gom nét"],
+     ["Generative", "Tự tạo đáp án"],
+     ["Chẩn đoán", "Chỉ vị trí"],
+     ["Transfer", "Mảnh nào ở đâu"],
+     ["Thiết kế", "Phân biệt từ điển"]
+    ]},
+   "notes": "Chunking: thay vì nhớ từng nét riêng lẻ, người học gom nét thành các đơn vị có nghĩa như 亻, 木, 日, 月. Generative learning: người học tự tạo đáp án từ thành phần — khó hơn nhận diện nhưng đòi hỏi truy hồi chủ động. Phản hồi chẩn đoán: trò chơi biết sai ở mảnh nào hoặc vị trí nào, từ đó đưa gợi ý cụ thể thay vì chỉ báo 'sai'. Transfer: khi gặp chữ mới, người học có thói quen hỏi — tôi nhận ra mảnh nào, mảnh nằm ở đâu, mối liên hệ là gì. Nguyên tắc thiết kế: không khẳng định mọi bộ phận đều trực tiếp tạo ra nghĩa hiện đại; trò chơi phải phân biệt bộ thủ từ điển, thành phần hình thể và câu chuyện ghi nhớ."}
+ ]}

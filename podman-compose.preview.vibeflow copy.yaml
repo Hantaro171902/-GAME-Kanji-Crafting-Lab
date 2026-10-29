@@ -1,0 +1,19 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.preview.vibeflow
+    ports:
+      - "5173:8787"
+    env_file:
+      - .env
+    environment:
+      WRANGLER_SEND_METRICS: "false"
+      CLOUDFLARE_CF_FETCH_ENABLED: "false"
+    working_dir: /app
+    volumes:
+      - ./.output:/app/.output
+      - ./entrypoint.preview.vibeflow.sh:/app/entrypoint.preview.vibeflow.sh:ro
+      - /home/user/.vf-ca/gitgw.pem:/certs/gitgw.pem:ro
+    entrypoint: ["sh", "/app/entrypoint.preview.vibeflow.sh"]
+    command: ["--cwd", ".output/server", "dev", "--port", "8787", "--ip", "0.0.0.0", "--inspector-port", "0", "--persist-to", "/tmp/wrangler-state"]

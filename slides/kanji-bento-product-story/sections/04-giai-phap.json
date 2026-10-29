@@ -1,0 +1,18 @@
+{"title": "Giải pháp",
+ "slides": [
+  {"id": "s-solution", "kind": "diagram", "title": "Vòng chơi ngắn, đủ nhận biết và hiểu",
+   "lead": "Sáu bước, mỗi bước một thao tác.",
+   "diagram": {"type": "process", "focus": ["st-build"],
+    "alt": "Luồng chơi một phiên gồm sáu bước: Khám phá, Lật thẻ, Suy luận, Đọc hình, Kiến tạo, Củng cố.",
+    "body": {"actors": ["Người chơi", "Trò chơi"],
+     "steps": [
+      {"stage": "Khám phá", "actor": "Người chơi", "name": "Vào cảnh chọn thử thách"},
+      {"stage": "Lật thẻ", "actor": "Trò chơi", "name": "Hiện gợi ý hình ảnh"},
+      {"stage": "Suy luận", "actor": "Người chơi", "name": "Đoán bộ phận cấu tạo"},
+      {"stage": "Đọc hình", "actor": "Trò chơi", "name": "Mở cảnh gợi nghĩa"},
+      {"id": "st-build", "stage": "Kiến tạo", "actor": "Người chơi", "name": "Ghép bộ phận vào bento"},
+      {"stage": "Củng cố", "actor": "Trò chơi", "name": "Chốt chữ và từ vựng"}
+     ]}},
+   "footnote": "Sai là tín hiệu điều chỉnh, không phải kết thúc.",
+   "notes": "Một vòng chơi ngắn nhưng đủ cả nhận biết và hiểu: Khám phá — vào cảnh và chọn thử thách; Lật thẻ — xem gợi ý bằng hình ảnh; Suy luận — đoán bộ phận cấu tạo; Đọc hình — đối chiếu cảnh gợi nghĩa; Kiến tạo — ghép bộ phận vào hộp bento; Củng cố — học chữ và từ vựng. Sai không phải kết thúc mà là tín hiệu để điều chỉnh mô hình trong đầu."}
+ ]}

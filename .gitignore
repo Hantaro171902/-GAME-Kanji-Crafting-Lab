@@ -118,3 +118,6 @@ vibeflow.json
 .turbo/
 *.tsbuildinfo
 
+
+# Local preview build state
+.vibeflow-preview.hash

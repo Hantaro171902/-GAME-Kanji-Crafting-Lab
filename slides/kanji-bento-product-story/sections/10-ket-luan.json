@@ -1,0 +1,16 @@
+{"title": "Kết luận",
+ "slides": [
+  {"id": "s-conclusion", "kind": "diagram", "title": "Xây Kanji như một mô hình",
+   "lead": "Không học như hình vẽ; xây như mô hình.",
+   "diagram": {"type": "loop", "focus": ["st-ghep"],
+    "alt": "Vòng lặp người học: Nhìn, Tách, Ghép, Giải thích, Nhớ — quanh trung tâm là mô hình lắp ráp.",
+    "body": {"hub": {"name": "Mô hình lắp ráp", "sub": "nhìn · tách · ghép · nhớ"},
+     "stations": [
+      {"name": "Nhìn", "sub": "cảnh gợi nghĩa"},
+      {"name": "Tách", "sub": "nhận phần quen"},
+      {"id": "st-ghep", "name": "Ghép", "sub": "xây chữ"},
+      {"name": "Giải thích", "sub": "chữ, âm, từ"}
+     ]}},
+   "footnote": "Game hoá flashcard chỉ thêm điểm số.",
+   "notes": "Kanji Bento biến sự phức tạp thành một chuỗi hành động có thể hiểu: nhìn → tách → ghép → giải thích → nhớ. Điểm khác biệt không nằm ở việc 'game hoá flashcard', mà ở việc biến cấu trúc chữ thành chính gameplay. Nguồn tham khảo nội dung: các tài liệu về mnemonic theo thành phần và ví dụ 休, 明, 森; cần kiểm chứng nội dung ngôn ngữ với giáo viên tiếng Nhật trước khi phát hành."}
+ ]}

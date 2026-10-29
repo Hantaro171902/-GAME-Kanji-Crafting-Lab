@@ -1,0 +1,16 @@
+{"title": "Kết quả",
+ "slides": [
+  {"id": "s-outcomes", "kind": "diagram", "title": "Nhìn thấy logic trước khi ghi nhớ",
+   "lead": "Logic trước ghi nhớ.",
+   "diagram": {"type": "tree", "focus": ["r-hieu"],
+    "alt": "Cây kết quả: gốc là hiểu Kanji, bốn nhánh là bớt quá tải, nhớ có liên kết, phân biệt tốt hơn, muốn tiếp tục.",
+    "body": {"root": {"id": "r-hieu", "name": "Hiểu Kanji", "sub": "logic trước ghi nhớ",
+     "children": [
+      {"name": "Bớt quá tải", "sub": "chữ → phần quen"},
+      {"name": "Nhớ có liên kết", "sub": "hình, cấu tạo, thao tác"},
+      {"name": "Phân biệt tốt hơn", "sub": "so mảnh, vị trí"},
+      {"name": "Muốn tiếp tục", "sub": "phiên ngắn, thưởng rõ"}
+     ]}}},
+   "footnote": "Chỉ số cốt lõi: giải thích được chữ tạo từ gì.",
+   "notes": "Bớt quá tải: chuyển một chữ lớn thành vài phần quen thuộc. Nhớ có liên kết: kết nối hình ảnh, cấu tạo, thao tác và câu chuyện. Phân biệt tốt hơn: so sánh trực tiếp các mảnh và vị trí trong chữ. Muốn tiếp tục: phiên chơi ngắn, phần thưởng rõ, không có đồng hồ gây áp lực. Chỉ số giá trị cốt lõi: người học có thể giải thích chữ được tạo từ gì và vì sao câu chuyện giúp nhớ chữ."}
+ ]}
