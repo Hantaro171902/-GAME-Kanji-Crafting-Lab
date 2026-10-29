@@ -8,9 +8,19 @@ import deskImg from "@/assets/desk.png";
 import benchImg from "@/assets/bench.png";
 import sundialImg from "@/assets/sundial.svg";
 import mineEntranceImg from "@/assets/mine-entrance.png";
-import { STATIONS, WORLD, atLeast, type Chapter, type StationId } from "../data";
+import checkpointStoneImg from "@/assets/tree-checkpoint-stone.png";
+import { CHAPTERS, STATIONS, WORLD, atLeast, type Chapter, type StationId } from "../data";
 import { pick, useLang, useT } from "../i18n";
 import { useGame } from "../store";
+
+const CANOPY_ORB_OFFSETS: { dx: number; dy: number }[] = [
+  { dx: -135, dy: -90 },
+  { dx: -65, dy: -145 },
+  { dx: 15, dy: -155 },
+  { dx: 95, dy: -130 },
+  { dx: 145, dy: -70 },
+  { dx: -20, dy: -85 },
+];
 
 export function VillageMap({
   chapter,
@@ -120,17 +130,50 @@ export function VillageMap({
         draggable={false}
       />
 
-      {/* Great Kanji Tree (Center) */}
+      {/* Great Kanji Tree (Center) & Kanji Checkpoint Pedestal */}
       <div
         className={`pointer-events-none absolute rounded-full bg-glow transition-opacity duration-1000 ${
-          restored ? "animate-glow opacity-100" : "opacity-0"
+          restored || state.discovered.length > 0 ? "animate-glow opacity-100" : "opacity-0"
         }`}
         style={{ left: 960 - 260, top: 210 - 260, width: 520, height: 520, zIndex: 100 }}
       />
-      {sprite(treeImg, 960, 200, 440, restored ? "" : "saturate-75 brightness-95", 150, () =>
-        onInteract("mori"),
+      {sprite(treeImg, 960, 200, 440, restored ? "" : "saturate-90 brightness-95", 150, () =>
+        onInteract("tree"),
       )}
-      {landmarkBadge("🌳", t("greatKanjiTree"), 1120, 145, () => onInteract("mori"))}
+
+      {/* Floating Restored Kanji Spirit Orbs on the Great Kanji Tree Canopy */}
+      {CHAPTERS.map((ch, idx) => {
+        if (!state.discovered.includes(ch.kanji.char)) return null;
+        const offset = CANOPY_ORB_OFFSETS[idx] ?? { dx: 0, dy: -100 };
+        return (
+          <button
+            key={ch.id}
+            type="button"
+            onClick={() => onInteract("tree")}
+            style={{
+              left: 960 + offset.dx - 22,
+              top: 200 + offset.dy - 22,
+              zIndex: 880,
+            }}
+            className="pointer-events-auto absolute flex h-11 w-11 animate-bob items-center justify-center rounded-full border-2 border-[#f6df96] bg-[#3b2818]/90 font-kanji text-xl font-bold text-[#f6df96] shadow-[0_0_14px_rgba(246,223,150,0.85)] transition hover:scale-110"
+            title={`${ch.kanji.char} — ${pick(ch.kanji.meaning, lang)}`}
+          >
+            {ch.kanji.char}
+          </button>
+        );
+      })}
+
+      {/* Kanji Checkpoint Stone Pedestal at Base of Tree */}
+      {sprite(
+        checkpointStoneImg,
+        STATIONS.tree.x,
+        STATIONS.tree.y + 15,
+        125,
+        "drop-shadow-[0_0_14px_rgba(246,223,150,0.75)]",
+        STATIONS.tree.y,
+        () => onInteract("tree"),
+      )}
+      {landmarkBadge("🌳", t("greatKanjiTree"), 960, 115, () => onInteract("tree"))}
 
       {restored && (
         <div

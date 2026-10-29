@@ -35,6 +35,7 @@ import {
 import { PouchModal } from "./components/PouchModal";
 import { AssessmentModal } from "./components/AssessmentModal";
 import { KanjiPopup } from "./components/KanjiPopup";
+import { KanjiTreeModal } from "./components/KanjiTreeModal";
 import { VillageMap } from "./maps/VillageMap";
 import { MineMap } from "./maps/MineMap";
 
@@ -43,6 +44,7 @@ type Overlay =
   | { kind: "dialogue"; id: string }
   | {
       kind:
+        | "tree"
         | "shrine"
         | "bento"
         | "info"
@@ -57,7 +59,8 @@ type Overlay =
 const SPEED = 280;
 
 export default function Game() {
-  const { state, update, resetChapter, changeMap, deductEnergy, restoreEnergy } = useGame();
+  const { state, update, resetChapter, changeMap, deductEnergy, restoreEnergy, selectChapter } =
+    useGame();
   const lang = useLang();
   const t = useT();
   const [pos, setPos] = useState({ x: 960, y: 560 });
@@ -160,6 +163,10 @@ export default function Game() {
     const step = state.step;
     const ch = chapterRef.current;
     switch (id) {
+      case "tree":
+        sfx("tap");
+        setOverlay({ kind: "tree" });
+        break;
       case "mori":
         setOverlay({ kind: "dialogue", id: step });
         break;
@@ -565,6 +572,60 @@ export default function Game() {
       )}
 
       {/* Overlays & Modals */}
+      {overlay?.kind === "tree" && (
+        <KanjiTreeModal
+          currentChapterIndex={state.chapter}
+          currentStep={state.step}
+          playerLevel={state.level}
+          energy={state.energy}
+          maxEnergy={state.maxEnergy}
+          discovered={state.discovered}
+          journal={state.journal}
+          onSelectChapter={(idx) => {
+            selectChapter(idx);
+            const targetChap = CHAPTERS[idx];
+            if (targetChap) {
+              showToast(
+                t("chapterLabel", {
+                  num: targetChap.num,
+                  title: pick(targetChap.title, lang),
+                }),
+              );
+            }
+          }}
+          onQuickStepAction={(step) => {
+            switch (step) {
+              case "arrival":
+              case "restore":
+                setOverlay({ kind: "dialogue", id: step });
+                break;
+              case "mine":
+                setOverlay(null);
+                changeMap("mine");
+                break;
+              case "shrine":
+                setOverlay({ kind: "shrine" });
+                break;
+              case "bento":
+                setOverlay({ kind: "bento" });
+                break;
+              case "write":
+                setOverlay({ kind: "desk" });
+                break;
+            }
+          }}
+          onRestoreEnergy={() => {
+            restoreEnergy();
+            showToast(t("restAndRecover"));
+          }}
+          onPracticeKanji={(idx) => {
+            if (idx !== state.chapter) selectChapter(idx);
+            setOverlay({ kind: "desk" });
+          }}
+          onInspectKanji={openInspectFromEvent}
+          onClose={() => setOverlay(null)}
+        />
+      )}
       {overlay?.kind === "dialogue" && (
         <Dialogue
           key={`${chapter.id}:${overlay.id}`}

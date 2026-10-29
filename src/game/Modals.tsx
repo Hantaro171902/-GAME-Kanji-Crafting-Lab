@@ -412,39 +412,12 @@ export function BentoModal({
             state === "bad" ? "animate-shake ring-4 ring-red-500" : ""
           }`}
         >
-          {/* Background 4x4 Bento Grid Lines */}
+          {/* Background 4x4 Bento Grid Lines (no stroke hint so player must memorize) */}
           <div className="pointer-events-none absolute inset-3 grid grid-cols-4 grid-rows-4 rounded-xl border-2 border-[#4e341e]/80">
             {Array.from({ length: 16 }, (_, idx) => (
               <div key={idx} className="border border-[#5a3d24]/60" />
             ))}
           </div>
-
-          {/* Dashed White Kanji Guide Overlay (matches game-ui-design.png) */}
-          <svg
-            viewBox="0 0 100 100"
-            className="pointer-events-none absolute inset-5 h-[calc(100%-2.5rem)] w-[calc(100%-2.5rem)] opacity-75"
-          >
-            <line
-              x1="40"
-              y1="6"
-              x2="40"
-              y2="94"
-              stroke="white"
-              strokeWidth="1.2"
-              strokeDasharray="3 3"
-            />
-            {chapter.strokes.map((d, idx) => (
-              <path
-                key={idx}
-                d={d}
-                fill="none"
-                stroke="white"
-                strokeWidth="3.2"
-                strokeLinecap="round"
-                strokeDasharray="4 4"
-              />
-            ))}
-          </svg>
 
           {state === "merged" ? (
             <div className="animate-pop relative z-10 flex flex-1 items-center justify-center rounded-xl bg-[#f7eed9]/95 font-kanji text-9xl text-[#3b2818] shadow-inner">
@@ -463,15 +436,10 @@ export function BentoModal({
                   } ${
                     slots[i]
                       ? "border-[#4b8b55] bg-[#f3dfb9]/95 text-[#3b2818] shadow-md"
-                      : "border-white/60 bg-black/10 text-white hover:bg-white/10"
+                      : "border-white/50 bg-black/10 text-white hover:bg-white/10"
                   } ${sel && !slots[i] ? "animate-pulse ring-2 ring-[#f3dfb9]" : ""}`}
                 >
                   <span>{slots[i]?.char ?? ""}</span>
-                  {!slots[i] && (
-                    <span className="mt-2 font-sans text-xs font-bold text-white/85">
-                      {radicalMeaning(chapter.digChars[i]!)}
-                    </span>
-                  )}
                 </button>
               ))}
             </div>

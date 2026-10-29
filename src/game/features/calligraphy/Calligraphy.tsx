@@ -141,6 +141,18 @@ export function Calligraphy({
                 strokeDasharray="2 3"
                 strokeWidth="0.5"
               />
+              {(mode === "trace" || showRef) && (
+                <text
+                  x="50"
+                  y="53"
+                  textAnchor="middle"
+                  dominantBaseline="central"
+                  className="fill-muted-foreground/10 font-kanji select-none"
+                  fontSize="82"
+                >
+                  {kanji.char}
+                </text>
+              )}
               {ready &&
                 (mode === "trace" || showRef) &&
                 strokes.map((path, index) => (
@@ -149,11 +161,12 @@ export function Calligraphy({
                     d={path}
                     fill="none"
                     strokeLinecap="round"
-                    strokeWidth="8"
+                    strokeLinejoin="round"
+                    strokeWidth="6.5"
                     className={
                       mode === "trace" && index === currentStroke && !traceDone
-                        ? "stroke-accent/60"
-                        : "stroke-muted-foreground/20"
+                        ? "stroke-accent/75"
+                        : "stroke-muted-foreground/25"
                     }
                   />
                 ))}
@@ -161,17 +174,15 @@ export function Calligraphy({
                 mode === "trace" &&
                 !traceDone &&
                 (() => {
-                  const match = (strokes[currentStroke] ?? "").match(/M(\d+) (\d+)/) ?? [
-                    "",
-                    "0",
-                    "0",
-                  ];
+                  const match = (strokes[currentStroke] ?? "").match(
+                    /M(\d+(?:\.\d+)?)[\s,]+(\d+(?:\.\d+)?)/,
+                  ) ?? ["", "0", "0"];
                   return (
                     <g>
                       <circle
                         cx={match[1]}
                         cy={match[2]}
-                        r="4"
+                        r="3.8"
                         className="fill-accent animate-glow"
                       />
                       <text

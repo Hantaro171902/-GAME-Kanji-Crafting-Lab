@@ -54,8 +54,9 @@ export function StrokeDemo({
           pathLength={1}
           fill="none"
           className="stroke-ink"
-          strokeWidth="7"
+          strokeWidth="6.5"
           strokeLinecap="round"
+          strokeLinejoin="round"
           style={{
             strokeDasharray: 1,
             strokeDashoffset: 1,

@@ -247,6 +247,21 @@ export function useGame() {
     }));
   }, []);
 
+  /** Switches or replays an unlocked chapter from the Great Kanji Tree Checkpoint. */
+  const selectChapter = useCallback((chapterIndex: number) => {
+    sfx("chime");
+    setGameState((s) => ({
+      ...s,
+      chapter: Math.max(0, Math.min(chapterIndex, 5)),
+      step: "arrival",
+      currentMap: "village",
+      isTransitioning: false,
+      energy: s.maxEnergy,
+      rocks: { rock1: 3, rock2: 3 },
+      pieces: [],
+    }));
+  }, []);
+
   return {
     state,
     update,
@@ -255,6 +270,7 @@ export function useGame() {
     changeMap,
     deductEnergy,
     restoreEnergy,
+    selectChapter,
     loaded,
   };
 }
