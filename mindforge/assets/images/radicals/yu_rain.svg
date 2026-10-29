@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="cloud" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#B0BEC5"/>
+      <stop offset="100%" stop-color="#78909C"/>
+    </linearGradient>
+    <linearGradient id="drop" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4FC3F7"/>
+      <stop offset="100%" stop-color="#0277BD"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="100" cy="182" rx="50" ry="7" fill="#00000014"/>
+  <circle cx="100" cy="52" r="26" fill="url(#cloud)"/>
+  <circle cx="72" cy="58" r="18" fill="url(#cloud)"/>
+  <circle cx="128" cy="58" r="18" fill="url(#cloud)"/>
+  <line x1="52" y1="44" x2="148" y2="44" stroke="#2D3436" stroke-width="12" stroke-linecap="round"/>
+  <line x1="100" y1="44" x2="100" y2="70" stroke="#2D3436" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="66" cy="90" r="8" fill="#2D3436"/>
+  <circle cx="134" cy="90" r="8" fill="#2D3436"/>
+  <circle cx="66" cy="116" r="8" fill="#2D3436"/>
+  <circle cx="134" cy="116" r="8" fill="#2D3436"/>
+  <path d="M100 138 L 96 152 L 104 152 Z" fill="url(#drop)"/>
+  <path d="M70 150 L 66 164 L 74 164 Z" fill="url(#drop)"/>
+  <path d="M130 150 L 126 164 L 134 164 Z" fill="url(#drop)"/>
+  <path d="M100 162 L 97 173 L 103 173 Z" fill="url(#drop)"/>
+</svg>

@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { clearSave, isSoundEnabled, setSoundEnabled, sfx, getVolume, setVolume } from "@/game/store";
+import { clearSave, isSoundEnabled, setSoundEnabled, sfx, getVolume, setVolume, isFuriganaEnabled, setFuriganaEnabled } from "@/game/store";
 import { LANGS, setLang, useLang, useT, type Lang } from "@/game/i18n";
 
 export default function SettingsModal({ onClose }: { onClose: () => void }) {
   const t = useT();
   const lang = useLang();
   const [sound, setSound] = useState(isSoundEnabled());
+  const [furigana, setFurigana] = useState(isFuriganaEnabled());
   const [volume, setVol] = useState(getVolume());
   const [confirmReset, setConfirmReset] = useState(false);
 
@@ -13,6 +14,12 @@ export default function SettingsModal({ onClose }: { onClose: () => void }) {
     setSoundEnabled(enabled);
     setSound(enabled);
     if (enabled) sfx("tap");
+  };
+
+  const toggleFurigana = (enabled: boolean) => {
+    setFuriganaEnabled(enabled);
+    setFurigana(enabled);
+    sfx("tap");
   };
 
   const changeVolume = (v: number) => {
@@ -60,6 +67,21 @@ export default function SettingsModal({ onClose }: { onClose: () => void }) {
               ))}
             </div>
           </div>
+
+          {lang === "ja" && (
+            <div className="setting-row">
+              <span className="setting-label">{t("furigana")}</span>
+              <button
+                role="switch"
+                aria-checked={furigana}
+                aria-label={t("furigana")}
+                className={`switch${furigana ? " on" : ""}`}
+                onClick={() => toggleFurigana(!furigana)}
+              >
+                <span className="switch-knob" />
+              </button>
+            </div>
+          )}
 
           <div className="setting-row">
             <span className="setting-label">{t("sound")}</span>
