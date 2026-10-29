@@ -1,8 +1,12 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useState } from "react";
 import { CATALOG, RADICALS, type Chapter, type Line } from "./data";
 import { sfx, isFuriganaEnabled, type Piece, type Writing } from "./store";
 import { pick, useLang, useT } from "./i18n";
 import { Furigana } from "./Furigana";
+import { Modal } from "./components/Modal";
+import { JournalStrip } from "./components/JournalStrip";
+import { StrokeDemo } from "./features/calligraphy/StrokeDemo";
+import { useCalligraphyStrokes } from "./features/calligraphy/useCalligraphyStrokes";
 import moriImg from "@/assets/mori.png";
 import tanukiImg from "@/assets/tanuki.png";
 import memoryImg from "@/assets/memory-rest.jpg";
@@ -10,24 +14,9 @@ import timeImg from "@/assets/time.jpg";
 import maleImg from "@/assets/male.jpg";
 import snowImg from "@/assets/snow.jpg";
 
-export function Modal({ title, onClose, children, wide }: { title: string; onClose?: () => void; children: ReactNode; wide?: boolean }) {
-  const t = useT();
-  return (
-    <div className="absolute inset-0 z-40 flex items-center justify-center bg-ink/50 p-4 backdrop-blur-[2px]">
-      <div className={`panel animate-pop relative max-h-full w-full overflow-auto p-5 ${wide ? "max-w-4xl" : "max-w-2xl"}`}>
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="font-display text-2xl text-wood">{title}</h2>
-          {onClose && (
-            <button className="btn-game btn-ghost px-3 py-1" onClick={onClose} aria-label={t("close")}>
-              ✕
-            </button>
-          )}
-        </div>
-        {children}
-      </div>
-    </div>
-  );
-}
+export { Modal };
+export { Calligraphy } from "./features/calligraphy/Calligraphy";
+export { StrokeDemo };
 
 export function Dialogue({ lines, onDone }: { lines: Line[]; onDone: () => void }) {
   const t = useT();
@@ -244,43 +233,28 @@ export function BentoModal({ chapter, pieces, onSolve, onClose }: { chapter: Cha
   );
 }
 
-export function StrokeDemo({ strokes, size = 220, loop = true }: { strokes: string[]; size?: number; loop?: boolean }) {
-  const [k, setK] = useState(0);
-  useEffect(() => {
-    if (!loop) return;
-    const t = setInterval(() => setK((x) => x + 1), strokes.length * 700 + 1200);
-    return () => clearInterval(t);
-  }, [loop, strokes.length]);
-  return (
-    <svg key={k} viewBox="0 0 100 100" width={size} height={size} className="rounded-xl bg-paper">
-      <line x1="50" y1="0" x2="50" y2="100" className="stroke-border" strokeDasharray="2 3" strokeWidth="0.6" />
-      <line x1="0" y1="50" x2="100" y2="50" className="stroke-border" strokeDasharray="2 3" strokeWidth="0.6" />
-      {strokes.map((d, i) => (
-        <path
-          key={i}
-          d={d}
-          pathLength={1}
-          fill="none"
-          className="stroke-ink"
-          strokeWidth="7"
-          strokeLinecap="round"
-          style={{ strokeDasharray: 1, strokeDashoffset: 1, animation: `draw-stroke 0.6s ease-out ${i * 0.7}s forwards` }}
-        />
-      ))}
-    </svg>
-  );
-}
-
 export function KanjiInfo({ chapter, onClose }: { chapter: Chapter; onClose: () => void }) {
   const t = useT();
   const lang = useLang();
   const k = chapter.kanji;
+  const { strokes, loading, error, retry } = useCalligraphyStrokes(k.char);
   return (
     <Modal title={t("newKanji")} onClose={onClose} wide>
       <div className="grid gap-5 md:grid-cols-[auto_1fr]">
         <div className="flex flex-col items-center gap-2">
-          <StrokeDemo strokes={chapter.strokes} />
-          <span className="text-sm text-muted-foreground">{t("strokeOrder", { n: k.strokes })}</span>
+          {loading && <p role="status">{t("loadingStrokeData")}</p>}
+          {error && (
+            <div role="alert" className="text-sm text-destructive">
+              <p>{t("strokeDataLoadError")}</p>
+              <button className="btn-game btn-ghost mt-2" onClick={retry}>
+                {t("retry")}
+              </button>
+            </div>
+          )}
+          {!loading && !error && <StrokeDemo strokes={strokes} />}
+          <span className="text-sm text-muted-foreground">
+            {t("strokeOrder", { n: k.strokes })}
+          </span>
         </div>
         <div className="space-y-2">
           <div className="flex items-baseline gap-3">
@@ -310,187 +284,6 @@ export function KanjiInfo({ chapter, onClose }: { chapter: Chapter; onClose: () 
         </div>
       </div>
     </Modal>
-  );
-}
-
-function useInk() {
-  const [ink, setInk] = useState("black");
-  useEffect(() => setInk(getComputedStyle(document.documentElement).getPropertyValue("--ink").trim() || "black"), []);
-  return ink;
-}
-
-export function Calligraphy({ chapter, onSave, onClose, journal, onToggleFav }: {
-  chapter: Chapter;
-  onSave: (img: string, fav: boolean) => void;
-  onClose: () => void;
-  journal: Writing[];
-  onToggleFav: (id: string) => void;
-}) {
-  const t = useT();
-  const strokes = chapter.strokes;
-  const kanji = chapter.kanji;
-  const [mode, setMode] = useState<"trace" | "free">("trace");
-  const [strokeCount, setStrokeCount] = useState(0);
-  const [showRef, setShowRef] = useState(true);
-  const [fav, setFav] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const canvas = useRef<HTMLCanvasElement>(null);
-  const drawing = useRef(false);
-  const history = useRef<ImageData[]>([]);
-  const ink = useInk();
-  const traceDone = strokeCount >= strokes.length;
-
-  const clear = () => {
-    const c = canvas.current!;
-    c.getContext("2d")!.clearRect(0, 0, c.width, c.height);
-    history.current = [];
-    setStrokeCount(0);
-  };
-  useEffect(clear, [mode]);
-
-  const pos = (e: React.PointerEvent) => {
-    const r = canvas.current!.getBoundingClientRect();
-    return [((e.clientX - r.left) / r.width) * 400, ((e.clientY - r.top) / r.height) * 400] as const;
-  };
-  const down = (e: React.PointerEvent) => {
-    const c = canvas.current!;
-    const g = c.getContext("2d")!;
-    history.current.push(g.getImageData(0, 0, 400, 400));
-    drawing.current = true;
-    c.setPointerCapture(e.pointerId);
-    const [x, y] = pos(e);
-    g.strokeStyle = ink;
-    g.lineCap = "round";
-    g.lineJoin = "round";
-    g.lineWidth = 22;
-    g.beginPath();
-    g.moveTo(x, y);
-  };
-  const move = (e: React.PointerEvent) => {
-    if (!drawing.current) return;
-    const g = canvas.current!.getContext("2d")!;
-    const [x, y] = pos(e);
-    g.lineWidth = Math.max(10, Math.min(26, 26 - Math.hypot(e.movementX, e.movementY) * 0.6));
-    g.lineTo(x, y);
-    g.stroke();
-  };
-  const up = () => {
-    if (!drawing.current) return;
-    drawing.current = false;
-    setStrokeCount((s) => s + 1);
-    sfx("tap");
-  };
-  const undo = () => {
-    const last = history.current.pop();
-    if (last) {
-      canvas.current!.getContext("2d")!.putImageData(last, 0, 0);
-      setStrokeCount((s) => Math.max(0, s - 1));
-    }
-  };
-  const save = () => {
-    onSave(canvas.current!.toDataURL("image/png"), fav);
-    setSaved(true);
-    sfx("chime");
-  };
-
-  const cur = Math.min(strokeCount, strokes.length - 1);
-
-  return (
-    <Modal title={t("deskTitle")} onClose={onClose} wide>
-      <div className="grid gap-5 md:grid-cols-[auto_1fr]">
-        <div className="flex flex-col items-center gap-3">
-          <div className="flex gap-2">
-            <button className={`btn-game px-4 py-1 ${mode === "trace" ? "" : "btn-ghost"}`} onClick={() => setMode("trace")}>{t("trace")}</button>
-            <button className={`btn-game px-4 py-1 ${mode === "free" ? "" : "btn-ghost"}`} disabled={!traceDone && mode === "trace"} onClick={() => setMode("free")}>{t("freeWrite")}</button>
-          </div>
-          <div className="relative h-[min(52vh,340px)] w-[min(52vh,340px)] rounded-xl border-4 border-wood bg-paper">
-            <svg viewBox="0 0 100 100" className="pointer-events-none absolute inset-0 h-full w-full">
-              <line x1="50" y1="0" x2="50" y2="100" className="stroke-border" strokeDasharray="2 3" strokeWidth="0.5" />
-              <line x1="0" y1="50" x2="100" y2="50" className="stroke-border" strokeDasharray="2 3" strokeWidth="0.5" />
-              {(mode === "trace" || showRef) &&
-                strokes.map((d, i) => (
-                  <path key={i} d={d} fill="none" strokeLinecap="round" strokeWidth="8"
-                    className={mode === "trace" && i === cur && !traceDone ? "stroke-accent/60" : "stroke-muted-foreground/20"} />
-                ))}
-              {mode === "trace" && !traceDone && (() => {
-                const m = (strokes[cur] ?? "").match(/M(\d+) (\d+)/) ?? ["", "0", "0"];
-                return (
-                  <g>
-                    <circle cx={m[1]} cy={m[2]} r="4" className="fill-accent animate-glow" />
-                    <text x={Number(m[1]) + 5} y={Number(m[2]) - 4} className="fill-accent font-bold" fontSize="7">{cur + 1}</text>
-                  </g>
-                );
-              })()}
-            </svg>
-            <canvas
-              ref={canvas}
-              width={400}
-              height={400}
-              className="absolute inset-0 h-full w-full touch-none"
-              onPointerDown={down}
-              onPointerMove={move}
-              onPointerUp={up}
-              onPointerLeave={up}
-            />
-          </div>
-          <div className="flex flex-wrap justify-center gap-2">
-            <button className="btn-game btn-ghost px-3 py-1" onClick={undo}>{t("undo")}</button>
-            <button className="btn-game btn-ghost px-3 py-1" onClick={clear}>{t("clear")}</button>
-            {mode === "free" && (
-              <button className="btn-game btn-ghost px-3 py-1" onClick={() => setShowRef((v) => !v)}>
-                {showRef ? t("hideGuide") : t("showGuide")}
-              </button>
-            )}
-          </div>
-        </div>
-        <div className="flex flex-col gap-3">
-          {mode === "trace" ? (
-            <>
-              <p>{t("followStroke", { cur: Math.min(strokeCount + 1, strokes.length), total: strokes.length })}</p>
-              <StrokeDemo strokes={strokes} size={140} />
-              {traceDone && (
-                <button className="btn-game btn-accent animate-pop" onClick={() => setMode("free")}>
-                  {t("greatNowWrite")}
-                </button>
-              )}
-            </>
-          ) : (
-            <>
-              <p>{t("writeFromMemory", { char: kanji.char, cur: strokeCount, total: strokes.length })}</p>
-              <label className="flex items-center gap-2">
-                <button className={`btn-game px-3 py-1 ${fav ? "btn-accent" : "btn-ghost"}`} onClick={() => setFav((f) => !f)}>
-                  {fav ? t("favoriteOn") : t("favoriteOff")}
-                </button>
-              </label>
-              <button className="btn-game" disabled={strokeCount < strokes.length || saved} onClick={save}>
-                {saved ? t("savedToJournal") : t("saveToJournal")}
-              </button>
-              {saved && <button className="btn-game btn-accent animate-pop" onClick={onClose}>{t("returnToForest")}</button>}
-            </>
-          )}
-          {journal.length > 0 && <JournalStrip journal={journal} onToggleFav={onToggleFav} />}
-        </div>
-      </div>
-    </Modal>
-  );
-}
-
-function JournalStrip({ journal, onToggleFav }: { journal: Writing[]; onToggleFav: (id: string) => void }) {
-  const t = useT();
-  return (
-    <div>
-      <h3 className="mb-1 font-bold text-wood">{t("memoryJournal")}</h3>
-      <div className="flex flex-wrap gap-2">
-        {journal.map((w) => (
-          <div key={w.id} className="relative">
-            <img src={w.image} alt={`Your ${w.kanji}`} className="h-20 w-20 rounded-lg border-2 border-wood bg-paper" />
-            <button onClick={() => onToggleFav(w.id)} className="absolute -right-1 -top-1 rounded-full bg-card px-1 text-accent" aria-label={t("toggleFavorite")}>
-              {w.favorite ? "♥" : "♡"}
-            </button>
-          </div>
-        ))}
-      </div>
-    </div>
   );
 }
 

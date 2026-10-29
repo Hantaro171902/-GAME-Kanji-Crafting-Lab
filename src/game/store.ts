@@ -57,25 +57,6 @@ export function setFuriganaEnabled(enabled: boolean): void {
 
 export const VOLUME_KEY = "kanji-bento-volume";
 
-export const FURIGANA_KEY = "kanji-bento-furigana";
-
-/** Whether readings (furigana) are shown above kanji in Japanese text. */
-export function isFuriganaEnabled(): boolean {
-  try {
-    return localStorage.getItem(FURIGANA_KEY) === "on";
-  } catch {
-    return false;
-  }
-}
-
-export function setFuriganaEnabled(enabled: boolean): void {
-  try {
-    localStorage.setItem(FURIGANA_KEY, enabled ? "on" : "off");
-  } catch {
-    /* storage unavailable */
-  }
-}
-
 /** Master volume 0–100, persisted so the settings menu can adjust it. */
 export function getVolume(): number {
   try {

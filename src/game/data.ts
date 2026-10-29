@@ -79,31 +79,6 @@ export const CHAPTERS: Chapter[] = [
       done: { en: "Chapter complete! Browse the Conversation Catalog", ja: "章クリア！会話カタログを見てみよう", vi: "Hoàn thành chương! Khám phá Danh Mục Hội Thoại" },
     },
     dialogues: {
-<<<<<<< Updated upstream
-arrival: [
-        { who: "tanuki", text: { en: "...? (Tanuki stares at the sign. The squiggles mean nothing yet.)", ja: "……？（タヌキが看板をじっと見ている。まだ何も読めない。）", vi: "...? (Tanuki nhìn chằm chằm tấm biển. Những nét nguệch ngoạc chẳng có nghĩa gì cả.)" }, kana: "……？（タヌキがかんばんをじっとみている。まだなにもよめない。）" },
-        { who: "mori", text: { en: "Hoo-hoo! A traveler! Welcome to Kotoba Forest. I'm Mori, keeper of the Great Kanji Tree.", ja: "ホーホー！旅人だね！ことばの森へようこそ。私は大漢字の木の番人、モリだよ。", vi: "Hoo-hoo! Một lữ khách! Chào mừng đến Rừng Kotoba. Ta là Mori, người trông giữ Cây Kanji Vĩ Đại." }, kana: "ホーホー！たびびとだね！ことばのもりへようこそ。わたしはだいかんじのきのばんにん、モリだよ。" },
-        { who: "mori", text: { en: "A strange wind blew through and every word in the forest broke into pieces. Signs went blank, memories sealed shut.", ja: "不思議な風が吹いて、森の言葉が全部バラバラになってしまったんだ。看板は真っ白になり、記憶は閉ざされてしまった。", vi: "Một cơn gió lạ thổi qua và mọi từ ngữ trong khu rừng vỡ thành từng mảnh. Biển hiệu trở nên trống rỗng, ký ức bị phong ấn." }, kana: "ふしぎなかぜがふいて、もりのことばがぜんぶバラバラになってしまったんだ。かんばんはまっしろになり、きおくはとざされてしまった。" },
-        { who: "mori", text: { en: "But those pieces — radicals — are hidden inside the glowing rocks to the west. Dig them up!", ja: "でもその破片——部首——は西の光る岩の中に隠れているんだ。掘り出してくれ！", vi: "Nhưng những mảnh đó — bộ thủ — đang ẩn bên trong những tảng đá phát sáng ở phía tây. Hãy đào chúng lên!" }, kana: "でもそのはへん——ぶしゅ——はにしのひかるいわのなかにかくれているんだ。ほりだしてくれ！" },
-        { who: "tanuki", text: { en: "(Tanuki pats its little bento box with determination.)", ja: "（タヌキは小さな弁当箱を力強くトントンと叩く。）", vi: "(Tanuki quyết tâm vỗ nhẹ chiếc hộp bento nhỏ của mình.)" }, kana: "（タヌキはちいさなべんとうばこをちからづよくトントンとたたく。）" },
-      ],
-      mine: [{ who: "mori", text: { en: "The glowing rocks are in the Radical Mine, west of here. Give them a few good whacks!", ja: "光る岩はここから西の部首鉱山にあるよ。しっかり叩いてみて！", vi: "Những tảng đá phát sáng nằm trong Mỏ Bộ Thủ, phía tây đây. Hãy đập chúng vài cú thật mạnh!" }, kana: "ひかるいわはここからにしのぶしゅこうざんにあるよ。しっかりたたいてみて！" }],
-      shrine: [
-        { who: "mori", text: { en: "Two pieces! 亻 is a person standing sideways, and 木 is a tree.", ja: "破片が二つ！亻は横向きに立っている人、木は木だよ。", vi: "Hai mảnh! 亻 là một người đứng nghiêng, còn 木 là cái cây." }, kana: "はへんがふたつ！にんべんはよこむきにたっているひと、きはきだよ。" },
-        { who: "mori", text: { en: "Kanji are built from pieces like these. Take them to the Picture Shrine — it remembers what they mean together.", ja: "漢字はこういう部品からできているんだ。絵神社に持っていくと、一緒になるとどんな意味になるか思い出してくれるよ。", vi: "Kanji được tạo nên từ những bộ phận như thế này. Hãy mang chúng đến Miếu Tranh — nó sẽ nhớ ý nghĩa khi chúng đứng cùng nhau." }, kana: "かんじはこういうぶひんからできているんだ。えじんじゃにもっていくと、いっしょになるとどんないみになるかおもいだしてくれるよ。" },
-      ],
-      bento: [{ who: "mori", text: { en: "Now pop those pieces into your Bento Box at the table. Left and right, like a little lunch!", ja: "さあ、その破片をテーブルの弁当箱に入れてごらん。左右に並べて、まるで小さなお弁当みたいに！", vi: "Giờ hãy đặt những mảnh đó vào Hộp Bento trên bàn. Trái và phải, như một bữa trưa nhỏ!" }, kana: "さあ、そのはへんをテーブルのべんとうばこにいれてごらん。さゆうにならべて、まるでちいさなおべんとうみたいに！" }],
-      write: [
-        { who: "mori", text: { en: "休 — a person resting by a tree. Look, the forest is already listening to you!", ja: "休——木のそばで休んでいる人だよ。ほら、森がもう君の声を聞いている！", vi: "休 — một người đang nghỉ ngơi bên gốc cây. Nhìn kìa, khu rừng đang lắng nghe bạn đấy!" }, kana: "やす——きのそばでやすんでいるひとだよ。ほら、もりがもうきみのこえをきいている！" },
-        { who: "mori", text: { en: "A word stays with you once your hand remembers it. The Calligraphy Desk is open now.", ja: "手が覚えると、言葉はずっと君のものになるんだ。書道机がもう使えるよ。", vi: "Một từ sẽ ở lại với bạn một khi đôi tay ghi nhớ nó. Bàn Thư Pháp giờ đã mở." }, kana: "てがおぼえると、ことばはずっときみのものになるんだ。しょどうづくえがもうつかえるよ。" },
-      ],
-      restore: [
-        { who: "mori", text: { en: "Beautiful brushwork! Watch the tree…", ja: "見事な筆さばきだ！木を見ていてごらん……", vi: "Nét bút tuyệt đẹp! Hãy nhìn cái cây…" }, kana: "みごとなふでさばきだ！きをみていてごらん……" },
-        { who: "mori", text: { en: "A resting place has returned beneath the branches, and the old sign reads 休 again.", ja: "枝の下に休む場所が戻ってきた。古い看板にはまた「休」と書かれている。", vi: "Một nơi nghỉ ngơi đã trở lại dưới tán cây, và tấm biển cũ lại đọc được chữ 休." }, kana: "えだのしたにやすむばしょがもどってきた。ふるいかんばんにはまた「やす」とかかれている。" },
-        { who: "mori", text: { en: "You've reached Level 1, little one. Now I can teach you some real conversations. Come see my catalog anytime!", ja: "レベル1到達だね、小さい子よ。これから本当の会話を教えてあげられるよ。いつでも私のカタログを見においで！", vi: "Con đã đạt Cấp 1 rồi, bé nhỏ à. Giờ ta có thể dạy con vài cuộc hội thoại thực sự. Hãy ghé xem danh mục của ta bất cứ khi nào con muốn!" }, kana: "レベル1とうたつだね、ちいさいこよ。これからほんとうのかいわをおしえてあげられるよ。いつでもわたしのカタログをみにおいで！" },
-      ],
-      done: [{ who: "mori", text: { en: "Rest a while! When you're ready, I'll share phrases from my Conversation Catalog.", ja: "少し休んでいいよ！準備ができたら、会話カタログからフレーズを教えてあげるね。", vi: "Hãy nghỉ ngơi một lát! Khi sẵn sàng, ta sẽ chia sẻ những câu hội thoại từ Danh Mục của mình." }, kana: "すこしやすんでいいよ！じゅんびができたら、かいわカタログからフレーズをおしえてあげるね。" }],
-=======
       arrival: [
         { who: "tanuki", text: { en: "...? (Tanuki stares at the sign. The squiggles mean nothing yet.)", ja: "……？（タヌキが看板をじっと見ている。まだ何も読めない。）", vi: "...? (Tanuki nhìn chằm chằm tấm biển. Những nét nguệch ngoạc chẳng có nghĩa gì cả.)"}, kana: "……？（タヌキがかんばんをじっとみている。まだなにもよめない。）" },
         { who: "mori", text: { en: "Hoo-hoo! A traveler! Welcome to Kotoba Forest. I'm Mori, keeper of the Great Kanji Tree.", ja: "ホーホー！旅人だね！ことばの森へようこそ。私は大漢字の木の番人、モリだよ。", vi: "Hoo-hoo! Một lữ khách! Chào mừng đến Rừng Kotoba. Ta là Mori, người trông giữ Cây Kanji Vĩ Đại."}, kana: "ホーホー！たびびとだね！ことばのもりへようこそ。わたしはだいかんじのきのばんにん、モリだよ。" },
@@ -127,7 +102,6 @@ arrival: [
         { who: "mori", text: { en: "You've reached Level 1, little one. Now I can teach you some real conversations. Come see my catalog anytime!", ja: "レベル1到達だね、小さい子よ。これから本当の会話を教えてあげられるよ。いつでも私のカタログを見においで！", vi: "Con đã đạt Cấp 1 rồi, bé nhỏ à. Giờ ta có thể dạy con vài cuộc hội thoại thực sự. Hãy ghé xem danh mục của ta bất cứ lúc nào!"}, kana: "レベル1とうたつだね、ちいさいこよ。これからほんとうのかいわをおしえてあげられるよ。いつでもわたしのカタログをみにおいで！" },
       ],
       done: [{ who: "mori", text: { en: "Rest a while! When you're ready, I'll share phrases from my Conversation Catalog.", ja: "少し休んでいいよ！準備ができたら、会話カタログからフレーズを教えてあげるね。", vi: "Hãy nghỉ ngơi một lát! Khi sẵn sàng, ta sẽ chia sẻ những câu hội thoại từ Danh Mục của mình."}, kana: "すこしやすんでいいよ！じゅんびができたら、かいわカタログからフレーズをおしえてあげるね。" }],
->>>>>>> Stashed changes
     },
   },
   {
@@ -176,28 +150,6 @@ arrival: [
     },
     dialogues: {
       arrival: [
-<<<<<<< Updated upstream
-        { who: "tanuki", text: { en: "(The forest grew darker overnight. The lanterns along the path have all gone out.)", ja: "（一晩で森は暗くなってしまった。道沿いのランタンはすべて消えている。）", vi: "(Khu rừng trở nên tối tăm chỉ sau một đêm. Những chiếc đèn lồng dọc đường đều đã tắt.)" }, kana: "（ひとばんでもりはくらくなってしまった。みちぞいのランタンはすべてきえている。）" },
-        { who: "mori", text: { en: "Hoo… the dark wind came while you slept. It stole the word for light, and every lantern forgot how to shine.", ja: "ホー……君が寝ている間に闇の風が来たんだ。光という言葉を奪われて、どのランタンも輝き方を忘れてしまった。", vi: "Hoo… cơn gió bóng tối đã đến khi con ngủ. Nó đánh cắp từ ngữ của ánh sáng, và mọi chiếc đèn lồng đều quên cách tỏa sáng." }, kana: "ホー……きみがねているあいだにやみのかぜがきたんだ。ひかりということばをうばわわれて、どのランタンもかがやきかたをわすれてしまった。" },
-        { who: "mori", text: { en: "The pieces 日 and 月 are buried in the mine. Sun and moon together — that word is bright enough to wake the lamps!", ja: "日と月の破片が鉱山に埋まっているんだ。太陽と月が一緒になれば——その言葉はランタンを目覚めさせるほど明るい！", vi: "Hai mảnh 日 và 月 đang bị chôn trong mỏ. Mặt trời và mặt trăng cùng nhau — từ đó đủ sáng để đánh thức những chiếc đèn!" }, kana: "ひとつきのはへんがこうざんにうまっているんだ。たいようとつきがいっしょになれば——そのことばはランタンをめざめさせるほどあかるい！" },
-        { who: "tanuki", text: { en: "(Tanuki nods bravely and grips its bento box.)", ja: "（タヌキは勇敢にうなずき、弁当箱をぎゅっと握る。）", vi: "(Tanuki dũng cảm gật đầu và siết chặt chiếc hộp bento.)" }, kana: "（タヌキはゆうかんにうなずき、べんとうばこをぎゅっとにぎる。）" },
-      ],
-      mine: [{ who: "mori", text: { en: "Two new glowing rocks appeared in the mine. The sun piece and the moon piece are waiting inside.", ja: "鉱山に新しい光る岩が二つ現れたよ。中では太陽の破片と月の破片が待っている。", vi: "Hai tảng đá phát sáng mới đã xuất hiện trong mổ. Mảnh mặt trời và mảnh mặt trăng đang chờ bên trong." }, kana: "こうざんにあたらしいひかるいわがふたつあらわれたよ。なかではたいようのはへんとつきのはへんがまっている。" }],
-      shrine: [
-        { who: "mori", text: { en: "日 is the sun, and 月 is the moon. Put them side by side and think of a sky that holds both at once.", ja: "日は太陽、月は月だよ。二つを並べて、両方が同時に見える空を想像してみて。", vi: "日 là mặt trời, 月 là mặt trăng. Đặt chúng cạnh nhau và nghĩ về bầu trời ôm cả hai cùng lúc." }, kana: "ひはたいよう、つきはつきだよ。ふたつをならべて、りょうほうがどうじにみえるそらをそうぞうしてみて。" },
-        { who: "mori", text: { en: "The Picture Shrine will show you the memory. Hurry — the lanterns are counting on you!", ja: "絵神社がその記憶を見せてくれるよ。急いで——ランタンたちが君を待っている！", vi: "Miếu Tranh sẽ cho con thấy ký ức đó. Mau lên — những chiếc đèn lồng đang trông cậy vào con!" }, kana: "えじんじゃがそのきおくをみせてくれるよ。いそいで——ランタンたちがきみをまっている！" },
-      ],
-      bento: [{ who: "mori", text: { en: "Into the Bento Box! Sun on the left, moon on the right — a little sky for lunch.", ja: "弁当箱に入れて！左に太陽、右に月——お昼の小さな空だね。", vi: "Cho vào Hộp Bento! Mặt trời bên trái, mặt trăng bên phải — một khoảng trời nhỏ cho bữa trưa." }, kana: "べんとうばこにいれて！ひだりにたいよう、みぎにつき——おひるのちいさなそらだね。" }],
-      write: [
-        { who: "mori", text: { en: "明 — sun and moon shining together. Say it softly: mei.", ja: "明——太陽と月が一緒に輝いている。そっと言ってみて：めい。", vi: "明 — mặt trời và mặt trăng cùng tỏa sáng. Hãy nói khẽ: mei." }, kana: "めい——たいようとつきがいっしょにかがやいている。そっといってみて：めい。" },
-        { who: "mori", text: { en: "Once your hand learns it, the lanterns will remember too. The Calligraphy Desk is ready.", ja: "手が覚えたら、ランタンたちも思い出すよ。書道机の準備はできている。", vi: "Một khi đôi tay học được nó, những chiếc đèn lồng cũng sẽ nhớ. Bàn Thư Pháp đã sẵn sàng." }, kana: "てがおぼえたら、ランタンたちもおもいだすよ。しょどうづくえのじゅんびはできている。" },
-      ],
-      restore: [
-        { who: "mori", text: { en: "What lovely strokes! Now watch the path…", ja: "なんて美しい線なんだ！さあ、道を見ていてごらん……", vi: "Những nét bút đáng yêu làm sao! Giờ hãy nhìn con đường…" }, kana: "なんてうつくしいせんなんだ！さあ、みちをみていてごらん……" },
-        { who: "mori", text: { en: "The lanterns flicker, then blaze — 明 shines all the way to the valley. You've reached Level 2!", ja: "ランタンが揺らめき、そして燃え上がる——明の光が谷まで届いたよ。レベル2到達だ！", vi: "Những chiếc đèn lồng lung lay rồi bùng cháy — 明 soi sáng tận thung lũng. Con đã đạt Cấp 2!" }, kana: "ランタンがゆらめき、そしてもえあがる——めいのひかりがたにまでとどいたよ。レベル2とうたつだ！" },
-      ],
-      done: [{ who: "mori", text: { en: "The forest is bright again. Rest by the lamps, and I'll teach you more words whenever you like.", ja: "森は再び明るくなった。ランタンのそばで休んで、いつでも好きなときに言葉を教えてあげるよ。", vi: "Khu rừng lại sáng rực. Hãy nghỉ ngơi bên những ngọn đèn, và ta sẽ dạy con thêm nhiều từ bất cứ khi nào con muốn." }, kana: "もりはふたたびあかるくなった。ランタンのそばでやすんで、いつでもすきなときにことばをおしえてあげるよ。" }],
-=======
         { who: "tanuki", text: { en: "(The forest grew darker overnight. The lanterns along the path have all gone out.)", ja: "（一晩で森は暗くなってしまった。道沿いのランタンはすべて消えている。）", vi: "(Khu rừng trở nên tối tăm chỉ sau một đêm. Những chiếc đèn lồng dọc đường đều đã tắt.)"}, kana: "（ひとばんでもりはくらくなってしまった。みちぞいのランタンはすべてきえている。）" },
         { who: "mori", text: { en: "Hoo… the dark wind came while you slept. It stole the word for light, and every lantern forgot how to shine.", ja: "ホー……君が寝ている間に闇の風が来たんだ。光という言葉を奪われて、どのランタンも輝き方を忘れてしまった。", vi: "Hoo… cơn gió bóng tối đã đến khi con ngủ. Nó đánh cắp từ ngữ của ánh sáng, và mọi chiếc đèn lồng đều quên cách tỏa sáng."}, kana: "ホー……きみがねているあいだにやみのかぜがきたんだ。ひかりということばをうばわわれて、どのランタンもかがやきかたをわすれてしまった。" },
         { who: "mori", text: { en: "The pieces 日 and 月 are buried in the mine. Sun and moon together — that word is bright enough to wake the lamps!", ja: "日と月の破片が鉱山に埋まっているんだ。太陽と月が一緒になれば——その言葉はランタンを目覚めさせるほど明るい！", vi: "Hai mảnh 日 và 月 đang bị chôn trong mỏ. Mặt trời và mặt trăng cùng nhau — từ đó đủ sáng để đánh thức những chiếc đèn!"}, kana: "ひとつきのはへんがこうざんにうまっているんだ。たいようとつきがいっしょになれば——そのことばはランタンをめざめさせるほどあかるい！" },
@@ -218,7 +170,6 @@ arrival: [
         { who: "mori", text: { en: "The lanterns flicker, then blaze — 明 shines all the way to the valley. You've reached Level 2!", ja: "ランタンが揺らめき、そして燃え上がる——明の光が谷まで届いたよ。レベル2到達だ！", vi: "Những chiếc đèn lồng lung lay rồi bùng cháy — 明 soi sáng tận thung lũng. Con đã đạt Cấp 2!"}, kana: "ランタンがゆらめき、そしてもえあがる——めいのひかりがたにまでとどいたよ。レベル2とうたつだ！" },
       ],
       done: [{ who: "mori", text: { en: "The forest is bright again. Rest by the lamps, and I'll teach you more words whenever you like.", ja: "森は再び明るくなった。ランタンのそばで休んで、いつでも好きなときに言葉を教えてあげるよ。", vi: "Khu rừng lại sáng rực. Hãy nghỉ ngơi bên những ngọn đèn, và ta sẽ dạy con thêm nhiều từ bất cứ khi nào con muốn."}, kana: "もりはふたたびあかるくなった。ランタンのそばでやすんで、いつでもすきなときにことばをおしえてあげるよ。" }],
->>>>>>> Stashed changes
     },
   },
   {
@@ -267,28 +218,6 @@ arrival: [
     },
     dialogues: {
       arrival: [
-<<<<<<< Updated upstream
-        { who: "tanuki", text: { en: "(A rumble shakes the forest. Big boulders have rolled across the mountain path.)", ja: "（ゴロゴロと森が揺れる。大きな岩が山道に転がってふさいでいる。）", vi: "(Một tiếng ầm ầm làm rung chuyển khu rừng. Những tảng đá lớn đã lăn xuống chặn con đường núi.)" }, kana: "（ゴロゴロともりがゆれる。おおきないわがやまみちにころがってふさいでいる。）" },
-        { who: "mori", text: { en: "Hoo! The mountain is restless. It has swallowed the word for rock, and now the path is blocked.", ja: "ホー！山が落ち着かないんだ。岩という言葉を飲み込まれて、今は道がふさがれている。", vi: "Hoo! Ngọn núi đang bất an. Nó đã nuốt chửng từ ngữ của đá, và giờ con đường bị chặn." }, kana: "ホー！やまがおちつかないんだ。いわということばをのみこまれて、いまはみちがふさがれている。" },
-        { who: "mori", text: { en: "The pieces 山 and 石 fell into the mine. Mountain upon stone — that word is strong enough to move boulders!", ja: "山と石の破片が鉱山に落ちたんだ。山の上に石——その言葉は巨岩を動かせるほど強い！", vi: "Hai mảnh 山 và 石 đã rơi vào mỏ. Núi chồng lên đá — từ đó đủ mạnh để dịch chuyển những tảng đá!" }, kana: "やまといしのはへんがこうざんにおちたんだ。やまのうえにいし——そのことばはきょがんをうごかせるほどつよい！" },
-        { who: "tanuki", text: { en: "(Tanuki cracks its knuckles and marches toward the mine.)", ja: "（タヌキは指をポキポキ鳴らし、鉱山へ向かって進む。）", vi: "(Tanuki bẻ khớp ngón tay và hành quân về phía mỏ.)" }, kana: "（タヌキはゆびをポキポキならし、こうざんへむかってすすむ。）" },
-      ],
-      mine: [{ who: "mori", text: { en: "The heaviest rocks in the mine hold the pieces. Give them your strongest whacks!", ja: "鉱山で一番重い岩が破片を持っているよ。一番強い一撃をお見舞いして！", vi: "Những tảng đá nặng nhất trong mỏ đang giữ các mảnh. Hãy tung những cú đập mạnh nhất!" }, kana: "こうざんでいちばんおもいいわがはへんをもっているよ。いちばんつよいいちげきをおみまいして！" }],
-      shrine: [
-        { who: "mori", text: { en: "山 is a mountain, and 石 is a stone. Imagine a mountain rooted in solid rock.", ja: "山は山、石は石だよ。しっかりとした岩に根を張った山を想像してみて。", vi: "山 là ngọn núi, 石 là hòn đá. Hãy tưởng tượng một ngọn núi bám rễ trên nền đá vững chắc." }, kana: "やまはやま、いしはいしだよ。しっかりとしたいわにねをはったやまをそうぞうしてみて。" },
-        { who: "mori", text: { en: "The Picture Shrine remembers it. Go see — then we'll build the word.", ja: "絵神社がそれを覚えているよ。見に行ってごらん——それから言葉を作ろう。", vi: "Miếu Tranh nhớ điều đó. Hãy đi xem — rồi chúng ta sẽ ghép từ." }, kana: "えじんじゃがそれをおぼえているよ。みにいってごらん——それからことばをつくろう。" },
-      ],
-      bento: [{ who: "mori", text: { en: "Bento time! Mountain on the left, stone on the right. Sturdy and delicious.", ja: "弁当の時間だ！左に山、右に石。丈夫でおいしいね。", vi: "Đến giờ bento! Núi bên trái, đá bên phải. Vững chãi và ngon lành." }, kana: "べんとうのじかんだ！ひだりにやま、みぎにいし。じょうぶでおいしいね。" }],
-      write: [
-        { who: "mori", text: { en: "岩 — a mountain of stone. Strong word! Say it: gan.", ja: "岩——石の山だ。強い言葉だね！言ってみて：がん。", vi: "岩 — một ngọn núi bằng đá. Từ mạnh mẽ! Hãy nói: gan." }, kana: "いわ——いしのやまだ。つよいことばだね！いってみて：がん。" },
-        { who: "mori", text: { en: "Write it at the Calligraphy Desk and the boulders will listen.", ja: "書道机で書けば、巨岩たちも言うことを聞くよ。", vi: "Hãy viết nó tại Bàn Thư Pháp và những tảng đá sẽ lắng nghe." }, kana: "しょどうづくえでかけば、きょがんたちもいうことをきくよ。" },
-      ],
-      restore: [
-        { who: "mori", text: { en: "Magnificent! Watch the mountain…", ja: "素晴らしい！山を見ていてごらん……", vi: "Tuyệt vời! Hãy nhìn ngọn núi…" }, kana: "すばらしい！やまをみていてごらん……" },
-        { who: "mori", text: { en: "The boulders roll aside, and the path gleams — 岩 carved into the cliff. You've reached Level 3!", ja: "巨岩が脇へ転がり、道が輝く——崖に刻まれた岩の文字。レベル3到達だ！", vi: "Những tảng đá lăn sang một bên, con đường lấp lánh — 岩 khắc trên vách đá. Con đã đạt Cấp 3!" }, kana: "きょがんがわきへころがり、みちがかがやく——がけにきざまれたいわのもじ。レベル3とうたつだ！" },
-      ],
-      done: [{ who: "mori", text: { en: "The whole forest is awake now: rest, light, and stone. Come visit my catalog whenever you wish, little one.", ja: "森全体が目を覚ましたね：休み、光、そして石。いつでもカタログを見においで、小さい子よ。", vi: "Cả khu rừng giờ đã thức giấc: nghỉ ngơi, ánh sáng, và đá. Hãy ghé thăm danh mục của ta bất cứ khi nào con muốn, bé nhỏ à." }, kana: "もりぜんたいがめをさましたね：やすみ、ひかり、そしていし。いつでもカタログをみにおいで、ちいさいこよ。" }],
-=======
         { who: "tanuki", text: { en: "(A rumble shakes the forest. Big boulders have rolled across the mountain path.)", ja: "（ゴロゴロと森が揺れる。大きな岩が山道に転がってふさいでいる。）", vi: "(Một tiếng ầm ầm làm rung chuyển khu rừng. Những tảng đá lớn đã lăn xuống chặn con đường núi.)"}, kana: "（ゴロゴロともりがゆれる。おおきないわがやまみちにころがってふさいでいる。）" },
         { who: "mori", text: { en: "Hoo! The mountain is restless. It has swallowed the word for rock, and now the path is blocked.", ja: "ホー！山が落ち着かないんだ。岩という言葉を飲み込まれて、今は道がふさがれている。", vi: "Hoo! Ngọn núi đang bất an. Nó đã nuốt chửng từ ngữ của đá, và giờ con đường bị chặn."}, kana: "ホー！やまがおちつかないんだ。いわということばをのみこまれて、いまはみちがふさがれている。" },
         { who: "mori", text: { en: "The pieces 山 and 石 fell into the mine. Mountain upon stone — that word is strong enough to move boulders!", ja: "山と石の破片が鉱山に落ちたんだ。山の上に石——その言葉は巨岩を動かせるほど強い！", vi: "Hai mảnh 山 và 石 đã rơi vào mỏ. Núi chồng lên đá — từ đó đủ mạnh để dịch chuyển những tảng đá!"}, kana: "やまといしのはへんがこうざんにおちたんだ。やまのうえにいし——そのことばはきょがんをうごかせるほどつよい！" },
@@ -523,7 +452,6 @@ arrival: [
         { who: "mori", text: { en: "The flakes slow, then stop — 雪 has returned to the sky. Level 6!", ja: "雪が静まり、やがて止む——雪が空に戻ってきたよ。レベル6到達だ！", vi: "Những bông tuyết chậm lại rồi ngừng hẳn — 雪 đã trở về bầu trời. Con đã đạt Cấp 6!" }, kana: "ゆきがしずまり、やがてやむ——ゆきがそらにもどってきたよ。レベル6とうたつだ！" },
       ],
       done: [{ who: "mori", text: { en: "The forest glitters under fresh snow! Rest by the hearth, and I'll teach you winter phrases.", ja: "森が新雪に輝いているね！暖炉のそばで休んで、冬のフレーズを教えてあげるよ。", vi: "Khu rừng lấp lánh dưới lớp tuyết mới! Hãy nghỉ ngơi bên lò sưởi, ta sẽ dạy con những câu về mùa đông." }, kana: "もりがしんせつにかがやいているね！だんろのそばでやすんで、ふゆのフレーズをおしえてあげるよ。" }],
->>>>>>> Stashed changes
     },
   },
 ];
@@ -585,8 +513,6 @@ export const CATALOG = [
     lines: [
       { who: "Mori", jp: "岩の上で休みましょう。", kana: "いわのうえでやすみましょう。", romaji: "Iwa no ue de yasumimashō.", en: { en: "Let's rest on the rock.", ja: "岩の上で休みましょう。", vi: "Chúng ta hãy nghỉ trên tảng đá." } },
       { who: "Tanuki", jp: "この岩は大きいですね。", kana: "このいわはおおきいですね。", romaji: "Kono iwa wa ōkii desu ne.", en: { en: "This rock is big, isn't it?", ja: "この岩は大きいですね。", vi: "Tảng đá này to nhỉ?" } },
-<<<<<<< Updated upstream
-=======
     ],
   },
 
@@ -662,7 +588,6 @@ export const CATALOG = [
     lines: [
       { who: "Mori", jp: "今夜は大雪でしょう。", kana: "こんやはおおゆきでしょう。", romaji: "Kon'ya wa ooyuki deshou.", en: { en: "It will snow heavily tonight.", ja: "今夜は大雪でしょう。", vi: "Đêm nay chắc sẽ có tuyết lớn." } },
       { who: "Tanuki", jp: "気をつけてください。", kana: "きをつけてください。", romaji: "Ki wo tsukete kudasai.", en: { en: "Please be careful.", ja: "気をつけてください。", vi: "Xin hãy cẩn thận." } },
->>>>>>> Stashed changes
     ],
   },
 ];
