@@ -8,13 +8,13 @@ import shrineImg from "@/assets/shrine.png";
 import bentoImg from "@/assets/bento.png";
 import deskImg from "@/assets/desk.png";
 import benchImg from "@/assets/bench.png";
+import sundialImg from "@/assets/sundial.svg";
 import { BOUNDS, CHAPTERS, OBSTACLES, STATIONS, WORLD, atLeast, type StationId } from "./data";
 import { sfx, useGame } from "./store";
 import { pick, useLang, useT } from "./i18n";
 import { BentoModal, Calligraphy, CatalogModal, Dialogue, JournalModal, KanjiInfo, ShrineModal } from "./Modals";
-import SettingsModal from "@/components/SettingsModal";
 
-type Overlay = null | { kind: "dialogue"; id: string } | { kind: "shrine" | "bento" | "info" | "desk" | "journal" | "catalog" | "settings" };
+type Overlay = null | { kind: "dialogue"; id: string } | { kind: "shrine" | "bento" | "info" | "desk" | "journal" | "catalog" };
 
 const SPEED = 280;
 
@@ -247,6 +247,7 @@ export default function Game() {
           </div>
         )}
         {restored && chapter.id === "kyu" && sprite(benchImg, 960, 400, 170, "animate-pop")}
+        {restored && chapter.id === "ji" && sprite(sundialImg, 704, 476, 120, "animate-pop")}
 
         {/* Sign */}
         <div className="absolute flex h-16 w-24 items-center justify-center rounded-md border-4 border-wood bg-secondary font-kanji text-3xl text-ink shadow-[var(--shadow-pop)]"
@@ -301,7 +302,6 @@ export default function Game() {
         <div className="pointer-events-auto flex gap-2">
           <button className="btn-game btn-ghost" onClick={() => setOverlay({ kind: "journal" })}>📖 {t("journal")}</button>
           <button className="btn-game btn-ghost" disabled={state.level < 1} onClick={() => setOverlay({ kind: "catalog" })}>💬 {t("catalog")}</button>
-          <button className="btn-game btn-ghost" onClick={() => setOverlay({ kind: "settings" })}>⚙ {t("settings")}</button>
           <button className="btn-game btn-ghost px-3" title={t("restartChapter")} onClick={() => { if (confirm(t("restartConfirm"))) { resetChapter(); posRef.current = { x: 960, y: 560 }; setPos(posRef.current); } }}>↺</button>
         </div>
       </div>
@@ -359,7 +359,6 @@ export default function Game() {
           onToggleFav={(id) => update((g) => ({ ...g, journal: g.journal.map((w) => (w.id === id ? { ...w, favorite: !w.favorite } : w)) }))} />
       )}
       {overlay?.kind === "catalog" && <CatalogModal level={state.level} onClose={() => setOverlay(null)} />}
-      {overlay?.kind === "settings" && <SettingsModal onClose={() => setOverlay(null)} />}
 
       {/* Portrait warning */}
       <div className="absolute inset-0 z-[60] hidden items-center justify-center bg-background p-8 text-center portrait:flex">
