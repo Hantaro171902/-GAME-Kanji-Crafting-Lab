@@ -918,81 +918,330 @@ export const INITIAL_CHAT_MESSAGES: ChatMessage[] = [
   },
 ];
 
+export const JLPT_LEVELS = ["N5", "N4", "N3"] as const;
+export type JLPTLevel = (typeof JLPT_LEVELS)[number];
+
 export type PlacementQuestion = {
   id: string;
   kanji: string;
+  jlptLevel: JLPTLevel;
   prompt: Localized<string>;
   options: { value: string; label: Localized<string> }[];
   correct: string;
   chapterIndex: number;
 };
 
-export const PLACEMENT_QUIZ: PlacementQuestion[] = [
-  {
-    id: "q1",
-    kanji: "休",
-    prompt: {
-      en: "A person (亻) leaning against a tree (木). What does 休 mean?",
-      ja: "人（亻）が木（木）のそばにいる漢字「休」の意味は？",
-      vi: "Một người (亻) tựa vào cây (木). Chữ 休 có nghĩa là gì?",
+type QuizItem = {
+  kanji: string;
+  meanings: [Localized<string>, Localized<string>, Localized<string>];
+  correctIndex: number;
+};
+
+const recognitionPrompt: Localized<string> = {
+  en: "What does this kanji mean?",
+  ja: "この漢字の意味は何ですか？",
+  vi: "Chữ Kanji này có nghĩa là gì?",
+};
+
+const jlptQuizItems: Record<JLPTLevel, QuizItem[]> = {
+  N5: [
+    {
+      kanji: "日",
+      meanings: [
+        { en: "Day; sun", ja: "日・太陽", vi: "Ngày; mặt trời" },
+        { en: "Moon", ja: "月", vi: "Mặt trăng" },
+        { en: "Person", ja: "人", vi: "Người" },
+      ],
+      correctIndex: 0,
     },
-    options: [
-      { value: "rest", label: { en: "Rest", ja: "休む (Rest)", vi: "Nghỉ ngơi" } },
-      { value: "fire", label: { en: "Fire", ja: "火 (Fire)", vi: "Lửa" } },
-      { value: "water", label: { en: "Water", ja: "水 (Water)", vi: "Nước" } },
-    ],
-    correct: "rest",
-    chapterIndex: 0,
-  },
-  {
-    id: "q2",
-    kanji: "明",
-    prompt: {
-      en: "Sun (日) and Moon (月) shining together. What does 明 mean?",
-      ja: "日と月が合わさった漢字「明」の意味は？",
-      vi: "Mặt trời (日) và Mặt trăng (月) cùng chiếu sáng. Chữ 明 nghĩa là gì?",
+    {
+      kanji: "月",
+      meanings: [
+        { en: "Fire", ja: "火", vi: "Lửa" },
+        { en: "Month; moon", ja: "月", vi: "Tháng; mặt trăng" },
+        { en: "Water", ja: "水", vi: "Nước" },
+      ],
+      correctIndex: 1,
     },
-    options: [
-      { value: "bright", label: { en: "Bright", ja: "明るい (Bright)", vi: "Sáng" } },
-      { value: "dark", label: { en: "Dark", ja: "暗い (Dark)", vi: "Tối" } },
-      { value: "rain", label: { en: "Rain", ja: "雨 (Rain)", vi: "Mưa" } },
-    ],
-    correct: "bright",
-    chapterIndex: 1,
-  },
-  {
-    id: "q3",
-    kanji: "岩",
-    prompt: {
-      en: "A mountain (山) over stone (石). What does 岩 mean?",
-      ja: "山の下に石がある漢字「岩」の意味は？",
-      vi: "Ngọn núi (山) trên đá (石). Chữ 岩 có nghĩa là gì?",
+    {
+      kanji: "人",
+      meanings: [
+        { en: "Tree", ja: "木", vi: "Cây" },
+        { en: "Mountain", ja: "山", vi: "Núi" },
+        { en: "Person", ja: "人", vi: "Người" },
+      ],
+      correctIndex: 2,
     },
-    options: [
-      { value: "rock", label: { en: "Rock / Cliff", ja: "岩・崖 (Rock)", vi: "Đá / Vách đá" } },
-      { value: "wind", label: { en: "Wind", ja: "風 (Wind)", vi: "Gió" } },
-      { value: "flower", label: { en: "Flower", ja: "花 (Flower)", vi: "Hoa" } },
-    ],
-    correct: "rock",
-    chapterIndex: 2,
-  },
-  {
-    id: "q4",
-    kanji: "時",
-    prompt: {
-      en: "The sun (日) moving beside a temple (寺). What does 時 mean?",
-      ja: "日と寺が合わさった漢字「時」の意味は？",
-      vi: "Mặt trời (日) bên ngôi chùa (寺). Chữ 時 có nghĩa là gì?",
+    {
+      kanji: "水",
+      meanings: [
+        { en: "Water", ja: "水", vi: "Nước" },
+        { en: "Gold; money", ja: "金", vi: "Vàng; tiền" },
+        { en: "Earth", ja: "土", vi: "Đất" },
+      ],
+      correctIndex: 0,
     },
-    options: [
-      { value: "time", label: { en: "Time", ja: "時間・時 (Time)", vi: "Thời gian" } },
-      { value: "snow", label: { en: "Snow", ja: "雪 (Snow)", vi: "Tuyết" } },
-      { value: "field", label: { en: "Rice field", ja: "田んぼ (Field)", vi: "Ruộng lúa" } },
-    ],
-    correct: "time",
-    chapterIndex: 3,
-  },
-];
+    {
+      kanji: "火",
+      meanings: [
+        { en: "Book", ja: "本", vi: "Sách" },
+        { en: "Fire", ja: "火", vi: "Lửa" },
+        { en: "Rain", ja: "雨", vi: "Mưa" },
+      ],
+      correctIndex: 1,
+    },
+    {
+      kanji: "木",
+      meanings: [
+        { en: "Small", ja: "小さい", vi: "Nhỏ" },
+        { en: "Big", ja: "大きい", vi: "To; lớn" },
+        { en: "Tree; wood", ja: "木", vi: "Cây; gỗ" },
+      ],
+      correctIndex: 2,
+    },
+    {
+      kanji: "大",
+      meanings: [
+        { en: "Big", ja: "大きい", vi: "To; lớn" },
+        { en: "Up; above", ja: "上", vi: "Trên" },
+        { en: "Woman", ja: "女", vi: "Phụ nữ" },
+      ],
+      correctIndex: 0,
+    },
+    {
+      kanji: "小",
+      meanings: [
+        { en: "Middle", ja: "中", vi: "Giữa" },
+        { en: "Small", ja: "小さい", vi: "Nhỏ" },
+        { en: "River", ja: "川", vi: "Sông" },
+      ],
+      correctIndex: 1,
+    },
+    {
+      kanji: "山",
+      meanings: [
+        { en: "Rain", ja: "雨", vi: "Mưa" },
+        { en: "Field", ja: "田", vi: "Ruộng" },
+        { en: "Mountain", ja: "山", vi: "Núi" },
+      ],
+      correctIndex: 2,
+    },
+    {
+      kanji: "上",
+      meanings: [
+        { en: "Up; above", ja: "上", vi: "Trên" },
+        { en: "Down; below", ja: "下", vi: "Dưới" },
+        { en: "Outside", ja: "外", vi: "Bên ngoài" },
+      ],
+      correctIndex: 0,
+    },
+  ],
+  N4: [
+    {
+      kanji: "会",
+      meanings: [
+        { en: "Company", ja: "会社", vi: "Công ty" },
+        { en: "Meet; meeting", ja: "会う・会議", vi: "Gặp; cuộc họp" },
+        { en: "Study", ja: "勉強", vi: "Học tập" },
+      ],
+      correctIndex: 1,
+    },
+    {
+      kanji: "社",
+      meanings: [
+        { en: "Society; company", ja: "社会・会社", vi: "Xã hội; công ty" },
+        { en: "School", ja: "学校", vi: "Trường học" },
+        { en: "Hospital", ja: "病院", vi: "Bệnh viện" },
+      ],
+      correctIndex: 0,
+    },
+    {
+      kanji: "場",
+      meanings: [
+        { en: "Station", ja: "駅", vi: "Nhà ga" },
+        { en: "Shop", ja: "店", vi: "Cửa hàng" },
+        { en: "Place; area", ja: "場所", vi: "Nơi; địa điểm" },
+      ],
+      correctIndex: 2,
+    },
+    {
+      kanji: "町",
+      meanings: [
+        { en: "Town", ja: "町", vi: "Thị trấn" },
+        { en: "Country", ja: "国", vi: "Đất nước" },
+        { en: "Road", ja: "道", vi: "Con đường" },
+      ],
+      correctIndex: 0,
+    },
+    {
+      kanji: "新",
+      meanings: [
+        { en: "Old", ja: "古い", vi: "Cũ" },
+        { en: "New", ja: "新しい", vi: "Mới" },
+        { en: "Long", ja: "長い", vi: "Dài" },
+      ],
+      correctIndex: 1,
+    },
+    {
+      kanji: "古",
+      meanings: [
+        { en: "Early", ja: "早い", vi: "Sớm" },
+        { en: "Wide", ja: "広い", vi: "Rộng" },
+        { en: "Old", ja: "古い", vi: "Cũ" },
+      ],
+      correctIndex: 2,
+    },
+    {
+      kanji: "近",
+      meanings: [
+        { en: "Near", ja: "近い", vi: "Gần" },
+        { en: "Far", ja: "遠い", vi: "Xa" },
+        { en: "Fast", ja: "速い", vi: "Nhanh" },
+      ],
+      correctIndex: 0,
+    },
+    {
+      kanji: "週",
+      meanings: [
+        { en: "Year", ja: "年", vi: "Năm" },
+        { en: "Week", ja: "週", vi: "Tuần" },
+        { en: "Hour", ja: "時間", vi: "Giờ" },
+      ],
+      correctIndex: 1,
+    },
+    {
+      kanji: "強",
+      meanings: [
+        { en: "Weak", ja: "弱い", vi: "Yếu" },
+        { en: "Quiet", ja: "静か", vi: "Yên tĩnh" },
+        { en: "Strong", ja: "強い", vi: "Mạnh" },
+      ],
+      correctIndex: 2,
+    },
+    {
+      kanji: "思",
+      meanings: [
+        { en: "Think; feel", ja: "思う", vi: "Nghĩ; cảm thấy" },
+        { en: "Forget", ja: "忘れる", vi: "Quên" },
+        { en: "Remember", ja: "覚える", vi: "Ghi nhớ" },
+      ],
+      correctIndex: 0,
+    },
+  ],
+  N3: [
+    {
+      kanji: "進",
+      meanings: [
+        { en: "Return", ja: "戻る", vi: "Trở về" },
+        { en: "Advance; proceed", ja: "進む", vi: "Tiến lên; tiến hành" },
+        { en: "Stop", ja: "止まる", vi: "Dừng lại" },
+      ],
+      correctIndex: 1,
+    },
+    {
+      kanji: "経",
+      meanings: [
+        { en: "Experience; pass through", ja: "経験・経る", vi: "Kinh nghiệm; trải qua" },
+        { en: "Remember", ja: "覚える", vi: "Ghi nhớ" },
+        { en: "Decide", ja: "決める", vi: "Quyết định" },
+      ],
+      correctIndex: 0,
+    },
+    {
+      kanji: "議",
+      meanings: [
+        { en: "Question", ja: "質問", vi: "Câu hỏi" },
+        { en: "Answer", ja: "答え", vi: "Câu trả lời" },
+        { en: "Discussion; deliberation", ja: "議論・会議", vi: "Thảo luận; nghị luận" },
+      ],
+      correctIndex: 2,
+    },
+    {
+      kanji: "連",
+      meanings: [
+        { en: "Connect; take along", ja: "連れる・連絡", vi: "Kết nối; đưa theo" },
+        { en: "Separate", ja: "分ける", vi: "Chia tách" },
+        { en: "Choose", ja: "選ぶ", vi: "Lựa chọn" },
+      ],
+      correctIndex: 0,
+    },
+    {
+      kanji: "談",
+      meanings: [
+        { en: "Promise", ja: "約束", vi: "Lời hứa" },
+        { en: "Talk; conversation", ja: "話・相談", vi: "Nói chuyện; trò chuyện" },
+        { en: "Notice", ja: "知らせ", vi: "Thông báo" },
+      ],
+      correctIndex: 1,
+    },
+    {
+      kanji: "変",
+      meanings: [
+        { en: "Same", ja: "同じ", vi: "Giống nhau" },
+        { en: "Normal", ja: "普通", vi: "Bình thường" },
+        { en: "Change; strange", ja: "変わる・変な", vi: "Thay đổi; kỳ lạ" },
+      ],
+      correctIndex: 2,
+    },
+    {
+      kanji: "必",
+      meanings: [
+        { en: "Certainly; necessary", ja: "必ず・必要", vi: "Chắc chắn; cần thiết" },
+        { en: "Maybe", ja: "たぶん", vi: "Có lẽ" },
+        { en: "Convenient", ja: "便利", vi: "Tiện lợi" },
+      ],
+      correctIndex: 0,
+    },
+    {
+      kanji: "感",
+      meanings: [
+        { en: "Taste", ja: "味", vi: "Vị giác" },
+        { en: "Feeling; sense", ja: "感じる・感覚", vi: "Cảm giác; cảm nhận" },
+        { en: "Voice", ja: "声", vi: "Giọng nói" },
+      ],
+      correctIndex: 1,
+    },
+    {
+      kanji: "選",
+      meanings: [
+        { en: "Explain", ja: "説明する", vi: "Giải thích" },
+        { en: "Compare", ja: "比べる", vi: "So sánh" },
+        { en: "Choose; select", ja: "選ぶ", vi: "Chọn; lựa chọn" },
+      ],
+      correctIndex: 2,
+    },
+    {
+      kanji: "確",
+      meanings: [
+        { en: "Certain; confirm", ja: "確か・確認", vi: "Chắc chắn; xác nhận" },
+        { en: "Dangerous", ja: "危険", vi: "Nguy hiểm" },
+        { en: "Difficult", ja: "難しい", vi: "Khó" },
+      ],
+      correctIndex: 0,
+    },
+  ],
+};
+
+const makePlacementQuestion = (
+  level: JLPTLevel,
+  item: QuizItem,
+  index: number,
+): PlacementQuestion => ({
+  id: `${level.toLowerCase()}-${index + 1}`,
+  kanji: item.kanji,
+  jlptLevel: level,
+  prompt: recognitionPrompt,
+  options: item.meanings.map((label, optionIndex) => ({
+    value: String(optionIndex),
+    label,
+  })),
+  correct: String(item.correctIndex),
+  chapterIndex: JLPT_LEVELS.indexOf(level),
+});
+
+export const PLACEMENT_QUIZ: PlacementQuestion[] = JLPT_LEVELS.flatMap((level) =>
+  jlptQuizItems[level].map((item, index) => makePlacementQuestion(level, item, index)),
+);
 
 /**
  * KanjiLookup — the subset of kanji info the word-type popup needs.

@@ -5,6 +5,7 @@ import { clearSave, initialState, useGame } from "@/game/store";
 import {
   FRIENDS_DATA,
   INITIAL_CHAT_MESSAGES,
+  JLPT_LEVELS,
   PLACEMENT_QUIZ,
   RADICALS,
   RANKING_DATA,
@@ -80,6 +81,15 @@ describe("Kanji: The Lost World — Gameplay Update", () => {
     expect(FRIENDS_DATA.length).toBeGreaterThanOrEqual(4);
     expect(RANKING_DATA.length).toBeGreaterThanOrEqual(4);
     expect(INITIAL_CHAT_MESSAGES.length).toBeGreaterThanOrEqual(3);
-    expect(PLACEMENT_QUIZ.length).toBeGreaterThanOrEqual(4);
+    expect(PLACEMENT_QUIZ).toHaveLength(30);
+    for (const level of JLPT_LEVELS) {
+      const questions = PLACEMENT_QUIZ.filter((question) => question.jlptLevel === level);
+      expect(questions).toHaveLength(10);
+      expect(new Set(questions.map((question) => question.kanji)).size).toBe(10);
+      for (const question of questions) {
+        expect(question.options).toHaveLength(3);
+        expect(question.options.map((option) => option.value)).toContain(question.correct);
+      }
+    }
   });
 });
