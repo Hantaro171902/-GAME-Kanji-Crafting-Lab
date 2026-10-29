@@ -5,5 +5,3 @@ services:
       dockerfile: Dockerfile.preview.node
     ports:
       - "3000:3000"
-    env_file:
-      - .env.preview

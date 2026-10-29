@@ -5,8 +5,22 @@ export type Step = "arrival" | "mine" | "shrine" | "bento" | "write" | "restore"
 export const STEP_ORDER: Step[] = ["arrival", "mine", "shrine", "bento", "write", "restore", "done"];
 export const atLeast = (s: Step, t: Step) => STEP_ORDER.indexOf(s) >= STEP_ORDER.indexOf(t);
 
+/** Parts of speech used to classify a kanji's primary usage. */
+export type PartOfSpeech = "noun" | "verb" | "i-adjective" | "na-adjective" | "adverb";
+
+/** Localized labels for each part of speech (shown in the lookup popup). */
+export const POS_LABELS: Record<PartOfSpeech, Localized<string>> = {
+  noun: { en: "Noun", ja: "名詞", vi: "Danh từ" },
+  verb: { en: "Verb", ja: "動詞", vi: "Động từ" },
+  "i-adjective": { en: "I-Adjective", ja: "形容詞", vi: "Tính từ" },
+  "na-adjective": { en: "Na-Adjective", ja: "形容動詞", vi: "Tính từ -na" },
+  adverb: { en: "Adverb", ja: "副詞", vi: "Trạng từ" },
+};
+
 export type KanjiData = {
   char: string;
+  /** Word types (parts of speech) of the kanji's primary usage. */
+  pos: PartOfSpeech[];
   meaning: Localized<string>;
   on: string;
   kun: string;
@@ -45,6 +59,7 @@ export const CHAPTERS: Chapter[] = [
     scene: "rest",
     kanji: {
       char: "休",
+      pos: ["verb", "noun"],
       meaning: { en: "Rest", ja: "休む", vi: "Nghỉ ngơi" },
       on: "キュウ (kyū)",
       kun: "やす・む (yasu-mu)",
@@ -62,12 +77,12 @@ export const CHAPTERS: Chapter[] = [
       ],
     },
     strokes: [
-      "M32 10 Q24 32 10 50",
-      "M23 34 L23 92",
-      "M38 38 L93 38",
-      "M65 10 L65 94",
-      "M63 40 Q50 62 35 76",
-      "M67 40 Q80 60 95 74",
+      "M32.1 15.1 c0.2 1.6 0.2 3.9 -0.8 6.2 C26.5 32.1 20.5 42.2 9.6 55.3",
+      "M24.1 39 c0.7 1.1 1.2 3.2 1.2 4.4 c0 11.7 -0.1 27.4 -0.2 38.8 c0 1.4 0 2.7 0 3.9",
+      "M34.5 35.6 c2.2 0.9 4.8 0.7 7.1 0.5 c10.8 -0.9 22.9 -3.1 34.4 -3.7 c2.4 -0.1 4.9 -0.2 7.3 0.4",
+      "M56.4 12.8 c0.8 0.7 1.7 1.9 1.7 3.4 c0 8.1 0 49.3 -0.1 66.1 c0 2.6 -0.1 4.5 -0.1 5.3",
+      "M57.3 35.2 c0 2 -1 4 -1.7 5.5 C50.1 52.7 41.2 65.9 32.1 72.2",
+      "M58.8 34.9 c4.1 7.7 14.9 23.2 22.9 30.4 c1.8 1.6 4 3.8 6.3 4.6",
     ],
     objectives: {
       arrival: { en: "Talk to Mori by the Great Kanji Tree", ja: "大漢字の木のそばでモリと話す", vi: "Trò chuyện với Mori bên Cây Kanji Vĩ Đại" },
@@ -113,6 +128,7 @@ export const CHAPTERS: Chapter[] = [
     scene: "bright",
     kanji: {
       char: "明",
+      pos: ["i-adjective", "noun"],
       meaning: { en: "Bright", ja: "明るい", vi: "Sáng" },
       on: "メイ (mei)",
       kun: "あか・るい (aka-rui)",
@@ -130,14 +146,14 @@ export const CHAPTERS: Chapter[] = [
       ],
     },
     strokes: [
-      "M20 12 L20 88",
-      "M20 20 L44 20 L44 88",
-      "M20 50 L44 50",
-      "M20 88 L44 88",
-      "M60 14 Q56 45 50 84",
-      "M58 20 L88 20 L88 88 L82 88",
-      "M58 48 L86 48",
-      "M54 80 L88 80",
+      "M15.4 23.1 c0.8 0.8 1.2 2.1 1.2 3.4 c0 1 0.1 25.2 0 34.5 c0 2.1 0 3.5 0 3.6",
+      "M17.7 25.5 c5.2 -0.7 17.9 -2.4 19.5 -2.5 c1.6 -0.2 2.7 1.7 2.5 2.7 c-0.2 1.6 -0.4 25.1 -0.5 33.6 c0 1.7 0 2.9 0 3",
+      "M17.6 43.1 C21.6 42.7 33.9 41.4 38.3 41.1",
+      "M17.4 61.1 c7.8 -0.9 13.2 -1.5 20.6 -1.9",
+      "M52.8 14.7 c0.9 1.1 1 2.3 1 3.2 c1 45.2 -4 59.4 -16 69.5",
+      "M54.6 16.5 c6 -1 20 -3.2 21.2 -3.4 c2.7 -0.5 4.8 0.6 4.8 4.1 c0 1.4 0.2 46.1 0.2 64.7 c0 10.9 -6.6 3.2 -7.6 2.3",
+      "M54.8 35.8 c7.2 -0.9 18.1 -2.1 24.7 -2.5",
+      "M54.4 53 c6.1 -0.6 18.3 -1.4 25.1 -1.8",
     ],
     objectives: {
       arrival: { en: "Talk to Mori by the Great Kanji Tree", ja: "大漢字の木のそばでモリと話す", vi: "Trò chuyện với Mori bên Cây Kanji Vĩ Đại" },
@@ -181,6 +197,7 @@ export const CHAPTERS: Chapter[] = [
     scene: "rock",
     kanji: {
       char: "岩",
+      pos: ["noun"],
       meaning: { en: "Rock / Cliff", ja: "岩", vi: "Đá / Vách đá" },
       on: "ガン (gan)",
       kun: "いわ (iwa)",
@@ -198,14 +215,14 @@ export const CHAPTERS: Chapter[] = [
       ],
     },
     strokes: [
-      "M20 30 L20 78",
-      "M20 22 L50 78 L50 22",
-      "M50 22 L80 78 L80 30",
-      "M30 18 L72 18",
-      "M48 18 L48 80",
-      "M40 45 L85 45",
-      "M40 45 L40 82 L85 82",
-      "M85 45 L85 82",
+      "M50.3 11.5 c0.8 0.7 1.6 1.8 1.6 3.6 c0 0.4 0 12.9 -0.1 18.7",
+      "M27.6 19.8 c0.7 0.8 0.9 1.5 0.9 3 c0.1 2.5 -1.2 8.1 -2.7 13.2 c-0.5 1.8 0.3 2.3 2.1 2 c13.5 -2.7 35.7 -3.9 46.8 -4.1",
+      "M77.7 16.2 c0.8 1 1 1.7 0.8 3.3 c-0.3 2.5 -1.2 8.5 -2.2 13.6 c-0.3 1.4 -0.6 2.8 -0.9 4.1",
+      "M16.1 50.9 c3.1 0.5 5.6 0.3 8.3 0.1 c12.5 -1 38.1 -3.5 54.1 -3.7 c2.5 0 5 0 7.4 0.3",
+      "M37.5 53.1 c0.2 0.8 0.1 2.4 -0.6 3.9 c-3.1 6.4 -9.9 20 -23.8 28.6",
+      "M35.1 63.8 c1.1 0.9 1.4 1.2 1.6 2.7 c0.6 4.3 1.1 11.9 1.8 19.1 c0.1 1.1 0.3 2.3 0.4 3.4",
+      "M37.6 65.5 c9.9 -1.1 29.9 -3.5 35.2 -3.6 c2.5 -0.1 4 1.8 3.7 3.2 c-1.1 5.1 -2.7 11.7 -3.8 17.8",
+      "M39.5 86.3 c6 -0.4 21.5 -1.7 31.4 -2.5 c1.8 -0.1 2.1 -0.1 3.5 -0.2",
     ],
     objectives: {
       arrival: { en: "Talk to Mori by the Great Kanji Tree", ja: "大漢字の木のそばでモリと話す", vi: "Trò chuyện với Mori bên Cây Kanji Vĩ Đại" },
@@ -250,6 +267,7 @@ export const CHAPTERS: Chapter[] = [
     scene: "time",
     kanji: {
       char: "時",
+      pos: ["noun"],
       meaning: { en: "Time", ja: "時", vi: "Thời gian" },
       on: "ジ (ji)",
       kun: "とき (toki)",
@@ -267,16 +285,16 @@ export const CHAPTERS: Chapter[] = [
       ],
     },
     strokes: [
-      "M18 22 L18 80",
-      "M14 22 L33 22",
-      "M25 22 L25 80",
-      "M14 80 L33 80",
-      "M42 16 L88 16",
-      "M65 16 L65 52",
-      "M46 52 L86 52",
-      "M46 66 L88 66",
-      "M78 66 L78 92 Q78 96 73 96",
-      "M88 70 Q93 76 87 82",
+      "M14.7 27.4 c0.7 0.6 1.1 1.5 1.1 2.8 c0 1.1 -0.1 27.6 -0.2 37.5 c0 2.2 0 3.6 0 3.7",
+      "M16.3 28.2 c4.3 -0.6 14.8 -1.9 16.1 -2.1 c1.4 -0.2 2.8 1.4 2.6 2.4 c-0.2 2 -0.3 22.8 -0.3 37.4 c0 1.5 -0.1 3.1 -0.1 4.1",
+      "M17.2 47.7 c4.1 -0.7 12.4 -1.9 16.7 -2.2",
+      "M16.3 68.4 c5.7 -0.8 10.5 -1.7 17.4 -2.5",
+      "M47.2 26.6 c1.3 0.4 3.3 0.3 4.6 0.2 c9 -1 15 -2.1 23.5 -2.8 c2.1 -0.2 3.6 0 4.6 0.2",
+      "M62 10.4 c0.8 0.8 1.5 2.1 1.5 3.4 c0 7.7 0 24.8 0 25.3",
+      "M41.6 41.6 c1.4 0.4 3.9 0.5 5.2 0.4 c10.4 -1.1 23.5 -3 36 -3.7 c2.3 -0.1 3.6 0.2 4.8 0.4",
+      "M42.2 56 c1.3 0.4 3.7 0.5 5 0.4 c11 -1 24.7 -2.8 35.8 -3.6 c2.2 -0.1 4 0.2 5.1 0.4",
+      "M71.6 42.3 c1 1 1.5 2.3 1.6 4.6 c0.2 11 -0.1 31.6 -0.1 35.3 c0 9 -5 2 -7 0",
+      "M52.1 64.6 c2.6 1.6 6 5.9 6.7 8.4",
     ],
     objectives: {
       arrival: { en: "Talk to Mori by the temple gate", ja: "寺の門のそばでモリと話す", vi: "Trò chuyện với Mori bên cổng chùa" },
@@ -322,6 +340,7 @@ export const CHAPTERS: Chapter[] = [
     scene: "field",
     kanji: {
       char: "男",
+      pos: ["noun"],
       meaning: { en: "Man", ja: "男", vi: "Nam / Đàn ông" },
       on: "ダン (dan)",
       kun: "おとこ (otoko)",
@@ -339,13 +358,13 @@ export const CHAPTERS: Chapter[] = [
       ],
     },
     strokes: [
-      "M20 15 L20 62",
-      "M14 15 L52 15",
-      "M33 15 L33 62",
-      "M14 62 L52 62",
-      "M58 18 L92 18",
-      "M75 18 L75 90 Q75 94 71 94",
-      "M58 34 Q68 62 75 90",
+      "M24.3 13.1 c0.8 0.8 1.4 1.8 1.6 2.7 c0.8 4.4 2.3 15.4 3.1 23.9 c0.2 1.8 0.3 2.2 0.5 3.9",
+      "M26.6 14.6 c10.4 -1.3 37.8 -4.2 45.5 -4.3 c3.6 -0.1 5 1.4 4.5 4.9 c-0.4 2.9 -2.9 13.9 -4.5 20.4 c-0.4 1.5 -0.7 2.7 -1.3 3.8",
+      "M49.5 14.7 c0.7 0.7 0.9 1.8 0.9 2.6 c0 5.8 0.2 20.2 0.2 20.9",
+      "M28.4 28.3 C41.3 26.7 52.4 25.7 73.9 24.2",
+      "M30.2 41 c10.4 -1.1 26 -2.7 40.5 -3.4",
+      "M18.3 55.9 c2 0.6 4.2 0.7 6.2 0.5 c12.3 -1.4 38.8 -5.2 47.6 -6.3 c4.8 -0.6 6.3 1 5.2 5.8 c-1.8 8.1 -8.3 25.1 -14.4 30.4 c-4.7 4.1 -6.8 2 -8.9 -0.8",
+      "M48.8 42.6 c0.3 1.2 0.3 2.8 -0.2 4.2 C45.1 57.9 34.9 74.5 15.7 84.5",
     ],
     objectives: {
       arrival: { en: "Talk to Mori by the rice paddies", ja: "田んぼのそばでモリと話す", vi: "Trò chuyện với Mori bên ruộng lúa" },
@@ -391,6 +410,7 @@ export const CHAPTERS: Chapter[] = [
     scene: "snow",
     kanji: {
       char: "雪",
+      pos: ["noun"],
       meaning: { en: "Snow", ja: "雪", vi: "Tuyết" },
       on: "セツ (setsu)",
       kun: "ゆき (yuki)",
@@ -408,17 +428,17 @@ export const CHAPTERS: Chapter[] = [
       ],
     },
     strokes: [
-      "M18 10 L82 10",
-      "M26 10 L26 86",
-      "M74 10 L74 86",
-      "M18 28 L82 28",
-      "M34 18 L34 24",
-      "M66 18 L66 24",
-      "M34 48 L34 54",
-      "M66 48 L66 54",
-      "M30 68 L82 68",
-      "M30 80 L82 80",
-      "M30 92 L76 92 Q82 92 82 88",
+      "M27.8 16.3 c1.8 0.2 4 0.1 5.6 -0.1 C43.1 15.1 57.9 13.3 67.7 12.7 c2.3 -0.1 4.2 -0.1 6.4 0.1",
+      "M17.6 27.8 c-0.2 4.8 -1.9 10.1 -3.1 14.9",
+      "M18.4 30 c14.6 -1.9 47.5 -5.8 63.2 -6.5 c10.2 -0.5 1.1 6.5 -0.3 8.2",
+      "M48.3 17.4 c1.1 1.1 1.5 2.6 1.5 4.2 c0 3.3 0.1 16.1 0.1 23.2 c0 2.2 0 3.8 0 4.2",
+      "M30 35.7 c3.3 0.7 7.8 2.7 9.7 3.8",
+      "M26.9 43.2 c3.5 0.7 8.8 3.2 10.7 4.4",
+      "M61.1 31.3 c3.8 1.1 8 3.3 9.6 4.3",
+      "M60.7 40.9 c3.4 0.8 8 3.4 9.9 4.8",
+      "M27 56.8 c2.3 1 4.4 1.1 7.2 0.7 c13 -1.8 26.8 -2.8 36.4 -3.7 c2.9 -0.3 5 1.4 4.6 4.1 c-1 6.1 -2.1 15 -3.4 24",
+      "M27.4 69.9 c1.9 1 4.3 1.1 6.5 0.9 c12.4 -1.4 31.2 -3.1 39.4 -3.6",
+      "M25.6 85.7 c1.9 0.6 4 0.9 6.3 0.7 C43.1 85.4 57.2 83.9 68.1 82.9 c2.2 -0.2 4.6 -0.4 6.8 0",
     ],
     objectives: {
       arrival: { en: "Talk to Mori by the snowy clearing", ja: "雪原でモリと話す", vi: "Trò chuyện với Mori giữa cánh đồng tuyết" },
@@ -605,6 +625,86 @@ export const RADICALS: Record<string, RadicalMeta> = {
     h: 1,
     shapeLabel: { en: "Horizontal (2 × 1)", ja: "横 (2 × 1)", vi: "Ngang (2 × 1)" },
   },
+  "川": {
+    name: "かわ",
+    meaning: { en: "river / stream", ja: "川", vi: "dòng sông" },
+    size: "1x3",
+    w: 1,
+    h: 3,
+    shapeLabel: { en: "Vertical (1 × 3)", ja: "縦長 (1 × 3)", vi: "Dọc (1 × 3)" },
+  },
+  "竹": {
+    name: "たけ",
+    meaning: { en: "bamboo", ja: "竹", vi: "tre trúc" },
+    size: "1x4",
+    w: 2,
+    h: 1,
+    shapeLabel: { en: "Horizontal (1 × 4)", ja: "竹冠 (1 × 4)", vi: "Ngang (1 × 4)" },
+  },
+  "金": {
+    name: "かね",
+    meaning: { en: "gold / metal", ja: "金", vi: "vàng / kim loại" },
+    size: "2x2",
+    w: 2,
+    h: 2,
+    shapeLabel: { en: "Square (2 × 2)", ja: "正方形 (2 × 2)", vi: "Vuông (2 × 2)" },
+  },
+  "糸": {
+    name: "いと",
+    meaning: { en: "thread / silk", ja: "糸", vi: "sợi chỉ / tơ" },
+    size: "1x3",
+    w: 1,
+    h: 3,
+    shapeLabel: { en: "Vertical (1 × 3)", ja: "縦長 (1 × 3)", vi: "Dọc (1 × 3)" },
+  },
+  "車": {
+    name: "くるま",
+    meaning: { en: "cart / wheel", ja: "車", vi: "xe" },
+    size: "2x2",
+    w: 2,
+    h: 2,
+    shapeLabel: { en: "Square (2 × 2)", ja: "正方形 (2 × 2)", vi: "Vuông (2 × 2)" },
+  },
+  "目": {
+    name: "め",
+    meaning: { en: "eye", ja: "目", vi: "mắt" },
+    size: "1x2",
+    w: 1,
+    h: 2,
+    shapeLabel: { en: "Vertical (1 × 2)", ja: "縦 (1 × 2)", vi: "Dọc (1 × 2)" },
+  },
+  "耳": {
+    name: "みみ",
+    meaning: { en: "ear", ja: "耳", vi: "tai" },
+    size: "1x2",
+    w: 1,
+    h: 2,
+    shapeLabel: { en: "Vertical (1 × 2)", ja: "縦 (1 × 2)", vi: "Dọc (1 × 2)" },
+  },
+  "手": {
+    name: "て",
+    meaning: { en: "hand", ja: "手", vi: "tay" },
+    size: "2x2",
+    w: 2,
+    h: 2,
+    shapeLabel: { en: "Square (2 × 2)", ja: "正方形 (2 × 2)", vi: "Vuông (2 × 2)" },
+  },
+  "足": {
+    name: "あし",
+    meaning: { en: "foot / leg", ja: "足", vi: "chân" },
+    size: "2x2",
+    w: 2,
+    h: 2,
+    shapeLabel: { en: "Square (2 × 2)", ja: "正方形 (2 × 2)", vi: "Vuông (2 × 2)" },
+  },
+  "心": {
+    name: "こころ",
+    meaning: { en: "heart / mind", ja: "心", vi: "trái tim / tâm" },
+    size: "1x4",
+    w: 2,
+    h: 1,
+    shapeLabel: { en: "Horizontal (1 × 4)", ja: "心 (1 × 4)", vi: "Ngang (1 × 4)" },
+  },
 };
 
 export const CATALOG = [
@@ -727,9 +827,19 @@ export const CATALOG = [
 
 export const WORLD = { w: 1920, h: 1088 };
 
-export type StationId = "mori" | "rock1" | "rock2" | "shrine" | "bento" | "desk" | "sign" | "mineEntrance";
+export type StationId =
+  | "tree"
+  | "mori"
+  | "rock1"
+  | "rock2"
+  | "shrine"
+  | "bento"
+  | "desk"
+  | "sign"
+  | "mineEntrance";
 
 export const STATIONS: Record<StationId, { x: number; y: number; r: number; label: Localized<string> }> = {
+  tree: { x: 960, y: 295, r: 135, label: { en: "Kanji Checkpoint", ja: "漢字チェックポイント", vi: "Điểm Lưu Kanji" } },
   mori: { x: 1190, y: 330, r: 110, label: { en: "Talk", ja: "話す", vi: "Nói chuyện" } },
   rock1: { x: 560, y: 470, r: 100, label: { en: "Dig", ja: "掘る", vi: "Đào" } },
   rock2: { x: 640, y: 680, r: 100, label: { en: "Dig", ja: "掘る", vi: "Đào" } },
@@ -898,78 +1008,375 @@ export const INITIAL_CHAT_MESSAGES: ChatMessage[] = [
   },
 ];
 
+export const JLPT_LEVELS = ["N5", "N4", "N3"] as const;
+export type JLPTLevel = (typeof JLPT_LEVELS)[number];
+
 export type PlacementQuestion = {
   id: string;
   kanji: string;
+  jlptLevel: JLPTLevel;
   prompt: Localized<string>;
   options: { value: string; label: Localized<string> }[];
   correct: string;
   chapterIndex: number;
 };
 
-export const PLACEMENT_QUIZ: PlacementQuestion[] = [
-  {
-    id: "q1",
-    kanji: "休",
-    prompt: {
-      en: "A person (亻) leaning against a tree (木). What does 休 mean?",
-      ja: "人（亻）が木（木）のそばにいる漢字「休」の意味は？",
-      vi: "Một người (亻) tựa vào cây (木). Chữ 休 có nghĩa là gì?",
+type QuizItem = {
+  kanji: string;
+  meanings: [Localized<string>, Localized<string>, Localized<string>];
+  correctIndex: number;
+};
+
+const recognitionPrompt: Localized<string> = {
+  en: "What does this kanji mean?",
+  ja: "この漢字の意味は何ですか？",
+  vi: "Chữ Kanji này có nghĩa là gì?",
+};
+
+const jlptQuizItems: Record<JLPTLevel, QuizItem[]> = {
+  N5: [
+    {
+      kanji: "日",
+      meanings: [
+        { en: "Day; sun", ja: "日・太陽", vi: "Ngày; mặt trời" },
+        { en: "Moon", ja: "月", vi: "Mặt trăng" },
+        { en: "Person", ja: "人", vi: "Người" },
+      ],
+      correctIndex: 0,
     },
-    options: [
-      { value: "rest", label: { en: "Rest", ja: "休む (Rest)", vi: "Nghỉ ngơi" } },
-      { value: "fire", label: { en: "Fire", ja: "火 (Fire)", vi: "Lửa" } },
-      { value: "water", label: { en: "Water", ja: "水 (Water)", vi: "Nước" } },
-    ],
-    correct: "rest",
-    chapterIndex: 0,
-  },
-  {
-    id: "q2",
-    kanji: "明",
-    prompt: {
-      en: "Sun (日) and Moon (月) shining together. What does 明 mean?",
-      ja: "日と月が合わさった漢字「明」の意味は？",
-      vi: "Mặt trời (日) và Mặt trăng (月) cùng chiếu sáng. Chữ 明 nghĩa là gì?",
+    {
+      kanji: "月",
+      meanings: [
+        { en: "Fire", ja: "火", vi: "Lửa" },
+        { en: "Month; moon", ja: "月", vi: "Tháng; mặt trăng" },
+        { en: "Water", ja: "水", vi: "Nước" },
+      ],
+      correctIndex: 1,
     },
-    options: [
-      { value: "bright", label: { en: "Bright", ja: "明るい (Bright)", vi: "Sáng" } },
-      { value: "dark", label: { en: "Dark", ja: "暗い (Dark)", vi: "Tối" } },
-      { value: "rain", label: { en: "Rain", ja: "雨 (Rain)", vi: "Mưa" } },
-    ],
-    correct: "bright",
-    chapterIndex: 1,
-  },
-  {
-    id: "q3",
-    kanji: "岩",
-    prompt: {
-      en: "A mountain (山) over stone (石). What does 岩 mean?",
-      ja: "山の下に石がある漢字「岩」の意味は？",
-      vi: "Ngọn núi (山) trên đá (石). Chữ 岩 có nghĩa là gì?",
+    {
+      kanji: "人",
+      meanings: [
+        { en: "Tree", ja: "木", vi: "Cây" },
+        { en: "Mountain", ja: "山", vi: "Núi" },
+        { en: "Person", ja: "人", vi: "Người" },
+      ],
+      correctIndex: 2,
     },
-    options: [
-      { value: "rock", label: { en: "Rock / Cliff", ja: "岩・崖 (Rock)", vi: "Đá / Vách đá" } },
-      { value: "wind", label: { en: "Wind", ja: "風 (Wind)", vi: "Gió" } },
-      { value: "flower", label: { en: "Flower", ja: "花 (Flower)", vi: "Hoa" } },
-    ],
-    correct: "rock",
-    chapterIndex: 2,
-  },
-  {
-    id: "q4",
-    kanji: "時",
-    prompt: {
-      en: "The sun (日) moving beside a temple (寺). What does 時 mean?",
-      ja: "日と寺が合わさった漢字「時」の意味は？",
-      vi: "Mặt trời (日) bên ngôi chùa (寺). Chữ 時 có nghĩa là gì?",
+    {
+      kanji: "水",
+      meanings: [
+        { en: "Water", ja: "水", vi: "Nước" },
+        { en: "Gold; money", ja: "金", vi: "Vàng; tiền" },
+        { en: "Earth", ja: "土", vi: "Đất" },
+      ],
+      correctIndex: 0,
     },
-    options: [
-      { value: "time", label: { en: "Time", ja: "時間・時 (Time)", vi: "Thời gian" } },
-      { value: "snow", label: { en: "Snow", ja: "雪 (Snow)", vi: "Tuyết" } },
-      { value: "field", label: { en: "Rice field", ja: "田んぼ (Field)", vi: "Ruộng lúa" } },
-    ],
-    correct: "time",
-    chapterIndex: 3,
-  },
-];
+    {
+      kanji: "火",
+      meanings: [
+        { en: "Book", ja: "本", vi: "Sách" },
+        { en: "Fire", ja: "火", vi: "Lửa" },
+        { en: "Rain", ja: "雨", vi: "Mưa" },
+      ],
+      correctIndex: 1,
+    },
+    {
+      kanji: "木",
+      meanings: [
+        { en: "Small", ja: "小さい", vi: "Nhỏ" },
+        { en: "Big", ja: "大きい", vi: "To; lớn" },
+        { en: "Tree; wood", ja: "木", vi: "Cây; gỗ" },
+      ],
+      correctIndex: 2,
+    },
+    {
+      kanji: "大",
+      meanings: [
+        { en: "Big", ja: "大きい", vi: "To; lớn" },
+        { en: "Up; above", ja: "上", vi: "Trên" },
+        { en: "Woman", ja: "女", vi: "Phụ nữ" },
+      ],
+      correctIndex: 0,
+    },
+    {
+      kanji: "小",
+      meanings: [
+        { en: "Middle", ja: "中", vi: "Giữa" },
+        { en: "Small", ja: "小さい", vi: "Nhỏ" },
+        { en: "River", ja: "川", vi: "Sông" },
+      ],
+      correctIndex: 1,
+    },
+    {
+      kanji: "山",
+      meanings: [
+        { en: "Rain", ja: "雨", vi: "Mưa" },
+        { en: "Field", ja: "田", vi: "Ruộng" },
+        { en: "Mountain", ja: "山", vi: "Núi" },
+      ],
+      correctIndex: 2,
+    },
+    {
+      kanji: "上",
+      meanings: [
+        { en: "Up; above", ja: "上", vi: "Trên" },
+        { en: "Down; below", ja: "下", vi: "Dưới" },
+        { en: "Outside", ja: "外", vi: "Bên ngoài" },
+      ],
+      correctIndex: 0,
+    },
+  ],
+  N4: [
+    {
+      kanji: "会",
+      meanings: [
+        { en: "Company", ja: "会社", vi: "Công ty" },
+        { en: "Meet; meeting", ja: "会う・会議", vi: "Gặp; cuộc họp" },
+        { en: "Study", ja: "勉強", vi: "Học tập" },
+      ],
+      correctIndex: 1,
+    },
+    {
+      kanji: "社",
+      meanings: [
+        { en: "Society; company", ja: "社会・会社", vi: "Xã hội; công ty" },
+        { en: "School", ja: "学校", vi: "Trường học" },
+        { en: "Hospital", ja: "病院", vi: "Bệnh viện" },
+      ],
+      correctIndex: 0,
+    },
+    {
+      kanji: "場",
+      meanings: [
+        { en: "Station", ja: "駅", vi: "Nhà ga" },
+        { en: "Shop", ja: "店", vi: "Cửa hàng" },
+        { en: "Place; area", ja: "場所", vi: "Nơi; địa điểm" },
+      ],
+      correctIndex: 2,
+    },
+    {
+      kanji: "町",
+      meanings: [
+        { en: "Town", ja: "町", vi: "Thị trấn" },
+        { en: "Country", ja: "国", vi: "Đất nước" },
+        { en: "Road", ja: "道", vi: "Con đường" },
+      ],
+      correctIndex: 0,
+    },
+    {
+      kanji: "新",
+      meanings: [
+        { en: "Old", ja: "古い", vi: "Cũ" },
+        { en: "New", ja: "新しい", vi: "Mới" },
+        { en: "Long", ja: "長い", vi: "Dài" },
+      ],
+      correctIndex: 1,
+    },
+    {
+      kanji: "古",
+      meanings: [
+        { en: "Early", ja: "早い", vi: "Sớm" },
+        { en: "Wide", ja: "広い", vi: "Rộng" },
+        { en: "Old", ja: "古い", vi: "Cũ" },
+      ],
+      correctIndex: 2,
+    },
+    {
+      kanji: "近",
+      meanings: [
+        { en: "Near", ja: "近い", vi: "Gần" },
+        { en: "Far", ja: "遠い", vi: "Xa" },
+        { en: "Fast", ja: "速い", vi: "Nhanh" },
+      ],
+      correctIndex: 0,
+    },
+    {
+      kanji: "週",
+      meanings: [
+        { en: "Year", ja: "年", vi: "Năm" },
+        { en: "Week", ja: "週", vi: "Tuần" },
+        { en: "Hour", ja: "時間", vi: "Giờ" },
+      ],
+      correctIndex: 1,
+    },
+    {
+      kanji: "強",
+      meanings: [
+        { en: "Weak", ja: "弱い", vi: "Yếu" },
+        { en: "Quiet", ja: "静か", vi: "Yên tĩnh" },
+        { en: "Strong", ja: "強い", vi: "Mạnh" },
+      ],
+      correctIndex: 2,
+    },
+    {
+      kanji: "思",
+      meanings: [
+        { en: "Think; feel", ja: "思う", vi: "Nghĩ; cảm thấy" },
+        { en: "Forget", ja: "忘れる", vi: "Quên" },
+        { en: "Remember", ja: "覚える", vi: "Ghi nhớ" },
+      ],
+      correctIndex: 0,
+    },
+  ],
+  N3: [
+    {
+      kanji: "進",
+      meanings: [
+        { en: "Return", ja: "戻る", vi: "Trở về" },
+        { en: "Advance; proceed", ja: "進む", vi: "Tiến lên; tiến hành" },
+        { en: "Stop", ja: "止まる", vi: "Dừng lại" },
+      ],
+      correctIndex: 1,
+    },
+    {
+      kanji: "経",
+      meanings: [
+        { en: "Experience; pass through", ja: "経験・経る", vi: "Kinh nghiệm; trải qua" },
+        { en: "Remember", ja: "覚える", vi: "Ghi nhớ" },
+        { en: "Decide", ja: "決める", vi: "Quyết định" },
+      ],
+      correctIndex: 0,
+    },
+    {
+      kanji: "議",
+      meanings: [
+        { en: "Question", ja: "質問", vi: "Câu hỏi" },
+        { en: "Answer", ja: "答え", vi: "Câu trả lời" },
+        { en: "Discussion; deliberation", ja: "議論・会議", vi: "Thảo luận; nghị luận" },
+      ],
+      correctIndex: 2,
+    },
+    {
+      kanji: "連",
+      meanings: [
+        { en: "Connect; take along", ja: "連れる・連絡", vi: "Kết nối; đưa theo" },
+        { en: "Separate", ja: "分ける", vi: "Chia tách" },
+        { en: "Choose", ja: "選ぶ", vi: "Lựa chọn" },
+      ],
+      correctIndex: 0,
+    },
+    {
+      kanji: "談",
+      meanings: [
+        { en: "Promise", ja: "約束", vi: "Lời hứa" },
+        { en: "Talk; conversation", ja: "話・相談", vi: "Nói chuyện; trò chuyện" },
+        { en: "Notice", ja: "知らせ", vi: "Thông báo" },
+      ],
+      correctIndex: 1,
+    },
+    {
+      kanji: "変",
+      meanings: [
+        { en: "Same", ja: "同じ", vi: "Giống nhau" },
+        { en: "Normal", ja: "普通", vi: "Bình thường" },
+        { en: "Change; strange", ja: "変わる・変な", vi: "Thay đổi; kỳ lạ" },
+      ],
+      correctIndex: 2,
+    },
+    {
+      kanji: "必",
+      meanings: [
+        { en: "Certainly; necessary", ja: "必ず・必要", vi: "Chắc chắn; cần thiết" },
+        { en: "Maybe", ja: "たぶん", vi: "Có lẽ" },
+        { en: "Convenient", ja: "便利", vi: "Tiện lợi" },
+      ],
+      correctIndex: 0,
+    },
+    {
+      kanji: "感",
+      meanings: [
+        { en: "Taste", ja: "味", vi: "Vị giác" },
+        { en: "Feeling; sense", ja: "感じる・感覚", vi: "Cảm giác; cảm nhận" },
+        { en: "Voice", ja: "声", vi: "Giọng nói" },
+      ],
+      correctIndex: 1,
+    },
+    {
+      kanji: "選",
+      meanings: [
+        { en: "Explain", ja: "説明する", vi: "Giải thích" },
+        { en: "Compare", ja: "比べる", vi: "So sánh" },
+        { en: "Choose; select", ja: "選ぶ", vi: "Chọn; lựa chọn" },
+      ],
+      correctIndex: 2,
+    },
+    {
+      kanji: "確",
+      meanings: [
+        { en: "Certain; confirm", ja: "確か・確認", vi: "Chắc chắn; xác nhận" },
+        { en: "Dangerous", ja: "危険", vi: "Nguy hiểm" },
+        { en: "Difficult", ja: "難しい", vi: "Khó" },
+      ],
+      correctIndex: 0,
+    },
+  ],
+};
+
+const makePlacementQuestion = (
+  level: JLPTLevel,
+  item: QuizItem,
+  index: number,
+): PlacementQuestion => ({
+  id: `${level.toLowerCase()}-${index + 1}`,
+  kanji: item.kanji,
+  jlptLevel: level,
+  prompt: recognitionPrompt,
+  options: item.meanings.map((label, optionIndex) => ({
+    value: String(optionIndex),
+    label,
+  })),
+  correct: String(item.correctIndex),
+  chapterIndex: JLPT_LEVELS.indexOf(level),
+});
+
+export const PLACEMENT_QUIZ: PlacementQuestion[] = JLPT_LEVELS.flatMap((level) =>
+  jlptQuizItems[level].map((item, index) => makePlacementQuestion(level, item, index)),
+);
+
+/**
+ * KanjiLookup — the subset of kanji info the word-type popup needs.
+ * Every chapter kanji satisfies this shape; extra kanji below provide it too.
+ */
+export type KanjiLookup = Pick<KanjiData, "char" | "pos" | "meaning" | "on" | "kun">;
+
+/**
+ * EXTRA_KANJI — word-type (part of speech) classification for common kanji
+ * that appear in the Conversation Catalog and story dialogues but are not
+ * (yet) chapter kanji. Lets the lookup popup classify them too.
+ */
+export const EXTRA_KANJI: Record<string, KanjiLookup> = {
+  日: { char: "日", pos: ["noun"], meaning: { en: "Sun; day", ja: "日", vi: "Mặt trời; ngày" }, on: "ニチ・ジツ (nichi-jitsu)", kun: "ひ (hi)" },
+  今: { char: "今", pos: ["noun"], meaning: { en: "Now", ja: "今", vi: "Bây giờ" }, on: "コン (kon)", kun: "いま (ima)" },
+  上: { char: "上", pos: ["noun"], meaning: { en: "Up; above", ja: "上", vi: "Trên" }, on: "ジョウ (jō)", kun: "うえ (ue)" },
+  大: { char: "大", pos: ["na-adjective"], meaning: { en: "Big", ja: "大きい", vi: "To lớn" }, on: "ダイ・タイ (dai-tai)", kun: "おお・きい (ō-kii)" },
+  何: { char: "何", pos: ["noun"], meaning: { en: "What", ja: "何", vi: "Cái gì" }, on: "カ (ka)", kun: "なに (nani)" },
+  三: { char: "三", pos: ["noun"], meaning: { en: "Three", ja: "三", vi: "Ba" }, on: "サン (san)", kun: "み (mi)" },
+  毎: { char: "毎", pos: ["noun"], meaning: { en: "Every", ja: "毎", vi: "Mỗi" }, on: "マイ (mai)", kun: "ごと (goto)" },
+  寺: { char: "寺", pos: ["noun"], meaning: { en: "Temple", ja: "寺", vi: "Chùa" }, on: "ジ (ji)", kun: "てら (tera)" },
+  間: { char: "間", pos: ["noun"], meaning: { en: "Interval; between", ja: "間", vi: "Khoảng; giữa" }, on: "カン (kan)", kun: "あいだ (aida)" },
+  過: { char: "過", pos: ["verb"], meaning: { en: "To pass; to exceed", ja: "過ぎる", vi: "Vượt qua" }, on: "カ (ka)", kun: "す・ぎる (su-giru)" },
+  昼: { char: "昼", pos: ["noun"], meaning: { en: "Daytime; noon", ja: "昼", vi: "Ban ngày" }, on: "チュウ (chū)", kun: "ひる (hiru)" },
+  寝: { char: "寝", pos: ["verb"], meaning: { en: "To sleep", ja: "寝る", vi: "Ngủ" }, on: "シン (shin)", kun: "ね・る (ne-ru)" },
+  人: { char: "人", pos: ["noun"], meaning: { en: "Person", ja: "人", vi: "Người" }, on: "ジン・ニン (jin-nin)", kun: "ひと (hito)" },
+  誰: { char: "誰", pos: ["noun"], meaning: { en: "Who", ja: "誰", vi: "Ai" }, on: "スイ (sui)", kun: "だれ (dare)" },
+  彼: { char: "彼", pos: ["noun"], meaning: { en: "He", ja: "彼", vi: "Anh ấy" }, on: "ヒ (hi)", kun: "かれ (kare)" },
+  父: { char: "父", pos: ["noun"], meaning: { en: "Father", ja: "父", vi: "Cha" }, on: "フ (fu)", kun: "ちち (chichi)" },
+  田: { char: "田", pos: ["noun"], meaning: { en: "Rice field", ja: "田", vi: "Ruộng lúa" }, on: "デン (den)", kun: "た (ta)" },
+  働: { char: "働", pos: ["verb"], meaning: { en: "To work", ja: "働く", vi: "Làm việc" }, on: "ドウ (dō)", kun: "はたら・く (hatara-ku)" },
+  力: { char: "力", pos: ["noun"], meaning: { en: "Power; strength", ja: "力", vi: "Sức mạnh" }, on: "リョク・リキ (ryoku-riki)", kun: "ちから (chikara)" },
+  強: { char: "強", pos: ["i-adjective"], meaning: { en: "Strong", ja: "強い", vi: "Mạnh" }, on: "キョウ (kyō)", kun: "つよ・い (tsuyo-i)" },
+  優: { char: "優", pos: ["i-adjective"], meaning: { en: "Gentle; superior", ja: "優しい", vi: "Dịu dàng" }, on: "ユウ (yū)", kun: "やさ・しい (yasa-shii)" },
+  降: { char: "降", pos: ["verb"], meaning: { en: "To fall (rain, snow)", ja: "降る", vi: "Rơi (mưa, tuyết)" }, on: "コウ (kō)", kun: "ふ・る (fu-ru)" },
+  寒: { char: "寒", pos: ["i-adjective"], meaning: { en: "Cold", ja: "寒い", vi: "Lạnh" }, on: "カン (kan)", kun: "さむ・い (samu-i)" },
+  作: { char: "作", pos: ["verb"], meaning: { en: "To make", ja: "作る", vi: "Làm" }, on: "サク (saku)", kun: "つく・る (tsuku-ru)" },
+  楽: { char: "楽", pos: ["i-adjective"], meaning: { en: "Pleasant; fun", ja: "楽しい", vi: "Vui vẻ" }, on: "ラク (raku)", kun: "たの・しい (tano-shii)" },
+  夜: { char: "夜", pos: ["noun"], meaning: { en: "Night", ja: "夜", vi: "Ban đêm" }, on: "ヤ (ya)", kun: "よる (yoru)" },
+  気: { char: "気", pos: ["noun"], meaning: { en: "Spirit; mood", ja: "気", vi: "Tinh thần" }, on: "キ (ki)", kun: "き (ki)" },
+};
+
+/** Looks up a kanji's word-type info: chapter kanji first, then the extra dictionary. */
+export function lookupKanji(char: string): KanjiLookup | undefined {
+  const ch = CHAPTERS.find((c) => c.kanji.char === char);
+  if (ch) return ch.kanji;
+  return EXTRA_KANJI[char];
+}

@@ -16,51 +16,59 @@ import { pick, useLang, useT } from "../i18n";
 import { sfx, useGame } from "../store";
 import { ShapedRadicalTile } from "../components/PouchModal";
 
-type BuriedArtifact = {
-  id: string;
-  char: string;
-  cells: [number, number][]; // [row, col] in 5x5 grid
+type CellRadical = {
+  key: string;
+  row: number;
+  col: number;
+  /** null means this cell is empty dirt when excavated */
+  char: string | null;
   required: boolean;
 };
 
-/** Builds a deterministic 5x5 Stardew-style artifact layout for the current chapter. */
-function buildChapterArtifacts(chapter: Chapter): BuriedArtifact[] {
-  const [c1, c2] = chapter.digChars;
-  return [
-    {
-      id: `${chapter.id}_req1_${c1}`,
-      char: c1,
-      // Vertical 1x3 on the left side of the 5x5 grid
-      cells: [
-        [1, 1],
-        [2, 1],
-        [3, 1],
-      ],
-      required: true,
-    },
-    {
-      id: `${chapter.id}_req2_${c2}`,
-      char: c2,
-      // Square 2x2 on the right side of the 5x5 grid
-      cells: [
-        [2, 3],
-        [2, 4],
-        [3, 3],
-        [3, 4],
-      ],
-      required: true,
-    },
-    {
-      id: `${chapter.id}_bonus_h`,
-      char: "一",
-      // Horizontal 1x2 at top right
-      cells: [
-        [0, 3],
-        [0, 4],
-      ],
-      required: false,
-    },
+/**
+ * Generates a 5x5 (25 cells) grid where:
+ * - 15 cells hold UNIQUE radical characters (no duplicates, always including
+ *   `chapter.digChars[0]` and `chapter.digChars[1]`)
+ * - 10 cells are randomly EMPTY (`char: null`)
+ */
+function buildUniqueMineGrid(chapter: Chapter): CellRadical[] {
+  const [req1, req2] = chapter.digChars;
+  const allRadicals = Object.keys(RADICALS);
+  const others = allRadicals.filter((c) => c !== req1 && c !== req2);
+
+  // 2 required radicals + 13 unique non-required radicals + 10 empty cells = 25 cells
+  const pool: (string | null)[] = [
+    req1,
+    req2,
+    ...others.slice(0, 13),
+    ...Array.from({ length: 10 }, () => null),
   ];
+
+  // Deterministic shuffle per chapter using Fisher-Yates
+  const shuffled = [...pool];
+  let seed =
+    chapter.num * 9973 +
+    req1.codePointAt(0)! * 31 +
+    req2.codePointAt(0)! * 17;
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    seed = (seed * 1664525 + 1013904223) >>> 0;
+    const j = seed % (i + 1);
+    const tmp = shuffled[i] ?? null;
+    shuffled[i] = shuffled[j] ?? null;
+    shuffled[j] = tmp;
+  }
+
+  return shuffled.map((char, idx) => {
+    const row = Math.floor(idx / 5);
+    const col = idx % 5;
+    return {
+      key: `${row},${col}`,
+      row,
+      col,
+      char,
+      required: char === req1 || char === req2,
+    };
+  });
 }
 
 export function MineMap({
@@ -91,15 +99,12 @@ export function MineMap({
   const lang = useLang();
 
   const [gridOpen, setGridOpen] = useState(true);
-  const [selectedCell, setSelectedCell] = useState<[number, number]>([2, 3]);
+  const [selectedCell, setSelectedCell] = useState<[number, number]>([2, 2]);
   const [foundPopup, setFoundPopup] = useState<{ char: string; meaning: string } | null>(null);
 
-  const artifacts = useMemo(() => buildChapterArtifacts(chapter), [chapter]);
+  const gridCells = useMemo(() => buildUniqueMineGrid(chapter), [chapter]);
   const dugList = state.excavatedCells[chapter.id] ?? [];
   const dugSet = useMemo(() => new Set(dugList), [dugList]);
-
-  const isArtifactComplete = (art: BuriedArtifact, set: Set<string>) =>
-    art.cells.every(([r, c]) => set.has(`${r},${c}`));
 
   const digCell = (r: number, c: number) => {
     const key = `${r},${c}`;
@@ -109,32 +114,34 @@ export function MineMap({
       return;
     }
 
+    const cell = gridCells.find((item) => item.row === r && item.col === c);
+    if (!cell) return;
+
     sfx("dig");
     const nextDug = [...dugList, key];
     const nextSet = new Set(nextDug);
 
-    // Check if any buried artifact just became fully uncovered
-    const newlyRevealed = artifacts.filter(
-      (art) => !isArtifactComplete(art, dugSet) && isArtifactComplete(art, nextSet),
-    );
+    const req1Cell = gridCells.find((item) => item.char === chapter.digChars[0]);
+    const req2Cell = gridCells.find((item) => item.char === chapter.digChars[1]);
+    const req1Done = req1Cell ? nextSet.has(req1Cell.key) : false;
+    const req2Done = req2Cell ? nextSet.has(req2Cell.key) : false;
+    const allReqDone = req1Done && req2Done;
+
+    const cellChar = cell.char;
 
     update((g) => {
-      let nextPieces = [...g.pieces];
-      for (const rev of newlyRevealed) {
-        const pieceId = `${rev.id}`;
-        if (!nextPieces.some((p) => p.id === pieceId)) {
-          nextPieces.push({
-            id: pieceId,
-            char: rev.char,
-            size: RADICALS[rev.char]?.size ?? "2x2",
-            discoveredAt: "Radical Mine",
-          });
-        }
-      }
-
-      const req1Done = isArtifactComplete(artifacts[0]!, nextSet);
-      const req2Done = isArtifactComplete(artifacts[1]!, nextSet);
-      const allReqDone = req1Done && req2Done;
+      const nextPieces =
+        cellChar === null || g.pieces.some((p) => p.char === cellChar)
+          ? g.pieces
+          : [
+              ...g.pieces,
+              {
+                id: `${chapter.id}_cell_${cellChar}`,
+                char: cellChar,
+                size: RADICALS[cellChar]?.size ?? "2x2",
+                discoveredAt: "Radical Mine",
+              },
+            ];
 
       return {
         ...g,
@@ -151,21 +158,20 @@ export function MineMap({
       };
     });
 
-    if (newlyRevealed.length > 0) {
-      const rev = newlyRevealed[0]!;
-      sfx("good");
-      const meaning = RADICALS[rev.char] ? pick(RADICALS[rev.char]!.meaning, lang) : "";
-      setFoundPopup({ char: rev.char, meaning });
-      onShowToast(t("foundPiece", { char: rev.char }));
-      setTimeout(() => setFoundPopup(null), 2800);
-
-      const req1Done = isArtifactComplete(artifacts[0]!, nextSet);
-      const req2Done = isArtifactComplete(artifacts[1]!, nextSet);
-      if (req1Done && req2Done) {
-        setTimeout(() => {
-          onAllRequiredDug();
-        }, 900);
+    if (cellChar !== null) {
+      if (cell.required) {
+        sfx("good");
       }
+      const meaning = RADICALS[cellChar] ? pick(RADICALS[cellChar]!.meaning, lang) : "";
+      setFoundPopup({ char: cellChar, meaning });
+      onShowToast(t("foundPiece", { char: cellChar }));
+      setTimeout(() => setFoundPopup(null), 2400);
+    }
+
+    if (allReqDone && (!dugSet.has(req1Cell?.key ?? "") || !dugSet.has(req2Cell?.key ?? ""))) {
+      setTimeout(() => {
+        onAllRequiredDug();
+      }, 950);
     }
   };
 
@@ -175,18 +181,17 @@ export function MineMap({
       digCell(r, c);
       return;
     }
-    // Find next un-dug cell belonging to a required artifact
-    for (const art of artifacts) {
-      for (const [ar, ac] of art.cells) {
-        if (!dugSet.has(`${ar},${ac}`)) {
-          digCell(ar, ac);
-          return;
-        }
-      }
+    // Pick a random un-dug cell on the board
+    const undug = gridCells.filter((cell) => !dugSet.has(cell.key));
+    if (undug.length > 0) {
+      const pickRandom = undug[Math.floor(Math.random() * undug.length)]!;
+      digCell(pickRandom.row, pickRandom.col);
     }
   };
 
-  const possibleShowcase = Array.from(new Set([chapter.digChars[0], "一", "冂", chapter.digChars[1]]));
+  const possibleShowcase = Array.from(
+    new Set([chapter.digChars[0], "一", "冂", chapter.digChars[1]]),
+  );
 
   return (
     <div className="relative h-full w-full overflow-hidden">
@@ -224,7 +229,11 @@ export function MineMap({
           type="button"
           onClick={() => changeMap("village")}
           className="pointer-events-auto absolute flex items-center gap-2 rounded-xl border-3 border-[#6e4b2a] bg-[#f5ead4] px-4 py-2 font-display text-lg font-bold text-[#3b2818] shadow-md transition hover:scale-105"
-          style={{ left: MINE_STATIONS.villageExit.x - 95, top: MINE_STATIONS.villageExit.y - 90, zIndex: 900 }}
+          style={{
+            left: MINE_STATIONS.villageExit.x - 95,
+            top: MINE_STATIONS.villageExit.y - 90,
+            zIndex: 900,
+          }}
         >
           <span>🏡</span> {t("mochiVillage")} →
         </button>
@@ -315,7 +324,7 @@ export function MineMap({
         </div>
       )}
 
-      {/* "You found a piece!" popup card matching bottom-right of game-ui-design.png */}
+      {/* "You found a piece!" popup card */}
       {foundPopup && (
         <div className="pointer-events-none absolute bottom-24 right-8 z-50 flex animate-pop items-center gap-3 rounded-2xl border-3 border-[#6e4b2a] bg-[#f7eed9] px-4 py-3 shadow-xl">
           <ShapedRadicalTile char={foundPopup.char} compact />
@@ -330,7 +339,7 @@ export function MineMap({
         </div>
       )}
 
-      {/* Stardew Valley-style Radical Mine Excavation Panel (matches top-right of game-ui-design.png) */}
+      {/* Radical Mine 5x5 Unique-Radical Excavation Panel */}
       {gridOpen && (
         <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/45 p-3 backdrop-blur-[2px]">
           <div className="relative w-full max-w-4xl rounded-3xl border-4 border-[#6e4b2a] bg-[#f6ebd4] p-4 shadow-2xl sm:p-6">
@@ -362,9 +371,8 @@ export function MineMap({
             </div>
 
             <div className="grid gap-6 md:grid-cols-[1.08fr_1fr]">
-              {/* Left: 5x5 Tiled Excavation Soil Board */}
+              {/* Left: 5x5 Tiled Excavation Soil Board (No hint dots, 25 unique radicals) */}
               <div className="relative overflow-hidden rounded-2xl border-4 border-[#5c3e26] bg-[#755336] p-3 shadow-inner">
-                {/* Ambient mine background */}
                 <img
                   src={mineMapImg}
                   alt=""
@@ -386,49 +394,34 @@ export function MineMap({
                 </div>
 
                 <div className="relative z-10 mt-9 grid grid-cols-5 gap-2">
-                  {Array.from({ length: 25 }, (_, idx) => {
-                    const r = Math.floor(idx / 5);
-                    const c = idx % 5;
-                    const key = `${r},${c}`;
-                    const isDug = dugSet.has(key);
-                    const isSelected = selectedCell[0] === r && selectedCell[1] === c;
-
-                    // Check if an artifact occupies this cell
-                    const art = artifacts.find((a) =>
-                      a.cells.some(([ar, ac]) => ar === r && ac === c),
-                    );
-                    const artComplete = art ? isArtifactComplete(art, dugSet) : false;
+                  {gridCells.map((cell) => {
+                    const isDug = dugSet.has(cell.key);
+                    const isSelected =
+                      selectedCell[0] === cell.row && selectedCell[1] === cell.col;
 
                     return (
                       <button
-                        key={key}
+                        key={cell.key}
                         type="button"
-                        onClick={() => digCell(r, c)}
-                        aria-label={`Excavate tile ${r + 1},${c + 1}`}
+                        onClick={() => digCell(cell.row, cell.col)}
+                        aria-label={`Excavate tile ${cell.row + 1},${cell.col + 1}`}
                         className={`relative flex aspect-square items-center justify-center rounded-xl border-2 transition ${
                           isDug
-                            ? art
-                              ? "border-[#5c3e26] bg-gradient-to-b from-[#f3dfb9] to-[#dfbe88] shadow-md"
-                              : "border-[#523720] bg-[#5e4128]/90"
+                            ? cell.char
+                              ? cell.required
+                                ? "border-[#4b8b55] bg-gradient-to-b from-[#f3dfb9] to-[#dfbe88] ring-2 ring-[#4b8b55] shadow-md"
+                                : "border-[#5c3e26] bg-gradient-to-b from-[#f3dfb9] to-[#dfbe88] shadow-sm"
+                              : "border-[#4a311c] bg-[#4e341e]/85 shadow-inner"
                             : "border-[#5c3e26] bg-gradient-to-br from-[#8c6440] to-[#6e4c2e] hover:brightness-110"
                         } ${
                           isSelected
                             ? "outline-2 outline-dashed outline-white ring-2 ring-[#f7eed9]"
-                            : art && !isDug
-                              ? "border-dashed border-[#d9bc8c]/80"
-                              : ""
+                            : ""
                         }`}
                       >
-                        {!isDug && art && (
-                          <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-[#f5deb3]/75" />
-                        )}
-                        {isDug && art && (
-                          <span
-                            className={`font-kanji text-2xl font-bold text-[#3b2512] sm:text-3xl ${
-                              artComplete ? "animate-pop" : "opacity-80"
-                            }`}
-                          >
-                            {art.char}
+                        {isDug && cell.char && (
+                          <span className="animate-pop font-kanji text-2xl font-bold text-[#3b2512] sm:text-3xl">
+                            {cell.char}
                           </span>
                         )}
                       </button>
@@ -456,11 +449,7 @@ export function MineMap({
                         const owned = state.pieces.some((p) => p.char === ch);
                         return (
                           <div key={ch} className="flex flex-col items-center gap-1">
-                            <ShapedRadicalTile
-                              char={ch}
-                              compact
-                              selected={owned}
-                            />
+                            <ShapedRadicalTile char={ch} compact selected={owned} />
                             <span className="text-[10px] font-bold text-[#5c3e26]">
                               {RADICALS[ch]?.size ?? "2×2"} {owned ? "✓" : ""}
                             </span>
@@ -478,11 +467,7 @@ export function MineMap({
                     onClick={handleDigButton}
                     className="group relative flex w-full max-w-xs items-center justify-center gap-2 rounded-2xl border-3 border-[#2e5936] bg-gradient-to-b from-[#559a60] to-[#3e7b48] py-3 font-display text-xl font-bold text-white shadow-[0_5px_0_0_#264a2c] transition active:translate-y-1"
                   >
-                    <img
-                      src={digBtnSvg}
-                      alt=""
-                      className="hidden h-7 w-7 object-contain"
-                    />
+                    <img src={digBtnSvg} alt="" className="hidden h-7 w-7 object-contain" />
                     <span>⛏ {t("digBtn")}</span>
                   </button>
 

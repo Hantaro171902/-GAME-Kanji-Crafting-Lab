@@ -3,12 +3,16 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { clearSave, initialState, useGame } from "@/game/store";
 import {
+  CHAPTERS,
   FRIENDS_DATA,
   INITIAL_CHAT_MESSAGES,
+  JLPT_LEVELS,
   PLACEMENT_QUIZ,
   RADICALS,
   RANKING_DATA,
+  STATIONS,
 } from "@/game/data";
+import { KanjiTreeModal } from "@/game/components/KanjiTreeModal";
 
 let root: Root;
 let latest: ReturnType<typeof useGame>;
@@ -77,9 +81,60 @@ describe("Kanji: The Lost World — Gameplay Update", () => {
     expect(RADICALS["木"]?.size).toBe("2x2");
     expect(RADICALS["一"]?.size).toBe("1x4");
     expect(RADICALS["冂"]?.size).toBe("2x3");
+    expect(Object.keys(RADICALS).length).toBeGreaterThanOrEqual(25);
     expect(FRIENDS_DATA.length).toBeGreaterThanOrEqual(4);
     expect(RANKING_DATA.length).toBeGreaterThanOrEqual(4);
     expect(INITIAL_CHAT_MESSAGES.length).toBeGreaterThanOrEqual(3);
-    expect(PLACEMENT_QUIZ.length).toBeGreaterThanOrEqual(4);
+    expect(PLACEMENT_QUIZ).toHaveLength(30);
+    for (const level of JLPT_LEVELS) {
+      const questions = PLACEMENT_QUIZ.filter((question) => question.jlptLevel === level);
+      expect(questions).toHaveLength(10);
+      expect(new Set(questions.map((question) => question.kanji)).size).toBe(10);
+      for (const question of questions) {
+        expect(question.options).toHaveLength(3);
+        expect(question.options.map((option) => option.value)).toContain(question.correct);
+      }
+    }
+  });
+
+  it("supports the Great Kanji Tree Checkpoint station, selectChapter, and KanjiTreeModal", () => {
+    expect(STATIONS.tree).toBeDefined();
+    expect(STATIONS.tree.label.en).toBe("Kanji Checkpoint");
+
+    act(() => {
+      latest.selectChapter(2);
+    });
+    expect(latest.state.chapter).toBe(2);
+    expect(latest.state.step).toBe("arrival");
+    expect(latest.state.currentMap).toBe("village");
+
+    const modalHost = document.createElement("div");
+    const modalRoot = createRoot(modalHost);
+    act(() => {
+      modalRoot.render(
+        createElement(KanjiTreeModal, {
+          currentChapterIndex: 1,
+          currentStep: "shrine",
+          playerLevel: 1,
+          energy: 3,
+          maxEnergy: 5,
+          discovered: ["休"],
+          journal: [],
+          onSelectChapter: () => {},
+          onRestoreEnergy: () => {},
+          onClose: () => {},
+        }),
+      );
+    });
+
+    // Verify all 6 level badges are rendered on the pathway
+    for (const ch of CHAPTERS) {
+      expect(modalHost.textContent).toContain(`Lv.${ch.num}`);
+    }
+    expect(modalHost.textContent).toContain("1 / 6");
+
+    act(() => {
+      modalRoot.unmount();
+    });
   });
 });

@@ -178,12 +178,15 @@ export function useGame() {
         /* ignore */
       }
       hydrated = true;
-      setState(sharedState);
     }
     setLoaded(true);
 
     const listener = () => setState(sharedState);
     storeListeners.add(listener);
+    // Hydration fix: broadcast the (possibly restored) save to every subscriber.
+    // A direct setState here does not reliably re-render this component, but the
+    // listener path used by every setGameState does — so notify instead.
+    notifyStore();
     return () => {
       storeListeners.delete(listener);
     };
@@ -244,6 +247,21 @@ export function useGame() {
     }));
   }, []);
 
+  /** Switches or replays an unlocked chapter from the Great Kanji Tree Checkpoint. */
+  const selectChapter = useCallback((chapterIndex: number) => {
+    sfx("chime");
+    setGameState((s) => ({
+      ...s,
+      chapter: Math.max(0, Math.min(chapterIndex, 5)),
+      step: "arrival",
+      currentMap: "village",
+      isTransitioning: false,
+      energy: s.maxEnergy,
+      rocks: { rock1: 3, rock2: 3 },
+      pieces: [],
+    }));
+  }, []);
+
   return {
     state,
     update,
@@ -252,6 +270,7 @@ export function useGame() {
     changeMap,
     deductEnergy,
     restoreEnergy,
+    selectChapter,
     loaded,
   };
 }
