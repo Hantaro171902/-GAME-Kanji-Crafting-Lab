@@ -12,8 +12,9 @@ import { BOUNDS, CHAPTERS, OBSTACLES, STATIONS, WORLD, atLeast, type StationId }
 import { sfx, useGame } from "./store";
 import { pick, useLang, useT } from "./i18n";
 import { BentoModal, Calligraphy, CatalogModal, Dialogue, JournalModal, KanjiInfo, ShrineModal } from "./Modals";
+import SettingsModal from "@/components/SettingsModal";
 
-type Overlay = null | { kind: "dialogue"; id: string } | { kind: "shrine" | "bento" | "info" | "desk" | "journal" | "catalog" };
+type Overlay = null | { kind: "dialogue"; id: string } | { kind: "shrine" | "bento" | "info" | "desk" | "journal" | "catalog" | "settings" };
 
 const SPEED = 280;
 
@@ -300,6 +301,7 @@ export default function Game() {
         <div className="pointer-events-auto flex gap-2">
           <button className="btn-game btn-ghost" onClick={() => setOverlay({ kind: "journal" })}>📖 {t("journal")}</button>
           <button className="btn-game btn-ghost" disabled={state.level < 1} onClick={() => setOverlay({ kind: "catalog" })}>💬 {t("catalog")}</button>
+          <button className="btn-game btn-ghost" onClick={() => setOverlay({ kind: "settings" })}>⚙ {t("settings")}</button>
           <button className="btn-game btn-ghost px-3" title={t("restartChapter")} onClick={() => { if (confirm(t("restartConfirm"))) { resetChapter(); posRef.current = { x: 960, y: 560 }; setPos(posRef.current); } }}>↺</button>
         </div>
       </div>
@@ -357,6 +359,7 @@ export default function Game() {
           onToggleFav={(id) => update((g) => ({ ...g, journal: g.journal.map((w) => (w.id === id ? { ...w, favorite: !w.favorite } : w)) }))} />
       )}
       {overlay?.kind === "catalog" && <CatalogModal level={state.level} onClose={() => setOverlay(null)} />}
+      {overlay?.kind === "settings" && <SettingsModal onClose={() => setOverlay(null)} />}
 
       {/* Portrait warning */}
       <div className="absolute inset-0 z-[60] hidden items-center justify-center bg-background p-8 text-center portrait:flex">
