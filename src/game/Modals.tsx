@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type MouseEvent as ReactMouseEvent } from "react";
 import { CATALOG, CHAPTERS, RADICALS, type Chapter, type Line } from "./data";
 import { sfx, isFuriganaEnabled, type MapName, type Piece, type Writing } from "./store";
 import { pick, useLang, useT } from "./i18n";
 import { Furigana } from "./Furigana";
+import { ClickableKanjiText } from "./components/ClickableKanjiText";
 import { Modal } from "./components/Modal";
 import { JournalStrip } from "./components/JournalStrip";
 import { ShapedRadicalTile } from "./components/PouchModal";
@@ -21,13 +22,26 @@ export { Modal };
 export { Calligraphy } from "./features/calligraphy/Calligraphy";
 export { StrokeDemo };
 
-export function Dialogue({ lines, onDone }: { lines: Line[]; onDone: () => void }) {
+export function Dialogue({
+  lines,
+  onDone,
+  onInspectKanji,
+  onAdvance,
+}: {
+  lines: Line[];
+  onDone: () => void;
+  onInspectKanji?: (char: string, e: ReactMouseEvent) => void;
+  onAdvance?: () => void;
+}) {
   const t = useT();
   const lang = useLang();
   const [i, setI] = useState(0);
   const line = lines[i];
   useEffect(() => {
     const k = (e: KeyboardEvent) => {
+      const el = e.target as HTMLElement | null;
+      if (el?.tagName === "INPUT" || el?.tagName === "TEXTAREA") return;
+      if (el?.closest?.('[role="button"], button, a')) return;
       if (e.key === " " || e.key === "Enter" || e.key === "e") next();
     };
     window.addEventListener("keydown", k);
@@ -35,13 +49,21 @@ export function Dialogue({ lines, onDone }: { lines: Line[]; onDone: () => void 
   });
   const next = () => {
     sfx("tap");
+    onAdvance?.();
     if (i + 1 < lines.length) setI(i + 1);
     else onDone();
   };
   if (!line) return null;
   const isMori = line.who === "mori";
   return (
-    <div className="absolute inset-x-0 bottom-0 z-40 flex justify-center p-4" onClick={next}>
+    <div
+      className="absolute inset-x-0 bottom-0 z-40 flex justify-center p-4"
+      onClick={(e) => {
+        if ((e.target as HTMLElement).closest?.('[role="button"], button, a, input, textarea'))
+          return;
+        next();
+      }}
+    >
       <div className="panel animate-pop relative flex w-full max-w-3xl cursor-pointer items-center gap-4 border-4 border-[#6e4b2a] bg-[#f6ebd4] p-4 shadow-2xl">
         <div className="relative -mt-10 flex h-28 w-28 shrink-0 items-center justify-center rounded-full border-4 border-[#6e4b2a] bg-[#ecd9b4] shadow-md">
           <img
@@ -55,8 +77,13 @@ export function Dialogue({ lines, onDone }: { lines: Line[]; onDone: () => void 
             {isMori ? t("moriTitle") : t("tanukiTitle")}
           </div>
           <p className="text-lg font-medium leading-snug text-[#3b2818]">
-            {lang === "ja" && isFuriganaEnabled() && line.kana ? (
-              <Furigana text={line.text.ja} kana={line.kana} className="furigana" />
+            {lang === "ja" ? (
+              <ClickableKanjiText
+                jp={line.text.ja}
+                kana={line.kana}
+                enableFurigana={isFuriganaEnabled()}
+                onInspect={onInspectKanji}
+              />
             ) : (
               pick(line.text, lang)
             )}
@@ -510,7 +537,15 @@ export function BentoModal({
 /**
  * KanjiInfo Modal — styled after middle-right of game-ui-design.png ("You discovered a new kanji!")
  */
-export function KanjiInfo({ chapter, onClose }: { chapter: Chapter; onClose: () => void }) {
+export function KanjiInfo({
+  chapter,
+  onClose,
+  onInspectKanji,
+}: {
+  chapter: Chapter;
+  onClose: () => void;
+  onInspectKanji?: (char: string, e: ReactMouseEvent) => void;
+}) {
   const t = useT();
   const lang = useLang();
   const k = chapter.kanji;
@@ -520,7 +555,13 @@ export function KanjiInfo({ chapter, onClose }: { chapter: Chapter; onClose: () 
     <Modal title={`✨ ${t("newKanji")}`} onClose={onClose} wide>
       <div className="grid gap-6 md:grid-cols-[auto_1fr]">
         <div className="flex flex-col items-center gap-3">
-          <div className="flex h-28 w-28 items-center justify-center rounded-2xl border-4 border-[#6e4b2a] bg-gradient-to-b from-[#f3dfb9] to-[#dfbe88] font-kanji text-7xl font-bold text-[#3b2512] shadow-md">
+          <div
+            onClick={onInspectKanji ? (e) => onInspectKanji(k.char, e) : undefined}
+            title={onInspectKanji ? `${k.char} — ${t("wordType")}` : undefined}
+            className={`flex h-28 w-28 items-center justify-center rounded-2xl border-4 border-[#6e4b2a] bg-gradient-to-b from-[#f3dfb9] to-[#dfbe88] font-kanji text-7xl font-bold text-[#3b2512] shadow-md ${
+              onInspectKanji ? "cursor-pointer transition-transform hover:scale-105" : ""
+            }`}
+          >
             {k.char}
           </div>
           {loading && <p role="status" className="text-xs">{t("loadingStrokeData")}</p>}
@@ -566,7 +607,11 @@ export function KanjiInfo({ chapter, onClose }: { chapter: Chapter; onClose: () 
             {k.vocab.map((v) => (
               <li
                 key={v.jp}
-                className="flex flex-col rounded-xl border border-[#c8b28e] bg-[#fbf5e6] px-3 py-1.5"
+                onClick={onInspectKanji ? (e) => onInspectKanji(k.char, e) : undefined}
+                title={onInspectKanji ? `${k.char} — ${t("wordType")}` : undefined}
+                className={`flex flex-col rounded-xl border border-[#c8b28e] bg-[#fbf5e6] px-3 py-1.5 ${
+                  onInspectKanji ? "cursor-pointer transition hover:border-[#4b8b55]" : ""
+                }`}
               >
                 <span className="font-kanji text-lg font-bold text-[#3b2818]">
                   {lang === "ja" && isFuriganaEnabled() ? (
@@ -604,6 +649,7 @@ export function JournalModal({
   pieces,
   onToggleFav,
   onPracticeKanji,
+  onInspectKanji,
   onClose,
 }: {
   journal: Writing[];
@@ -611,6 +657,7 @@ export function JournalModal({
   pieces: Piece[];
   onToggleFav: (id: string) => void;
   onPracticeKanji?: () => void;
+  onInspectKanji?: (char: string, e: ReactMouseEvent) => void;
   onClose: () => void;
 }) {
   const t = useT();
@@ -742,18 +789,26 @@ export function JournalModal({
 
           {tab === "vocab" && (
             <div className="grid gap-2 sm:grid-cols-2">
-              {CHAPTERS.flatMap((ch) => ch.kanji.vocab).map((v) => (
-                <div
-                  key={v.jp}
-                  className="flex items-center justify-between rounded-xl border border-[#d4be98] bg-[#f6ebd4] px-3 py-2"
-                >
-                  <div>
-                    <div className="font-kanji text-lg font-bold text-[#3b2818]">{v.jp}</div>
-                    <div className="text-xs text-[#6e4f35]">{v.kana}</div>
+              {CHAPTERS.flatMap((ch) =>
+                ch.kanji.vocab.map((v) => (
+                  <div
+                    key={v.jp}
+                    onClick={
+                      onInspectKanji ? (e) => onInspectKanji(ch.kanji.char, e) : undefined
+                    }
+                    title={onInspectKanji ? `${ch.kanji.char} — ${t("wordType")}` : undefined}
+                    className={`flex items-center justify-between rounded-xl border border-[#d4be98] bg-[#f6ebd4] px-3 py-2 ${
+                      onInspectKanji ? "cursor-pointer transition hover:border-[#4b8b55]" : ""
+                    }`}
+                  >
+                    <div>
+                      <div className="font-kanji text-lg font-bold text-[#3b2818]">{v.jp}</div>
+                      <div className="text-xs text-[#6e4f35]">{v.kana}</div>
+                    </div>
+                    <div className="text-sm font-bold text-[#4b8b55]">{pick(v.en, lang)}</div>
                   </div>
-                  <div className="text-sm font-bold text-[#4b8b55]">{pick(v.en, lang)}</div>
-                </div>
-              ))}
+                )),
+              )}
             </div>
           )}
 
@@ -886,7 +941,15 @@ export function WorldMapModal({
   );
 }
 
-export function CatalogModal({ level, onClose }: { level: number; onClose: () => void }) {
+export function CatalogModal({
+  level,
+  onClose,
+  onInspectKanji,
+}: {
+  level: number;
+  onClose: () => void;
+  onInspectKanji?: (char: string, e: ReactMouseEvent) => void;
+}) {
   const t = useT();
   const lang = useLang();
   const speak = (text: string) => {
@@ -927,11 +990,12 @@ export function CatalogModal({ level, onClose }: { level: number; onClose: () =>
                   >
                     <span className="text-xs font-bold text-accent">{l.who}</span>
                     <div className="font-kanji text-xl">
-                      {lang === "ja" && isFuriganaEnabled() && l.kana ? (
-                        <Furigana text={l.jp} kana={l.kana} className="furigana" />
-                      ) : (
-                        l.jp
-                      )}{" "}
+                      <ClickableKanjiText
+                        jp={l.jp}
+                        kana={l.kana}
+                        enableFurigana={lang === "ja" && isFuriganaEnabled()}
+                        onInspect={onInspectKanji}
+                      />{" "}
                       <span className="text-sm">🔊</span>
                     </div>
                     <div className="text-xs text-muted-foreground">

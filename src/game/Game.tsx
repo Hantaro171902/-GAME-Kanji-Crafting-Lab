@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
 import tanukiImg from "@/assets/tanuki.png";
 import mapIconSvg from "@/assets/new-design/map-icon.svg";
 import journalIconSvg from "@/assets/new-design/image 6.svg";
@@ -16,6 +16,7 @@ import {
   STATIONS,
   WORLD,
   atLeast,
+  lookupKanji,
   type MineStationId,
   type StationId,
 } from "./data";
@@ -33,6 +34,7 @@ import {
 } from "./Modals";
 import { PouchModal } from "./components/PouchModal";
 import { AssessmentModal } from "./components/AssessmentModal";
+import { KanjiPopup } from "./components/KanjiPopup";
 import { VillageMap } from "./maps/VillageMap";
 import { MineMap } from "./maps/MineMap";
 
@@ -66,11 +68,14 @@ export default function Game() {
   const [hurtFlash, setHurtFlash] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [popups, setPopups] = useState<{ id: number; x: number; y: number; text: string }[]>([]);
+  const [inspect, setInspect] = useState<{ char: string; x: number; y: number } | null>(null);
   const [vp, setVp] = useState({ w: 1280, h: 720 });
   const keys = useRef(new Set<string>());
   const posRef = useRef(pos);
   const overlayRef = useRef(overlay);
   overlayRef.current = overlay;
+  const inspectRef = useRef(inspect);
+  inspectRef.current = inspect;
 
   const chapter =
     CHAPTERS[Math.min(Math.max(state.chapter, 0), CHAPTERS.length - 1)] ?? CHAPTERS[0]!;
@@ -95,6 +100,40 @@ export default function Game() {
     setHurtFlash(true);
     showToast(t("wrongRadicalPenalty"));
     setTimeout(() => setHurtFlash(false), 650);
+  };
+
+  /** Opens/closes the kanji lookup popup (J key), anchored above the player. */
+  const toggleInspectRef = useRef(() => {});
+  toggleInspectRef.current = () => {
+    if (socialOpen) return;
+    const char = chapterRef.current.kanji.char;
+    // Already showing the current kanji → close; showing another → replace it.
+    if (inspectRef.current?.char === char) {
+      setInspect(null);
+      return;
+    }
+    const vpw = window.innerWidth;
+    const vph = window.innerHeight;
+    let x: number;
+    let y: number;
+    if (overlayRef.current?.kind === "dialogue") {
+      // While chatting, anchor the popup above the dialogue panel so it is visible.
+      x = vpw / 2;
+      y = vph - 260;
+    } else {
+      const scale = Math.max(vph / 820, vpw / WORLD.w);
+      const camX = Math.max(vpw - WORLD.w * scale, Math.min(0, vpw / 2 - posRef.current.x * scale));
+      const camY = Math.max(vph - WORLD.h * scale, Math.min(0, vph / 2 - posRef.current.y * scale));
+      x = camX + posRef.current.x * scale;
+      y = camY + posRef.current.y * scale - 36;
+    }
+    setInspect({ char, x, y });
+  };
+
+  /** Opens the popup anchored to a clicked kanji element (vocab lists). */
+  const openInspectFromEvent = (char: string, e: ReactMouseEvent) => {
+    const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    setInspect({ char, x: r.left + r.width / 2, y: r.top });
   };
 
   // Nearby station on VillageMap
@@ -178,6 +217,13 @@ export default function Game() {
       }
       if ((k === "e" || k === " " || k === "enter") && !overlayRef.current) {
         interactRef.current();
+      }
+      // Kanji lookup popup: J toggles, Escape closes (works in dialogues/catalog too).
+      if (k === "j" && !e.repeat) {
+        toggleInspectRef.current();
+      }
+      if (k === "escape") {
+        setInspect(null);
       }
       keys.current.add(k);
     };
@@ -524,6 +570,8 @@ export default function Game() {
           key={`${chapter.id}:${overlay.id}`}
           lines={chapter.dialogues[overlay.id] ?? []}
           onDone={() => closeDialogue(overlay.id)}
+          onInspectKanji={openInspectFromEvent}
+          onAdvance={() => setInspect(null)}
         />
       )}
       {overlay?.kind === "shrine" && (
@@ -561,6 +609,7 @@ export default function Game() {
       {overlay?.kind === "info" && (
         <KanjiInfo
           chapter={chapter}
+          onInspectKanji={openInspectFromEvent}
           onClose={() =>
             setOverlay(
               state.step === "write" && state.journal.length === 0
@@ -608,6 +657,7 @@ export default function Game() {
           pieces={state.pieces}
           onClose={() => setOverlay(null)}
           onPracticeKanji={() => setOverlay({ kind: "desk" })}
+          onInspectKanji={openInspectFromEvent}
           onToggleFav={(id) =>
             update((g) => ({
               ...g,
@@ -636,7 +686,11 @@ export default function Game() {
         <SettingsModal onClose={() => setOverlay(null)} />
       )}
       {overlay?.kind === "catalog" && (
-        <CatalogModal level={state.level} onClose={() => setOverlay(null)} />
+        <CatalogModal
+          level={state.level}
+          onClose={() => setOverlay(null)}
+          onInspectKanji={openInspectFromEvent}
+        />
       )}
 
       {/* Phase 4: Social Drawer (Friends, Ranking & Chat) */}
@@ -646,6 +700,16 @@ export default function Game() {
         playerLevel={state.level}
         discoveredCount={state.discovered.length}
       />
+
+      {/* Kanji Word-Type Lookup Popup (click a kanji or press J) */}
+      {inspect && (
+        <KanjiPopup
+          kanji={lookupKanji(inspect.char)}
+          x={inspect.x}
+          y={inspect.y}
+          onClose={() => setInspect(null)}
+        />
+      )}
 
       {/* Phase 1: Full-Screen Dark Splash Transition Overlay */}
       <div

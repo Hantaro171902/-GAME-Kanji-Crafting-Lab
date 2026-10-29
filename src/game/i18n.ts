@@ -153,6 +153,7 @@ const UI: Record<Lang, Record<string, string>> = {
     practiceBtn: "Practice",
     addToJournal: "Add to Journal",
     youFoundPiece: "You found a piece!",
+    wordType: "Word type",
   },
   ja: {
     settings: "設定",
@@ -292,6 +293,7 @@ const UI: Record<Lang, Record<string, string>> = {
     practiceBtn: "練習する",
     addToJournal: "手帳に追加",
     youFoundPiece: "破片を見つけた！",
+    wordType: "品詞",
   },
   vi: {
     settings: "Cài đặt",
@@ -431,6 +433,7 @@ const UI: Record<Lang, Record<string, string>> = {
     practiceBtn: "Luyện viết",
     addToJournal: "Thêm vào Nhật ký",
     youFoundPiece: "Bạn đã tìm thấy một mảnh!",
+    wordType: "Từ loại",
   },
 };
 

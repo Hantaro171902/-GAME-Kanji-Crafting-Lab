@@ -178,12 +178,15 @@ export function useGame() {
         /* ignore */
       }
       hydrated = true;
-      setState(sharedState);
     }
     setLoaded(true);
 
     const listener = () => setState(sharedState);
     storeListeners.add(listener);
+    // Hydration fix: broadcast the (possibly restored) save to every subscriber.
+    // A direct setState here does not reliably re-render this component, but the
+    // listener path used by every setGameState does — so notify instead.
+    notifyStore();
     return () => {
       storeListeners.delete(listener);
     };

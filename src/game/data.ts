@@ -5,8 +5,22 @@ export type Step = "arrival" | "mine" | "shrine" | "bento" | "write" | "restore"
 export const STEP_ORDER: Step[] = ["arrival", "mine", "shrine", "bento", "write", "restore", "done"];
 export const atLeast = (s: Step, t: Step) => STEP_ORDER.indexOf(s) >= STEP_ORDER.indexOf(t);
 
+/** Parts of speech used to classify a kanji's primary usage. */
+export type PartOfSpeech = "noun" | "verb" | "i-adjective" | "na-adjective" | "adverb";
+
+/** Localized labels for each part of speech (shown in the lookup popup). */
+export const POS_LABELS: Record<PartOfSpeech, Localized<string>> = {
+  noun: { en: "Noun", ja: "名詞", vi: "Danh từ" },
+  verb: { en: "Verb", ja: "動詞", vi: "Động từ" },
+  "i-adjective": { en: "I-Adjective", ja: "形容詞", vi: "Tính từ" },
+  "na-adjective": { en: "Na-Adjective", ja: "形容動詞", vi: "Tính từ -na" },
+  adverb: { en: "Adverb", ja: "副詞", vi: "Trạng từ" },
+};
+
 export type KanjiData = {
   char: string;
+  /** Word types (parts of speech) of the kanji's primary usage. */
+  pos: PartOfSpeech[];
   meaning: Localized<string>;
   on: string;
   kun: string;
@@ -45,6 +59,7 @@ export const CHAPTERS: Chapter[] = [
     scene: "rest",
     kanji: {
       char: "休",
+      pos: ["verb", "noun"],
       meaning: { en: "Rest", ja: "休む", vi: "Nghỉ ngơi" },
       on: "キュウ (kyū)",
       kun: "やす・む (yasu-mu)",
@@ -113,6 +128,7 @@ export const CHAPTERS: Chapter[] = [
     scene: "bright",
     kanji: {
       char: "明",
+      pos: ["i-adjective", "noun"],
       meaning: { en: "Bright", ja: "明るい", vi: "Sáng" },
       on: "メイ (mei)",
       kun: "あか・るい (aka-rui)",
@@ -181,6 +197,7 @@ export const CHAPTERS: Chapter[] = [
     scene: "rock",
     kanji: {
       char: "岩",
+      pos: ["noun"],
       meaning: { en: "Rock / Cliff", ja: "岩", vi: "Đá / Vách đá" },
       on: "ガン (gan)",
       kun: "いわ (iwa)",
@@ -250,6 +267,7 @@ export const CHAPTERS: Chapter[] = [
     scene: "time",
     kanji: {
       char: "時",
+      pos: ["noun"],
       meaning: { en: "Time", ja: "時", vi: "Thời gian" },
       on: "ジ (ji)",
       kun: "とき (toki)",
@@ -322,6 +340,7 @@ export const CHAPTERS: Chapter[] = [
     scene: "field",
     kanji: {
       char: "男",
+      pos: ["noun"],
       meaning: { en: "Man", ja: "男", vi: "Nam / Đàn ông" },
       on: "ダン (dan)",
       kun: "おとこ (otoko)",
@@ -391,6 +410,7 @@ export const CHAPTERS: Chapter[] = [
     scene: "snow",
     kanji: {
       char: "雪",
+      pos: ["noun"],
       meaning: { en: "Snow", ja: "雪", vi: "Tuyết" },
       on: "セツ (setsu)",
       kun: "ゆき (yuki)",
@@ -973,3 +993,51 @@ export const PLACEMENT_QUIZ: PlacementQuestion[] = [
     chapterIndex: 3,
   },
 ];
+
+/**
+ * KanjiLookup — the subset of kanji info the word-type popup needs.
+ * Every chapter kanji satisfies this shape; extra kanji below provide it too.
+ */
+export type KanjiLookup = Pick<KanjiData, "char" | "pos" | "meaning" | "on" | "kun">;
+
+/**
+ * EXTRA_KANJI — word-type (part of speech) classification for common kanji
+ * that appear in the Conversation Catalog and story dialogues but are not
+ * (yet) chapter kanji. Lets the lookup popup classify them too.
+ */
+export const EXTRA_KANJI: Record<string, KanjiLookup> = {
+  日: { char: "日", pos: ["noun"], meaning: { en: "Sun; day", ja: "日", vi: "Mặt trời; ngày" }, on: "ニチ・ジツ (nichi-jitsu)", kun: "ひ (hi)" },
+  今: { char: "今", pos: ["noun"], meaning: { en: "Now", ja: "今", vi: "Bây giờ" }, on: "コン (kon)", kun: "いま (ima)" },
+  上: { char: "上", pos: ["noun"], meaning: { en: "Up; above", ja: "上", vi: "Trên" }, on: "ジョウ (jō)", kun: "うえ (ue)" },
+  大: { char: "大", pos: ["na-adjective"], meaning: { en: "Big", ja: "大きい", vi: "To lớn" }, on: "ダイ・タイ (dai-tai)", kun: "おお・きい (ō-kii)" },
+  何: { char: "何", pos: ["noun"], meaning: { en: "What", ja: "何", vi: "Cái gì" }, on: "カ (ka)", kun: "なに (nani)" },
+  三: { char: "三", pos: ["noun"], meaning: { en: "Three", ja: "三", vi: "Ba" }, on: "サン (san)", kun: "み (mi)" },
+  毎: { char: "毎", pos: ["noun"], meaning: { en: "Every", ja: "毎", vi: "Mỗi" }, on: "マイ (mai)", kun: "ごと (goto)" },
+  寺: { char: "寺", pos: ["noun"], meaning: { en: "Temple", ja: "寺", vi: "Chùa" }, on: "ジ (ji)", kun: "てら (tera)" },
+  間: { char: "間", pos: ["noun"], meaning: { en: "Interval; between", ja: "間", vi: "Khoảng; giữa" }, on: "カン (kan)", kun: "あいだ (aida)" },
+  過: { char: "過", pos: ["verb"], meaning: { en: "To pass; to exceed", ja: "過ぎる", vi: "Vượt qua" }, on: "カ (ka)", kun: "す・ぎる (su-giru)" },
+  昼: { char: "昼", pos: ["noun"], meaning: { en: "Daytime; noon", ja: "昼", vi: "Ban ngày" }, on: "チュウ (chū)", kun: "ひる (hiru)" },
+  寝: { char: "寝", pos: ["verb"], meaning: { en: "To sleep", ja: "寝る", vi: "Ngủ" }, on: "シン (shin)", kun: "ね・る (ne-ru)" },
+  人: { char: "人", pos: ["noun"], meaning: { en: "Person", ja: "人", vi: "Người" }, on: "ジン・ニン (jin-nin)", kun: "ひと (hito)" },
+  誰: { char: "誰", pos: ["noun"], meaning: { en: "Who", ja: "誰", vi: "Ai" }, on: "スイ (sui)", kun: "だれ (dare)" },
+  彼: { char: "彼", pos: ["noun"], meaning: { en: "He", ja: "彼", vi: "Anh ấy" }, on: "ヒ (hi)", kun: "かれ (kare)" },
+  父: { char: "父", pos: ["noun"], meaning: { en: "Father", ja: "父", vi: "Cha" }, on: "フ (fu)", kun: "ちち (chichi)" },
+  田: { char: "田", pos: ["noun"], meaning: { en: "Rice field", ja: "田", vi: "Ruộng lúa" }, on: "デン (den)", kun: "た (ta)" },
+  働: { char: "働", pos: ["verb"], meaning: { en: "To work", ja: "働く", vi: "Làm việc" }, on: "ドウ (dō)", kun: "はたら・く (hatara-ku)" },
+  力: { char: "力", pos: ["noun"], meaning: { en: "Power; strength", ja: "力", vi: "Sức mạnh" }, on: "リョク・リキ (ryoku-riki)", kun: "ちから (chikara)" },
+  強: { char: "強", pos: ["i-adjective"], meaning: { en: "Strong", ja: "強い", vi: "Mạnh" }, on: "キョウ (kyō)", kun: "つよ・い (tsuyo-i)" },
+  優: { char: "優", pos: ["i-adjective"], meaning: { en: "Gentle; superior", ja: "優しい", vi: "Dịu dàng" }, on: "ユウ (yū)", kun: "やさ・しい (yasa-shii)" },
+  降: { char: "降", pos: ["verb"], meaning: { en: "To fall (rain, snow)", ja: "降る", vi: "Rơi (mưa, tuyết)" }, on: "コウ (kō)", kun: "ふ・る (fu-ru)" },
+  寒: { char: "寒", pos: ["i-adjective"], meaning: { en: "Cold", ja: "寒い", vi: "Lạnh" }, on: "カン (kan)", kun: "さむ・い (samu-i)" },
+  作: { char: "作", pos: ["verb"], meaning: { en: "To make", ja: "作る", vi: "Làm" }, on: "サク (saku)", kun: "つく・る (tsuku-ru)" },
+  楽: { char: "楽", pos: ["i-adjective"], meaning: { en: "Pleasant; fun", ja: "楽しい", vi: "Vui vẻ" }, on: "ラク (raku)", kun: "たの・しい (tano-shii)" },
+  夜: { char: "夜", pos: ["noun"], meaning: { en: "Night", ja: "夜", vi: "Ban đêm" }, on: "ヤ (ya)", kun: "よる (yoru)" },
+  気: { char: "気", pos: ["noun"], meaning: { en: "Spirit; mood", ja: "気", vi: "Tinh thần" }, on: "キ (ki)", kun: "き (ki)" },
+};
+
+/** Looks up a kanji's word-type info: chapter kanji first, then the extra dictionary. */
+export function lookupKanji(char: string): KanjiLookup | undefined {
+  const ch = CHAPTERS.find((c) => c.kanji.char === char);
+  if (ch) return ch.kanji;
+  return EXTRA_KANJI[char];
+}
