@@ -456,22 +456,155 @@ export const CHAPTERS: Chapter[] = [
   },
 ];
 
-export const RADICALS: Record<string, { name: string; meaning: Localized<string> }> = {
-  "亻": { name: "にんべん", meaning: { en: "person (side)", ja: "人（にんべん）", vi: "người (đứng nghiêng)" } },
-  "木": { name: "き", meaning: { en: "tree / wood", ja: "木", vi: "cây / gỗ" } },
-  "口": { name: "くち", meaning: { en: "mouth", ja: "口", vi: "miệng" } },
-  "水": { name: "みず", meaning: { en: "water", ja: "水", vi: "nước" } },
-  "日": { name: "ひ", meaning: { en: "sun / day", ja: "日", vi: "mặt trời / ngày" } },
-  "月": { name: "つき", meaning: { en: "moon / month", ja: "月", vi: "mặt trăng / tháng" } },
-  "火": { name: "ひ", meaning: { en: "fire", ja: "火", vi: "lửa" } },
-  "山": { name: "やま", meaning: { en: "mountain", ja: "山", vi: "núi" } },
-  "石": { name: "いし", meaning: { en: "stone", ja: "石", vi: "đá" } },
-  "土": { name: "つち", meaning: { en: "earth / soil", ja: "土", vi: "đất" } },
-  "寺": { name: "てら", meaning: { en: "temple", ja: "寺", vi: "chùa" } },
-  "田": { name: "た", meaning: { en: "rice field", ja: "田", vi: "ruộng" } },
-  "力": { name: "ちから", meaning: { en: "power / strength", ja: "力", vi: "sức mạnh" } },
-  "雨": { name: "あめ", meaning: { en: "rain", ja: "雨", vi: "mưa" } },
-  "彐": { name: "けい", meaning: { en: "rake / bristle", ja: "彐（けい）", vi: "cái cào" } },
+export type RadicalShape = "1x1" | "1x2" | "1x3" | "1x4" | "2x2" | "2x3" | "3x3";
+
+export type RadicalMeta = {
+  name: string;
+  meaning: Localized<string>;
+  /** Grid footprint for Stardew-style excavation & Bento tray */
+  size: RadicalShape;
+  w: number;
+  h: number;
+  shapeLabel: Localized<string>;
+};
+
+export const RADICALS: Record<string, RadicalMeta> = {
+  "亻": {
+    name: "にんべん",
+    meaning: { en: "person (side)", ja: "人（にんべん）", vi: "người (đứng nghiêng)" },
+    size: "1x3",
+    w: 1,
+    h: 3,
+    shapeLabel: { en: "Vertical (1 × 3)", ja: "縦長 (1 × 3)", vi: "Dọc (1 × 3)" },
+  },
+  "木": {
+    name: "き",
+    meaning: { en: "tree / wood", ja: "木", vi: "cây / gỗ" },
+    size: "2x2",
+    w: 2,
+    h: 2,
+    shapeLabel: { en: "Square (2 × 2)", ja: "正方形 (2 × 2)", vi: "Vuông (2 × 2)" },
+  },
+  "一": {
+    name: "いち",
+    meaning: { en: "one / horizontal stroke", ja: "一（横棒）", vi: "một / nét ngang" },
+    size: "1x4",
+    w: 3,
+    h: 1,
+    shapeLabel: { en: "Horizontal (1 × 4)", ja: "横長 (1 × 4)", vi: "Ngang (1 × 4)" },
+  },
+  "冂": {
+    name: "けいがまえ",
+    meaning: { en: "enclosure / border", ja: "冂（けいがまえ）", vi: "khung bao" },
+    size: "2x3",
+    w: 2,
+    h: 2,
+    shapeLabel: { en: "Enclosure (2 × 3)", ja: "囲い (2 × 3)", vi: "Bao quanh (2 × 3)" },
+  },
+  "口": {
+    name: "くち",
+    meaning: { en: "mouth", ja: "口", vi: "miệng" },
+    size: "1x1",
+    w: 1,
+    h: 1,
+    shapeLabel: { en: "Small (1 × 1)", ja: "小 (1 × 1)", vi: "Nhỏ (1 × 1)" },
+  },
+  "水": {
+    name: "みず",
+    meaning: { en: "water", ja: "水", vi: "nước" },
+    size: "1x2",
+    w: 1,
+    h: 2,
+    shapeLabel: { en: "Vertical (1 × 2)", ja: "縦 (1 × 2)", vi: "Dọc (1 × 2)" },
+  },
+  "日": {
+    name: "ひ",
+    meaning: { en: "sun / day", ja: "日", vi: "mặt trời / ngày" },
+    size: "1x2",
+    w: 1,
+    h: 2,
+    shapeLabel: { en: "Vertical (1 × 2)", ja: "縦 (1 × 2)", vi: "Dọc (1 × 2)" },
+  },
+  "月": {
+    name: "つき",
+    meaning: { en: "moon / month", ja: "月", vi: "mặt trăng / tháng" },
+    size: "1x3",
+    w: 1,
+    h: 3,
+    shapeLabel: { en: "Vertical (1 × 3)", ja: "縦長 (1 × 3)", vi: "Dọc (1 × 3)" },
+  },
+  "火": {
+    name: "ひ",
+    meaning: { en: "fire", ja: "火", vi: "lửa" },
+    size: "2x2",
+    w: 2,
+    h: 2,
+    shapeLabel: { en: "Square (2 × 2)", ja: "正方形 (2 × 2)", vi: "Vuông (2 × 2)" },
+  },
+  "山": {
+    name: "やま",
+    meaning: { en: "mountain", ja: "山", vi: "núi" },
+    size: "1x4",
+    w: 2,
+    h: 1,
+    shapeLabel: { en: "Wide (2 × 1)", ja: "横広 (2 × 1)", vi: "Rộng (2 × 1)" },
+  },
+  "石": {
+    name: "いし",
+    meaning: { en: "stone", ja: "石", vi: "đá" },
+    size: "2x2",
+    w: 2,
+    h: 2,
+    shapeLabel: { en: "Square (2 × 2)", ja: "正方形 (2 × 2)", vi: "Vuông (2 × 2)" },
+  },
+  "土": {
+    name: "つち",
+    meaning: { en: "earth / soil", ja: "土", vi: "đất" },
+    size: "1x1",
+    w: 1,
+    h: 1,
+    shapeLabel: { en: "Small (1 × 1)", ja: "小 (1 × 1)", vi: "Nhỏ (1 × 1)" },
+  },
+  "寺": {
+    name: "てら",
+    meaning: { en: "temple", ja: "寺", vi: "chùa" },
+    size: "2x2",
+    w: 2,
+    h: 2,
+    shapeLabel: { en: "Square (2 × 2)", ja: "正方形 (2 × 2)", vi: "Vuông (2 × 2)" },
+  },
+  "田": {
+    name: "た",
+    meaning: { en: "rice field", ja: "田", vi: "ruộng" },
+    size: "2x2",
+    w: 2,
+    h: 2,
+    shapeLabel: { en: "Square (2 × 2)", ja: "正方形 (2 × 2)", vi: "Vuông (2 × 2)" },
+  },
+  "力": {
+    name: "ちから",
+    meaning: { en: "power / strength", ja: "力", vi: "sức mạnh" },
+    size: "2x2",
+    w: 2,
+    h: 2,
+    shapeLabel: { en: "Square (2 × 2)", ja: "正方形 (2 × 2)", vi: "Vuông (2 × 2)" },
+  },
+  "雨": {
+    name: "あめ",
+    meaning: { en: "rain", ja: "雨", vi: "mưa" },
+    size: "2x3",
+    w: 2,
+    h: 2,
+    shapeLabel: { en: "Enclosure (2 × 2)", ja: "雨冠 (2 × 2)", vi: "Bao phủ (2 × 2)" },
+  },
+  "彐": {
+    name: "けい",
+    meaning: { en: "rake / bristle", ja: "彐（けい）", vi: "cái cào" },
+    size: "1x2",
+    w: 2,
+    h: 1,
+    shapeLabel: { en: "Horizontal (2 × 1)", ja: "横 (2 × 1)", vi: "Ngang (2 × 1)" },
+  },
 };
 
 export const CATALOG = [
@@ -594,7 +727,7 @@ export const CATALOG = [
 
 export const WORLD = { w: 1920, h: 1088 };
 
-export type StationId = "mori" | "rock1" | "rock2" | "shrine" | "bento" | "desk" | "sign";
+export type StationId = "mori" | "rock1" | "rock2" | "shrine" | "bento" | "desk" | "sign" | "mineEntrance";
 
 export const STATIONS: Record<StationId, { x: number; y: number; r: number; label: Localized<string> }> = {
   mori: { x: 1190, y: 330, r: 110, label: { en: "Talk", ja: "話す", vi: "Nói chuyện" } },
@@ -604,17 +737,239 @@ export const STATIONS: Record<StationId, { x: number; y: number; r: number; labe
   bento: { x: 980, y: 860, r: 120, label: { en: "Build", ja: "作る", vi: "Ghép" } },
   desk: { x: 1520, y: 430, r: 110, label: { en: "Write", ja: "書く", vi: "Viết" } },
   sign: { x: 760, y: 360, r: 90, label: { en: "Read", ja: "読む", vi: "Đọc" } },
+  mineEntrance: { x: 470, y: 420, r: 135, label: { en: "Enter Radical Mine", ja: "部首鉱山へ入る", vi: "Vào Mỏ Bộ Thủ" } },
+};
+
+export type MineStationId = "excavate" | "rock1" | "rock2" | "villageExit";
+
+export const MINE_STATIONS: Record<MineStationId, { x: number; y: number; r: number; label: Localized<string> }> = {
+  excavate: { x: 950, y: 540, r: 180, label: { en: "Excavate Radicals", ja: "部首を発掘する", vi: "Khai quật Bộ Thủ" } },
+  rock1: { x: 740, y: 440, r: 110, label: { en: "Dig Site A", ja: "発掘地点 A", vi: "Điểm đào A" } },
+  rock2: { x: 1120, y: 610, r: 110, label: { en: "Dig Site B", ja: "発掘地点 B", vi: "Điểm đào B" } },
+  villageExit: { x: 1540, y: 520, r: 140, label: { en: "Return to Mochi Village", ja: "モチの村へ戻る", vi: "Về Làng Mochi" } },
 };
 
 // Simple circle obstacles (x, y, radius)
 export const OBSTACLES: [number, number, number][] = [
   [960, 210, 120],
   [1190, 300, 40],
-  [560, 450, 55],
-  [640, 660, 55],
+  [440, 360, 65],
   [1400, 650, 70],
   [980, 830, 70],
   [1520, 410, 60],
 ];
 
-export const BOUNDS = { minX: 380, maxX: 1640, minY: 170, maxY: 960 };
+export const BOUNDS = { minX: 340, maxX: 1660, minY: 170, maxY: 960 };
+
+export type FriendEntry = {
+  id: string;
+  name: string;
+  role: Localized<string>;
+  bio: Localized<string>;
+  level: number;
+  status: "online" | "mining" | "writing" | "resting";
+  avatarKey: "mochi" | "koma" | "yuzu" | "hana";
+  kanjiCount: number;
+};
+
+export const FRIENDS_DATA: FriendEntry[] = [
+  {
+    id: "mori",
+    name: "Mori",
+    role: { en: "Keeper of the Kanji Tree", ja: "大漢字の木の番人", vi: "Người giữ Cây Kanji" },
+    bio: {
+      en: "The forest has lost its words. Let's find them together.",
+      ja: "森の言葉が失われてしまった。一緒に見つけよう。",
+      vi: "Khu rừng đã mất đi từ ngữ. Hãy cùng nhau tìm lại nhé.",
+    },
+    level: 6,
+    status: "online",
+    avatarKey: "mochi",
+    kanjiCount: 6,
+  },
+  {
+    id: "koma",
+    name: "Koma",
+    role: { en: "Rock Collector", ja: "石のコレクター", vi: "Nhà sưu tầm đá" },
+    bio: {
+      en: "Stones about the forest hold ancient radical fragments.",
+      ja: "森の石には古い部首の破片が眠っているよ。",
+      vi: "Những viên đá quanh rừng ẩn chứa mảnh bộ thủ cổ xưa.",
+    },
+    level: 2,
+    status: "mining",
+    avatarKey: "koma",
+    kanjiCount: 3,
+  },
+  {
+    id: "yuzu",
+    name: "Yuzu",
+    role: { en: "Picture Restorer", ja: "絵の修復師", vi: "Người phục chế tranh" },
+    bio: {
+      en: "Old paintings, visual riddles, and sealed forest memories.",
+      ja: "古い絵や謎解き、封印された森の記憶を集めている。",
+      vi: "Những bức tranh cổ, câu đố hình ảnh và ký ức rừng xanh.",
+    },
+    level: 3,
+    status: "online",
+    avatarKey: "yuzu",
+    kanjiCount: 4,
+  },
+  {
+    id: "hana",
+    name: "Hana",
+    role: { en: "Calligraphy Apprentice", ja: "書道見習い", vi: "Học trò Thư pháp" },
+    bio: {
+      en: "Practicing brush strokes every morning at the Dojo!",
+      ja: "毎朝道場で筆の書き順を練習しているよ！",
+      vi: "Luyện nét bút mỗi sáng tại Võ đường Thư pháp!",
+    },
+    level: 4,
+    status: "writing",
+    avatarKey: "hana",
+    kanjiCount: 5,
+  },
+];
+
+export type RankingEntry = {
+  id: string;
+  name: string;
+  avatarKey: "mochi" | "koma" | "yuzu" | "hana";
+  level: number;
+  kanjiCount: number;
+  score: number;
+  isPlayer?: boolean;
+};
+
+export const RANKING_DATA: RankingEntry[] = [
+  { id: "mori", name: "Mori (Guide)", avatarKey: "mochi", level: 6, kanjiCount: 6, score: 1250 },
+  { id: "hana", name: "Hana_Brush", avatarKey: "hana", level: 4, kanjiCount: 5, score: 940 },
+  { id: "yuzu", name: "YuzuCrow", avatarKey: "yuzu", level: 3, kanjiCount: 4, score: 760 },
+  { id: "koma", name: "KomaFox", avatarKey: "koma", level: 2, kanjiCount: 3, score: 520 },
+  { id: "ren", name: "TanukiRen", avatarKey: "mochi", level: 1, kanjiCount: 2, score: 310 },
+];
+
+export type ChatMessage = {
+  id: string;
+  senderId: string;
+  senderName: string;
+  avatarKey: "mochi" | "koma" | "yuzu" | "hana";
+  text: Localized<string> | string;
+  timestamp: string;
+  isPlayer?: boolean;
+};
+
+export const INITIAL_CHAT_MESSAGES: ChatMessage[] = [
+  {
+    id: "msg-1",
+    senderId: "mori",
+    senderName: "Mori",
+    avatarKey: "mochi",
+    text: {
+      en: "Welcome to the Kotoba Forest community chat! Ask if you need a radical hint.",
+      ja: "ことばの森チャットへようこそ！部首のヒントが必要なら聞いてね。",
+      vi: "Chào mừng đến phòng trò chuyện Rừng Kotoba! Hãy hỏi nếu bạn cần gợi ý bộ thủ nhé.",
+    },
+    timestamp: "10:12",
+  },
+  {
+    id: "msg-2",
+    senderId: "koma",
+    senderName: "Koma",
+    avatarKey: "koma",
+    text: {
+      en: "I just dug up a 1×3 vertical 亻 piece and a 2×2 木 piece in the Radical Mine!",
+      ja: "部首鉱山で 1×3 の「亻」と 2×2 の「木」を掘り出したよ！",
+      vi: "Mình vừa đào được mảnh 亻 (1×3) và 木 (2×2) trong Mỏ Bộ Thủ!",
+    },
+    timestamp: "10:14",
+  },
+  {
+    id: "msg-3",
+    senderId: "yuzu",
+    senderName: "Yuzu",
+    avatarKey: "yuzu",
+    text: {
+      en: "Combine 亻 + 木 in the Bento Box to restore 休 (Rest)!",
+      ja: "弁当箱で「亻＋木」を合わせると「休」になるよ！",
+      vi: "Ghép 亻 + 木 trong Hộp Bento để khôi phục chữ 休 (Nghỉ ngơi)!",
+    },
+    timestamp: "10:15",
+  },
+];
+
+export type PlacementQuestion = {
+  id: string;
+  kanji: string;
+  prompt: Localized<string>;
+  options: { value: string; label: Localized<string> }[];
+  correct: string;
+  chapterIndex: number;
+};
+
+export const PLACEMENT_QUIZ: PlacementQuestion[] = [
+  {
+    id: "q1",
+    kanji: "休",
+    prompt: {
+      en: "A person (亻) leaning against a tree (木). What does 休 mean?",
+      ja: "人（亻）が木（木）のそばにいる漢字「休」の意味は？",
+      vi: "Một người (亻) tựa vào cây (木). Chữ 休 có nghĩa là gì?",
+    },
+    options: [
+      { value: "rest", label: { en: "Rest", ja: "休む (Rest)", vi: "Nghỉ ngơi" } },
+      { value: "fire", label: { en: "Fire", ja: "火 (Fire)", vi: "Lửa" } },
+      { value: "water", label: { en: "Water", ja: "水 (Water)", vi: "Nước" } },
+    ],
+    correct: "rest",
+    chapterIndex: 0,
+  },
+  {
+    id: "q2",
+    kanji: "明",
+    prompt: {
+      en: "Sun (日) and Moon (月) shining together. What does 明 mean?",
+      ja: "日と月が合わさった漢字「明」の意味は？",
+      vi: "Mặt trời (日) và Mặt trăng (月) cùng chiếu sáng. Chữ 明 nghĩa là gì?",
+    },
+    options: [
+      { value: "bright", label: { en: "Bright", ja: "明るい (Bright)", vi: "Sáng" } },
+      { value: "dark", label: { en: "Dark", ja: "暗い (Dark)", vi: "Tối" } },
+      { value: "rain", label: { en: "Rain", ja: "雨 (Rain)", vi: "Mưa" } },
+    ],
+    correct: "bright",
+    chapterIndex: 1,
+  },
+  {
+    id: "q3",
+    kanji: "岩",
+    prompt: {
+      en: "A mountain (山) over stone (石). What does 岩 mean?",
+      ja: "山の下に石がある漢字「岩」の意味は？",
+      vi: "Ngọn núi (山) trên đá (石). Chữ 岩 có nghĩa là gì?",
+    },
+    options: [
+      { value: "rock", label: { en: "Rock / Cliff", ja: "岩・崖 (Rock)", vi: "Đá / Vách đá" } },
+      { value: "wind", label: { en: "Wind", ja: "風 (Wind)", vi: "Gió" } },
+      { value: "flower", label: { en: "Flower", ja: "花 (Flower)", vi: "Hoa" } },
+    ],
+    correct: "rock",
+    chapterIndex: 2,
+  },
+  {
+    id: "q4",
+    kanji: "時",
+    prompt: {
+      en: "The sun (日) moving beside a temple (寺). What does 時 mean?",
+      ja: "日と寺が合わさった漢字「時」の意味は？",
+      vi: "Mặt trời (日) bên ngôi chùa (寺). Chữ 時 có nghĩa là gì?",
+    },
+    options: [
+      { value: "time", label: { en: "Time", ja: "時間・時 (Time)", vi: "Thời gian" } },
+      { value: "snow", label: { en: "Snow", ja: "雪 (Snow)", vi: "Tuyết" } },
+      { value: "field", label: { en: "Rice field", ja: "田んぼ (Field)", vi: "Ruộng lúa" } },
+    ],
+    correct: "time",
+    chapterIndex: 3,
+  },
+];
