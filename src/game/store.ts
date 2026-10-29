@@ -1,15 +1,36 @@
 import { useCallback, useEffect, useState } from "react";
-import type { Step } from "./data";
+import type { RadicalShape, Step } from "./data";
 
-export type Piece = { id: string; char: string };
-export type Writing = { id: string; kanji: string; image: string; date: string; favorite: boolean };
+export type MapName = "village" | "mine";
+
+export type Piece = {
+  id: string;
+  char: string;
+  size?: RadicalShape;
+  discoveredAt?: string;
+};
+
+export type Writing = {
+  id: string;
+  kanji: string;
+  image: string;
+  date: string;
+  favorite: boolean;
+};
 
 export type GameState = {
   /** 0-based index into CHAPTERS. */
   chapter: number;
   step: Step;
   level: number;
+  currentMap: MapName;
+  isTransitioning: boolean;
+  energy: number;
+  maxEnergy: number;
+  assessed: boolean;
   rocks: { rock1: number; rock2: number }; // hits remaining
+  /** Chapter ID -> list of excavated "row,col" cells in the Radical Mine grid */
+  excavatedCells: Record<string, string[]>;
   pieces: Piece[];
   discovered: string[];
   journal: Writing[];
@@ -76,6 +97,52 @@ export function setVolume(volume: number): void {
   }
 }
 
+export const initialState: GameState = {
+  chapter: 0,
+  step: "arrival",
+  level: 0,
+  currentMap: "village",
+  isTransitioning: false,
+  energy: 5,
+  maxEnergy: 5,
+  assessed: false,
+  rocks: { rock1: 3, rock2: 3 },
+  excavatedCells: {},
+  pieces: [],
+  discovered: [],
+  journal: [],
+};
+
+// Shared module store so all components reading useGame() stay synchronized.
+let sharedState: GameState = initialState;
+let hydrated = false;
+let transitionTimer: ReturnType<typeof setTimeout> | null = null;
+const storeListeners = new Set<() => void>();
+
+function notifyStore() {
+  storeListeners.forEach((fn) => fn());
+}
+
+function persistState(next: GameState) {
+  try {
+    const toSave = { ...next, isTransitioning: false };
+    localStorage.setItem(SAVE_KEY, JSON.stringify(toSave));
+  } catch {
+    /* storage unavailable */
+  }
+}
+
+export function getGameState(): GameState {
+  return sharedState;
+}
+
+export function setGameState(updater: GameState | ((prev: GameState) => GameState)): void {
+  const next = typeof updater === "function" ? updater(sharedState) : updater;
+  sharedState = next;
+  if (hydrated) persistState(next);
+  notifyStore();
+}
+
 /** Erases saved game progress (used by the welcome screen's Settings). */
 export function clearSave(): void {
   try {
@@ -83,50 +150,110 @@ export function clearSave(): void {
   } catch {
     /* storage unavailable */
   }
+  sharedState = initialState;
+  notifyStore();
 }
 
-export const initialState: GameState = {
-  chapter: 0,
-  step: "arrival",
-  level: 0,
-  rocks: { rock1: 3, rock2: 3 },
-  pieces: [],
-  discovered: [],
-  journal: [],
-};
-
 export function useGame() {
-  const [state, setState] = useState<GameState>(initialState);
-  const [loaded, setLoaded] = useState(false);
+  const [state, setState] = useState<GameState>(sharedState);
+  const [loaded, setLoaded] = useState(hydrated);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(SAVE_KEY);
-      if (raw) setState({ ...initialState, ...JSON.parse(raw) });
-    } catch {
-      /* ignore */
+    if (!hydrated) {
+      try {
+        const raw = localStorage.getItem(SAVE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          sharedState = {
+            ...initialState,
+            ...parsed,
+            isTransitioning: false,
+            energy: typeof parsed.energy === "number" ? parsed.energy : initialState.energy,
+            maxEnergy: typeof parsed.maxEnergy === "number" ? parsed.maxEnergy : initialState.maxEnergy,
+            currentMap: parsed.currentMap === "mine" ? "mine" : "village",
+            excavatedCells: parsed.excavatedCells ?? {},
+          };
+        }
+      } catch {
+        /* ignore */
+      }
+      hydrated = true;
+      setState(sharedState);
     }
     setLoaded(true);
+
+    const listener = () => setState(sharedState);
+    storeListeners.add(listener);
+    return () => {
+      storeListeners.delete(listener);
+    };
   }, []);
 
-  useEffect(() => {
-    if (loaded) localStorage.setItem(SAVE_KEY, JSON.stringify(state));
-  }, [state, loaded]);
+  const update = useCallback((fn: (s: GameState) => GameState) => {
+    setGameState(fn);
+  }, []);
 
-  const update = useCallback((fn: (s: GameState) => GameState) => setState(fn), []);
-  const reset = useCallback(() => setState(initialState), []);
+  const reset = useCallback(() => {
+    if (transitionTimer) clearTimeout(transitionTimer);
+    setGameState(initialState);
+  }, []);
+
   /** Restarts the current chapter: keeps progress, resets the chapter's run. */
-  const resetChapter = useCallback(
-    () =>
-      setState((s) => ({
+  const resetChapter = useCallback(() => {
+    setGameState((s) => ({
+      ...s,
+      step: "arrival",
+      currentMap: "village",
+      isTransitioning: false,
+      energy: s.maxEnergy,
+      rocks: { rock1: 3, rock2: 3 },
+      excavatedCells: {},
+      pieces: [],
+    }));
+  }, []);
+
+  /** Phase 1: Smooth 800ms dark splash transition between 'village' and 'mine'. */
+  const changeMap = useCallback((mapName: MapName) => {
+    if (sharedState.currentMap === mapName || sharedState.isTransitioning) return;
+    sfx("tap");
+    setGameState((s) => ({ ...s, isTransitioning: true }));
+    if (transitionTimer) clearTimeout(transitionTimer);
+    transitionTimer = setTimeout(() => {
+      setGameState((s) => ({
         ...s,
-        step: "arrival",
-        rocks: { rock1: 3, rock2: 3 },
-        pieces: [],
-      })),
-    [],
-  );
-  return { state, update, reset, resetChapter, loaded };
+        currentMap: mapName,
+        isTransitioning: false,
+      }));
+    }, 800);
+  }, []);
+
+  /** Phase 3: Deduct energy upon wrong answer in Kanji Bento / Shrine. */
+  const deductEnergy = useCallback((amount = 1) => {
+    setGameState((s) => ({
+      ...s,
+      energy: Math.max(0, s.energy - amount),
+    }));
+  }, []);
+
+  /** Restores player energy to full after resting. */
+  const restoreEnergy = useCallback(() => {
+    sfx("chime");
+    setGameState((s) => ({
+      ...s,
+      energy: s.maxEnergy,
+    }));
+  }, []);
+
+  return {
+    state,
+    update,
+    reset,
+    resetChapter,
+    changeMap,
+    deductEnergy,
+    restoreEnergy,
+    loaded,
+  };
 }
 
 let ctx: AudioContext | null = null;

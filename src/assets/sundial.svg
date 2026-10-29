@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- sundial base -->
+  <ellipse cx="100" cy="154" rx="82" ry="26" fill="#C9A876"/>
+  <ellipse cx="100" cy="151" rx="82" ry="26" fill="#D9BC8F"/>
+  <!-- hour ticks -->
+  <g stroke="#A98B5F" stroke-width="3">
+    <line x1="40" y1="151" x2="48" y2="153"/>
+    <line x1="175" y1="161" x2="167" y2="159"/>
+    <line x1="100" y1="126" x2="100" y2="134"/>
+  </g>
+  <!-- shadow cast by the gnomon -->
+  <path d="M100 136 L26 176 L100 186 Z" fill="#8A7A63" opacity="0.55"/>
+  <!-- gnomon (the pole) -->
+  <path d="M100 174 L100 52 L122 139 Z" fill="#5B534A"/>
+  <path d="M100 52 L122 139 L100 150 L100 139 Z" fill="#7D776F"/>
+  <!-- sun above -->
+  <circle cx="152" cy="46" r="17" fill="#E8C46A"/>
+  <g stroke="#E8C46A" stroke-width="4" stroke-linecap="round">
+    <line x1="152" y1="14" x2="152" y2="24"/>
+    <line x1="181" y1="46" x2="171" y2="46"/>
+    <line x1="166" y1="21" x2="159" y2="28"/>
+  </g>
+</svg>

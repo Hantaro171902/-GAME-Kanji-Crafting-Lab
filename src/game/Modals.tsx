@@ -1,30 +1,25 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
-import { CATALOG, RADICALS, type Chapter, type Line } from "./data";
-import { sfx, isFuriganaEnabled, type Piece, type Writing } from "./store";
+import { useEffect, useState } from "react";
+import { CATALOG, CHAPTERS, RADICALS, type Chapter, type Line } from "./data";
+import { sfx, isFuriganaEnabled, type MapName, type Piece, type Writing } from "./store";
 import { pick, useLang, useT } from "./i18n";
 import { Furigana } from "./Furigana";
+import { Modal } from "./components/Modal";
+import { JournalStrip } from "./components/JournalStrip";
+import { ShapedRadicalTile } from "./components/PouchModal";
+import { StrokeDemo } from "./features/calligraphy/StrokeDemo";
+import { useCalligraphyStrokes } from "./features/calligraphy/useCalligraphyStrokes";
 import moriImg from "@/assets/mori.png";
 import tanukiImg from "@/assets/tanuki.png";
+import mapImg from "@/assets/map.jpg";
+import mineMapImg from "@/assets/mine-map.jpg";
 import memoryImg from "@/assets/memory-rest.jpg";
+import timeImg from "@/assets/time.jpg";
+import maleImg from "@/assets/male.jpg";
+import snowImg from "@/assets/snow.jpg";
 
-export function Modal({ title, onClose, children, wide }: { title: string; onClose?: () => void; children: ReactNode; wide?: boolean }) {
-  const t = useT();
-  return (
-    <div className="absolute inset-0 z-40 flex items-center justify-center bg-ink/50 p-4 backdrop-blur-[2px]">
-      <div className={`panel animate-pop relative max-h-full w-full overflow-auto p-5 ${wide ? "max-w-4xl" : "max-w-2xl"}`}>
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="font-display text-2xl text-wood">{title}</h2>
-          {onClose && (
-            <button className="btn-game btn-ghost px-3 py-1" onClick={onClose} aria-label={t("close")}>
-              ✕
-            </button>
-          )}
-        </div>
-        {children}
-      </div>
-    </div>
-  );
-}
+export { Modal };
+export { Calligraphy } from "./features/calligraphy/Calligraphy";
+export { StrokeDemo };
 
 export function Dialogue({ lines, onDone }: { lines: Line[]; onDone: () => void }) {
   const t = useT();
@@ -47,18 +42,28 @@ export function Dialogue({ lines, onDone }: { lines: Line[]; onDone: () => void 
   const isMori = line.who === "mori";
   return (
     <div className="absolute inset-x-0 bottom-0 z-40 flex justify-center p-4" onClick={next}>
-      <div className="panel animate-pop flex w-full max-w-3xl cursor-pointer items-end gap-4 p-4">
-        <img src={isMori ? moriImg : tanukiImg} alt="" className="-mt-16 h-28 w-28 shrink-0 object-contain drop-shadow-lg" />
+      <div className="panel animate-pop relative flex w-full max-w-3xl cursor-pointer items-center gap-4 border-4 border-[#6e4b2a] bg-[#f6ebd4] p-4 shadow-2xl">
+        <div className="relative -mt-10 flex h-28 w-28 shrink-0 items-center justify-center rounded-full border-4 border-[#6e4b2a] bg-[#ecd9b4] shadow-md">
+          <img
+            src={isMori ? moriImg : tanukiImg}
+            alt=""
+            className="h-24 w-24 object-contain drop-shadow-md"
+          />
+        </div>
         <div className="flex-1">
-          <div className="mb-1 inline-block rounded-full bg-wood px-3 py-0.5 text-sm font-bold text-primary-foreground">
+          <div className="mb-1.5 inline-block rounded-xl border-2 border-[#6e4b2a] bg-[#ecd9b4] px-3.5 py-0.5 font-display text-sm font-bold text-[#3b2818]">
             {isMori ? t("moriTitle") : t("tanukiTitle")}
           </div>
-          <p className="text-lg leading-snug">
-            {lang === "ja" && isFuriganaEnabled() && line.kana
-              ? <Furigana text={line.text.ja} kana={line.kana} className="furigana" />
-              : pick(line.text, lang)}
+          <p className="text-lg font-medium leading-snug text-[#3b2818]">
+            {lang === "ja" && isFuriganaEnabled() && line.kana ? (
+              <Furigana text={line.text.ja} kana={line.kana} className="furigana" />
+            ) : (
+              pick(line.text, lang)
+            )}
           </p>
-          <p className="mt-1 text-right text-sm text-muted-foreground animate-bob">{t("tapSpace")}</p>
+          <p className="mt-1 text-right text-sm font-bold text-[#6e4f35] animate-bob">
+            {t("tapSpace")}
+          </p>
         </div>
       </div>
     </div>
@@ -66,13 +71,24 @@ export function Dialogue({ lines, onDone }: { lines: Line[]; onDone: () => void 
 }
 
 /** Hand-painted style memory picture shown by the Picture Shrine. */
-function MemoryScene({ scene }: { scene: Chapter["scene"] }) {
+export function MemoryScene({ scene }: { scene: Chapter["scene"] }) {
   if (scene === "rest") {
-    return <img src={memoryImg} alt="Someone resting against a tree" className="w-full rounded-xl border-4 border-wood" />;
+    return (
+      <img
+        src={memoryImg}
+        alt="Someone resting against a tree"
+        className="w-full rounded-xl border-4 border-wood object-cover"
+      />
+    );
   }
   if (scene === "bright") {
     return (
-      <svg viewBox="0 0 400 300" className="w-full rounded-xl border-4 border-wood" role="img" aria-label="The sun and the moon sharing the sky">
+      <svg
+        viewBox="0 0 400 300"
+        className="w-full rounded-xl border-4 border-wood"
+        role="img"
+        aria-label="The sun and the moon sharing the sky"
+      >
         <rect width="400" height="300" fill="#BFD8E8" />
         <circle cx="110" cy="90" r="46" fill="#E8C46A" />
         <g stroke="#E8C46A" strokeWidth="6" strokeLinecap="round">
@@ -92,8 +108,40 @@ function MemoryScene({ scene }: { scene: Chapter["scene"] }) {
       </svg>
     );
   }
+  if (scene === "time") {
+    return (
+      <img
+        src={timeImg}
+        alt="The sun casting a shadow beside a temple"
+        className="w-full rounded-xl border-4 border-wood object-cover"
+      />
+    );
+  }
+  if (scene === "field") {
+    return (
+      <img
+        src={maleImg}
+        alt="A person working in a green rice field"
+        className="w-full rounded-xl border-4 border-wood object-cover"
+      />
+    );
+  }
+  if (scene === "snow") {
+    return (
+      <img
+        src={snowImg}
+        alt="A snowy forest with falling snow"
+        className="w-full rounded-xl border-4 border-wood object-cover"
+      />
+    );
+  }
   return (
-    <svg viewBox="0 0 400 300" className="w-full rounded-xl border-4 border-wood" role="img" aria-label="A mountain standing on stone">
+    <svg
+      viewBox="0 0 400 300"
+      className="w-full rounded-xl border-4 border-wood"
+      role="img"
+      aria-label="A mountain standing on stone"
+    >
       <rect width="400" height="300" fill="#DCEAF3" />
       <path d="M40 230 L200 60 L360 230 Z" fill="#A8A29A" />
       <path d="M200 60 L360 230 L330 230 L200 90 Z" fill="#C9C4BB" />
@@ -107,48 +155,117 @@ function MemoryScene({ scene }: { scene: Chapter["scene"] }) {
   );
 }
 
-export function ShrineModal({ chapter, pieces, onSolve, onClose }: { chapter: Chapter; pieces: Piece[]; onSolve: () => void; onClose: () => void }) {
+/** Shared helper banner when player energy reaches 0. */
+function TiredRecoveryBanner({
+  energy,
+  onRestoreEnergy,
+}: {
+  energy: number;
+  onRestoreEnergy?: (() => void) | undefined;
+}) {
+  const t = useT();
+  if (energy > 0) return null;
+  return (
+    <div className="mb-4 flex flex-col items-center justify-between gap-3 rounded-2xl border-2 border-red-700/60 bg-red-100/90 p-3 text-center sm:flex-row sm:text-left">
+      <div>
+        <div className="font-display text-base font-bold text-red-900">
+          💤 {t("mochiTiredTitle")}
+        </div>
+        <p className="text-xs text-red-800">{t("mochiTiredDesc")}</p>
+      </div>
+      {onRestoreEnergy && (
+        <button
+          type="button"
+          onClick={onRestoreEnergy}
+          className="btn-game shrink-0 bg-[#4b8b55] text-xs text-white"
+        >
+          {t("restAndRecover")}
+        </button>
+      )}
+    </div>
+  );
+}
+
+export function ShrineModal({
+  chapter,
+  pieces,
+  energy = 5,
+  onWrongAnswer,
+  onRestoreEnergy,
+  onSolve,
+  onClose,
+}: {
+  chapter: Chapter;
+  pieces: Piece[];
+  energy?: number;
+  onWrongAnswer?: () => void;
+  onRestoreEnergy?: () => void;
+  onSolve: () => void;
+  onClose: () => void;
+}) {
   const t = useT();
   const lang = useLang();
   const options = chapter.shrineOptions;
   const owned = new Set(pieces.map((p) => p.char));
   const [picked, setPicked] = useState<string[]>([]);
   const [bad, setBad] = useState(false);
+
   const toggle = (c: string) => {
+    if (energy <= 0) return;
     sfx("tap");
     setPicked((p) => (p.includes(c) ? p.filter((x) => x !== c) : [...p, c]));
   };
+
   const check = () => {
-    const ok = picked.length === 2 && picked.includes(chapter.digChars[0]) && picked.includes(chapter.digChars[1]);
+    if (energy <= 0) return;
+    const ok =
+      picked.length === 2 &&
+      picked.includes(chapter.digChars[0]) &&
+      picked.includes(chapter.digChars[1]);
     if (ok) {
       sfx("good");
       onSolve();
     } else {
       sfx("bad");
       setBad(true);
+      onWrongAnswer?.();
       setTimeout(() => setBad(false), 700);
     }
   };
+
   return (
     <Modal title={t("shrineTitle")} onClose={onClose} wide>
+      <TiredRecoveryBanner energy={energy} onRestoreEnergy={onRestoreEnergy} />
       <div className="grid gap-5 md:grid-cols-2">
         <MemoryScene scene={chapter.scene} />
         <div className="flex flex-col gap-3">
-          <p className="text-lg">{t("memoryOpens")}<b>{pick(chapter.kanji.story, lang)}</b></p>
+          <p className="text-lg">
+            {t("memoryOpens")}
+            <b>{pick(chapter.kanji.story, lang)}</b>
+          </p>
           <p className="text-muted-foreground">{t("whichPieces")}</p>
           <div className={`grid grid-cols-2 gap-3 ${bad ? "animate-shake" : ""}`}>
             {options.map((c) => (
               <button
                 key={c}
                 onClick={() => toggle(c)}
-                className={`tile h-24 flex-col text-4xl transition ${picked.includes(c) ? "ring-4 ring-success" : ""} ${owned.has(c) ? "" : "opacity-60"}`}
+                disabled={energy <= 0}
+                className={`tile h-24 flex-col text-4xl transition ${
+                  picked.includes(c) ? "ring-4 ring-success" : ""
+                } ${owned.has(c) ? "" : "opacity-60"}`}
               >
                 {c}
-                <span className="font-sans text-xs text-muted-foreground">{RADICALS[c]?.meaning ? pick(RADICALS[c].meaning, lang) : ""}</span>
+                <span className="font-sans text-xs text-muted-foreground">
+                  {RADICALS[c]?.meaning ? pick(RADICALS[c].meaning, lang) : ""}
+                </span>
               </button>
             ))}
           </div>
-          <button className="btn-game btn-accent mt-2" onClick={check}>
+          <button
+            className="btn-game btn-accent mt-2"
+            disabled={energy <= 0}
+            onClick={check}
+          >
             {t("remember")}
           </button>
         </div>
@@ -157,366 +274,613 @@ export function ShrineModal({ chapter, pieces, onSolve, onClose }: { chapter: Ch
   );
 }
 
-export function BentoModal({ chapter, pieces, onSolve, onClose }: { chapter: Chapter; pieces: Piece[]; onSolve: () => void; onClose: () => void }) {
+/**
+ * Kanji Bento Modal — updated to match middle-left of game-ui-design.png:
+ * - Left: Wooden Bento Grid with dashed white kanji guide outline
+ * - Right: Assemble instructions + shaped wooden radical pieces
+ * - Deducts 1 Energy on wrong slot placement or wrong lid check
+ */
+export function BentoModal({
+  chapter,
+  pieces,
+  energy = 5,
+  onWrongAnswer,
+  onRestoreEnergy,
+  onSolve,
+  onClose,
+}: {
+  chapter: Chapter;
+  pieces: Piece[];
+  energy?: number;
+  onWrongAnswer?: () => void;
+  onRestoreEnergy?: () => void;
+  onSolve: () => void;
+  onClose: () => void;
+}) {
   const t = useT();
   const lang = useLang();
   const [slots, setSlots] = useState<(Piece | null)[]>([null, null]);
   const [sel, setSel] = useState<Piece | null>(null);
   const [state, setState] = useState<"idle" | "bad" | "merged">("idle");
-  const tray = pieces.filter((p) => !slots.some((s) => s?.id === p.id));
-  const radicalMeaning = (c: string) => (RADICALS[c] ? pick(RADICALS[c].meaning, lang) : "");
+
+  // Combine player's collected pieces with decoy shapes so the tray matches game-ui-design.png
+  const allTrayPieces: Piece[] = [
+    ...pieces,
+    ...(pieces.some((p) => p.char === "一")
+      ? []
+      : [{ id: "decoy_h", char: "一", size: "1x4" as const }]),
+    ...(pieces.some((p) => p.char === "冂")
+      ? []
+      : [{ id: "decoy_enc", char: "冂", size: "2x3" as const }]),
+  ];
+  const tray = allTrayPieces.filter((p) => !slots.some((s) => s?.id === p.id));
+
+  const radicalMeaning = (c: string) =>
+    RADICALS[c] ? pick(RADICALS[c].meaning, lang) : "";
+
   const place = (i: number) => {
-    if (state === "merged") return;
+    if (state === "merged" || energy <= 0) return;
     if (slots[i]) {
       sfx("tap");
       setSlots((s) => s.map((x, j) => (j === i ? null : x)));
       return;
     }
     if (!sel) return;
+
+    // Phase 3 Penalty Logic: check if the selected radical belongs in slot `i`
+    const expectedChar = chapter.digChars[i];
+    if (sel.char !== expectedChar) {
+      sfx("bad");
+      setState("bad");
+      onWrongAnswer?.();
+      setSel(null);
+      setTimeout(() => setState("idle"), 650);
+      return;
+    }
+
     sfx("tap");
-    setSlots((s) => s.map((x, j) => (j === i ? sel : x)));
+    const nextSlots = slots.map((x, j) => (j === i ? sel : x));
+    setSlots(nextSlots);
     setSel(null);
-  };
-  const check = () => {
-    if (slots[0]?.char === chapter.digChars[0] && slots[1]?.char === chapter.digChars[1]) {
+
+    // Auto-merge if both compartments now hold the correct radicals
+    if (
+      nextSlots[0]?.char === chapter.digChars[0] &&
+      nextSlots[1]?.char === chapter.digChars[1]
+    ) {
       sfx("chime");
       setState("merged");
-      setTimeout(onSolve, 1400);
+      setTimeout(onSolve, 1300);
+    }
+  };
+
+  const check = () => {
+    if (energy <= 0) return;
+    if (
+      slots[0]?.char === chapter.digChars[0] &&
+      slots[1]?.char === chapter.digChars[1]
+    ) {
+      sfx("chime");
+      setState("merged");
+      setTimeout(onSolve, 1300);
     } else {
       sfx("bad");
       setState("bad");
+      onWrongAnswer?.();
       setTimeout(() => {
         setSlots([null, null]);
         setState("idle");
       }, 700);
     }
   };
+
   return (
-    <Modal title={t("bentoTitle")} onClose={onClose}>
-      <p className="mb-4 text-muted-foreground">
-        {t("bentoHint", { left: radicalMeaning(chapter.digChars[0]), right: radicalMeaning(chapter.digChars[1]) })}
-      </p>
-      <div className={`mx-auto mb-5 flex h-48 max-w-md overflow-hidden rounded-2xl border-[6px] border-ink bg-accent/90 p-2 shadow-[var(--shadow-soft)] ${state === "bad" ? "animate-shake" : ""}`}>
-        {state === "merged" ? (
-          <div className="animate-pop flex flex-1 items-center justify-center rounded-xl bg-paper font-kanji text-9xl text-ink">
-            {chapter.kanji.char}
+    <Modal title={`🍱 ${t("bentoTitle")}`} onClose={onClose} wide>
+      <TiredRecoveryBanner energy={energy} onRestoreEnergy={onRestoreEnergy} />
+
+      <div className="grid gap-6 md:grid-cols-[1.05fr_1fr]">
+        {/* Left: Dark Wooden Bento Box with 4x4 grid & dashed white kanji layout guide */}
+        <div
+          className={`relative mx-auto flex aspect-square w-full max-w-[340px] overflow-hidden rounded-2xl border-[8px] border-[#4e341e] bg-[#6d4c30] p-3 shadow-xl ${
+            state === "bad" ? "animate-shake ring-4 ring-red-500" : ""
+          }`}
+        >
+          {/* Background 4x4 Bento Grid Lines */}
+          <div className="pointer-events-none absolute inset-3 grid grid-cols-4 grid-rows-4 rounded-xl border-2 border-[#4e341e]/80">
+            {Array.from({ length: 16 }, (_, idx) => (
+              <div key={idx} className="border border-[#5a3d24]/60" />
+            ))}
           </div>
-        ) : (
-          [0, 1].map((i) => (
+
+          {/* Dashed White Kanji Guide Overlay (matches game-ui-design.png) */}
+          <svg
+            viewBox="0 0 100 100"
+            className="pointer-events-none absolute inset-5 h-[calc(100%-2.5rem)] w-[calc(100%-2.5rem)] opacity-75"
+          >
+            <line
+              x1="40"
+              y1="6"
+              x2="40"
+              y2="94"
+              stroke="white"
+              strokeWidth="1.2"
+              strokeDasharray="3 3"
+            />
+            {chapter.strokes.map((d, idx) => (
+              <path
+                key={idx}
+                d={d}
+                fill="none"
+                stroke="white"
+                strokeWidth="3.2"
+                strokeLinecap="round"
+                strokeDasharray="4 4"
+              />
+            ))}
+          </svg>
+
+          {state === "merged" ? (
+            <div className="animate-pop relative z-10 flex flex-1 items-center justify-center rounded-xl bg-[#f7eed9]/95 font-kanji text-9xl text-[#3b2818] shadow-inner">
+              {chapter.kanji.char}
+            </div>
+          ) : (
+            <div className="relative z-10 flex flex-1 gap-2">
+              {[0, 1].map((i) => (
+                <button
+                  key={i}
+                  type="button"
+                  disabled={energy <= 0}
+                  onClick={() => place(i)}
+                  className={`flex flex-col items-center justify-center rounded-xl border-2 border-dashed font-kanji text-7xl transition ${
+                    i === 0 ? "w-2/5" : "flex-1"
+                  } ${
+                    slots[i]
+                      ? "border-[#4b8b55] bg-[#f3dfb9]/95 text-[#3b2818] shadow-md"
+                      : "border-white/60 bg-black/10 text-white hover:bg-white/10"
+                  } ${sel && !slots[i] ? "animate-pulse ring-2 ring-[#f3dfb9]" : ""}`}
+                >
+                  <span>{slots[i]?.char ?? ""}</span>
+                  {!slots[i] && (
+                    <span className="mt-2 font-sans text-xs font-bold text-white/85">
+                      {radicalMeaning(chapter.digChars[i]!)}
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Right: Assemble Instructions + Shaped Radical Tray */}
+        <div className="flex flex-col justify-between gap-4">
+          <div>
+            <h3 className="font-display text-xl font-bold text-[#3b2818]">
+              {t("assembleKanji")}
+            </h3>
+            <p className="mt-1 text-sm text-[#5c3e26]">{t("assembleInstructions")}</p>
+            <p className="mt-1 text-xs font-bold text-[#6e4f35]">
+              {t("bentoHint", {
+                left: radicalMeaning(chapter.digChars[0]),
+                right: radicalMeaning(chapter.digChars[1]),
+              })}
+            </p>
+
+            <div className="mt-4">
+              <div className="mb-2 text-sm font-bold text-[#3b2818]">
+                {t("availablePieces")}
+              </div>
+              <div className="flex min-h-28 flex-wrap items-center gap-3 rounded-2xl border-2 border-[#d4be98] bg-[#efe2c6] p-3">
+                {tray.map((p) => (
+                  <ShapedRadicalTile
+                    key={p.id}
+                    char={p.char}
+                    selected={sel?.id === p.id}
+                    onClick={() => {
+                      if (energy <= 0) return;
+                      sfx("tap");
+                      setSel(p);
+                    }}
+                  />
+                ))}
+                {tray.length === 0 && state !== "merged" && (
+                  <span className="self-center text-sm text-muted-foreground">
+                    {t("trayEmpty")}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end">
             <button
-              key={i}
-              onClick={() => place(i)}
-              className={`m-1 flex items-center justify-center rounded-xl border-2 border-dashed font-kanji text-7xl text-ink transition ${
-                i === 0 ? "w-2/5" : "flex-1"
-              } ${slots[i] ? "border-success bg-paper" : "border-paper/70 bg-paper/30"} ${sel && !slots[i] ? "animate-glow" : ""}`}
+              type="button"
+              className="btn-game btn-accent w-full py-3 text-base"
+              disabled={!slots[0] || !slots[1] || state === "merged" || energy <= 0}
+              onClick={check}
             >
-              {slots[i]?.char ?? ""}
+              {t("closeLid")}
             </button>
-          ))
-        )}
-      </div>
-      <div className="mb-4 flex min-h-20 justify-center gap-3 rounded-xl bg-muted p-3">
-        {tray.map((p) => (
-          <button key={p.id} onClick={() => (sfx("tap"), setSel(p))} className={`tile h-16 w-16 text-4xl ${sel?.id === p.id ? "ring-4 ring-gold -translate-y-1" : ""}`}>
-            {p.char}
-          </button>
-        ))}
-        {tray.length === 0 && state !== "merged" && <span className="self-center text-muted-foreground">{t("trayEmpty")}</span>}
-      </div>
-      <div className="flex justify-center">
-        <button className="btn-game btn-accent" disabled={!slots[0] || !slots[1] || state === "merged"} onClick={check}>
-          {t("closeLid")}
-        </button>
+          </div>
+        </div>
       </div>
     </Modal>
   );
 }
 
-export function StrokeDemo({ strokes, size = 220, loop = true }: { strokes: string[]; size?: number; loop?: boolean }) {
-  const [k, setK] = useState(0);
-  useEffect(() => {
-    if (!loop) return;
-    const t = setInterval(() => setK((x) => x + 1), strokes.length * 700 + 1200);
-    return () => clearInterval(t);
-  }, [loop, strokes.length]);
-  return (
-    <svg key={k} viewBox="0 0 100 100" width={size} height={size} className="rounded-xl bg-paper">
-      <line x1="50" y1="0" x2="50" y2="100" className="stroke-border" strokeDasharray="2 3" strokeWidth="0.6" />
-      <line x1="0" y1="50" x2="100" y2="50" className="stroke-border" strokeDasharray="2 3" strokeWidth="0.6" />
-      {strokes.map((d, i) => (
-        <path
-          key={i}
-          d={d}
-          pathLength={1}
-          fill="none"
-          className="stroke-ink"
-          strokeWidth="7"
-          strokeLinecap="round"
-          style={{ strokeDasharray: 1, strokeDashoffset: 1, animation: `draw-stroke 0.6s ease-out ${i * 0.7}s forwards` }}
-        />
-      ))}
-    </svg>
-  );
-}
-
+/**
+ * KanjiInfo Modal — styled after middle-right of game-ui-design.png ("You discovered a new kanji!")
+ */
 export function KanjiInfo({ chapter, onClose }: { chapter: Chapter; onClose: () => void }) {
   const t = useT();
   const lang = useLang();
   const k = chapter.kanji;
+  const { strokes, loading, error, retry } = useCalligraphyStrokes(k.char);
+
   return (
-    <Modal title={t("newKanji")} onClose={onClose} wide>
-      <div className="grid gap-5 md:grid-cols-[auto_1fr]">
-        <div className="flex flex-col items-center gap-2">
-          <StrokeDemo strokes={chapter.strokes} />
-          <span className="text-sm text-muted-foreground">{t("strokeOrder", { n: k.strokes })}</span>
+    <Modal title={`✨ ${t("newKanji")}`} onClose={onClose} wide>
+      <div className="grid gap-6 md:grid-cols-[auto_1fr]">
+        <div className="flex flex-col items-center gap-3">
+          <div className="flex h-28 w-28 items-center justify-center rounded-2xl border-4 border-[#6e4b2a] bg-gradient-to-b from-[#f3dfb9] to-[#dfbe88] font-kanji text-7xl font-bold text-[#3b2512] shadow-md">
+            {k.char}
+          </div>
+          {loading && <p role="status" className="text-xs">{t("loadingStrokeData")}</p>}
+          {error && (
+            <div role="alert" className="text-xs text-destructive">
+              <p>{t("strokeDataLoadError")}</p>
+              <button className="btn-game btn-ghost mt-1 text-xs" onClick={retry}>
+                {t("retry")}
+              </button>
+            </div>
+          )}
+          {!loading && !error && <StrokeDemo strokes={strokes} size={130} />}
+          <span className="text-xs font-bold text-[#6e4f35]">
+            {t("strokeOrder", { n: k.strokes })}
+          </span>
         </div>
-        <div className="space-y-2">
-          <div className="flex items-baseline gap-3">
-            <span className="font-kanji text-6xl">{k.char}</span>
-            <span className="font-display text-3xl text-accent">{pick(k.meaning, lang)}</span>
+
+        <div className="space-y-3">
+          <div>
+            <div className="flex flex-wrap items-baseline gap-3">
+              <span className="font-kanji text-5xl font-bold text-[#3b2818]">{k.char}</span>
+              <span className="font-display text-2xl font-bold text-[#4b8b55]">
+                {pick(k.meaning, lang)}
+              </span>
+            </div>
+            <div className="mt-1 text-sm text-[#5c3e26]">
+              <b>{t("on")}</b> {k.on} · <b>{t("kun")}</b> {k.kun}
+            </div>
+            <div className="mt-1 text-sm font-bold text-[#3b2818]">
+              {t("builtFrom")} <span className="font-kanji text-lg">{k.parts.join(" + ")}</span> (
+              {k.parts
+                .map((p) => (RADICALS[p] ? pick(RADICALS[p].meaning, lang) : ""))
+                .join(" + ")}
+              )
+            </div>
           </div>
-          <p className="italic">{pick(k.story, lang)}</p>
-          <div className="grid grid-cols-2 gap-2 text-sm">
-            <div className="rounded-lg bg-muted p-2"><b>{t("on")}</b> {k.on}</div>
-            <div className="rounded-lg bg-muted p-2"><b>{t("kun")}</b> {k.kun}</div>
-            <div className="col-span-2 rounded-lg bg-muted p-2"><b>{t("builtFrom")}</b> <span className="font-kanji text-lg">{k.parts.join(" + ")}</span> · {k.parts.map((p) => (RADICALS[p] ? pick(RADICALS[p].meaning, lang) : "")).join(" + ")}</div>
-          </div>
-          <ul className="space-y-1">
+
+          <p className="rounded-xl border border-[#d4be98] bg-[#f8efe0] p-2.5 text-sm italic text-[#5c3e26]">
+            {pick(k.story, lang)}
+          </p>
+
+          <ul className="grid gap-1.5 sm:grid-cols-3">
             {k.vocab.map((v) => (
-              <li key={v.jp} className="flex gap-3 rounded-lg border border-border px-3 py-1">
-                <span className="font-kanji text-xl">
-                  {lang === "ja" && isFuriganaEnabled()
-                    ? <Furigana text={v.jp} kana={v.kana} className="furigana" />
-                    : v.jp}
+              <li
+                key={v.jp}
+                className="flex flex-col rounded-xl border border-[#c8b28e] bg-[#fbf5e6] px-3 py-1.5"
+              >
+                <span className="font-kanji text-lg font-bold text-[#3b2818]">
+                  {lang === "ja" && isFuriganaEnabled() ? (
+                    <Furigana text={v.jp} kana={v.kana} className="furigana" />
+                  ) : (
+                    v.jp
+                  )}
                 </span>
-                {!(lang === "ja" && isFuriganaEnabled()) && <span className="text-muted-foreground">{v.kana}</span>}
-                <span className="ml-auto">{pick(v.en, lang)}</span>
+                <span className="text-xs text-[#6e4f35]">{v.kana}</span>
+                <span className="text-xs font-bold text-[#4b8b55]">{pick(v.en, lang)}</span>
               </li>
             ))}
           </ul>
-          <button className="btn-game w-full" onClick={onClose}>{t("backToForest")}</button>
+
+          <button
+            type="button"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl border-3 border-[#2e5936] bg-gradient-to-b from-[#559a60] to-[#3e7b48] py-3 font-display text-lg font-bold text-white shadow-[0_4px_0_0_#264a2c] transition active:translate-y-1"
+            onClick={onClose}
+          >
+            📖 {t("addToJournal")}
+          </button>
         </div>
       </div>
     </Modal>
   );
 }
 
-function useInk() {
-  const [ink, setInk] = useState("black");
-  useEffect(() => setInk(getComputedStyle(document.documentElement).getPropertyValue("--ink").trim() || "black"), []);
-  return ink;
-}
-
-export function Calligraphy({ chapter, onSave, onClose, journal, onToggleFav }: {
-  chapter: Chapter;
-  onSave: (img: string, fav: boolean) => void;
-  onClose: () => void;
+/**
+ * JournalModal — upgraded to match bottom-center of game-ui-design.png
+ * with sidebar tabs: Kanji, Calligraphy, Vocabulary, Components, Favorites
+ */
+export function JournalModal({
+  journal,
+  discovered,
+  pieces,
+  onToggleFav,
+  onPracticeKanji,
+  onClose,
+}: {
   journal: Writing[];
+  discovered: string[];
+  pieces: Piece[];
   onToggleFav: (id: string) => void;
-}) {
-  const t = useT();
-  const strokes = chapter.strokes;
-  const kanji = chapter.kanji;
-  const [mode, setMode] = useState<"trace" | "free">("trace");
-  const [strokeCount, setStrokeCount] = useState(0);
-  const [showRef, setShowRef] = useState(true);
-  const [fav, setFav] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const canvas = useRef<HTMLCanvasElement>(null);
-  const drawing = useRef(false);
-  const history = useRef<ImageData[]>([]);
-  const ink = useInk();
-  const traceDone = strokeCount >= strokes.length;
-
-  const clear = () => {
-    const c = canvas.current!;
-    c.getContext("2d")!.clearRect(0, 0, c.width, c.height);
-    history.current = [];
-    setStrokeCount(0);
-  };
-  useEffect(clear, [mode]);
-
-  const pos = (e: React.PointerEvent) => {
-    const r = canvas.current!.getBoundingClientRect();
-    return [((e.clientX - r.left) / r.width) * 400, ((e.clientY - r.top) / r.height) * 400] as const;
-  };
-  const down = (e: React.PointerEvent) => {
-    const c = canvas.current!;
-    const g = c.getContext("2d")!;
-    history.current.push(g.getImageData(0, 0, 400, 400));
-    drawing.current = true;
-    c.setPointerCapture(e.pointerId);
-    const [x, y] = pos(e);
-    g.strokeStyle = ink;
-    g.lineCap = "round";
-    g.lineJoin = "round";
-    g.lineWidth = 22;
-    g.beginPath();
-    g.moveTo(x, y);
-  };
-  const move = (e: React.PointerEvent) => {
-    if (!drawing.current) return;
-    const g = canvas.current!.getContext("2d")!;
-    const [x, y] = pos(e);
-    g.lineWidth = Math.max(10, Math.min(26, 26 - Math.hypot(e.movementX, e.movementY) * 0.6));
-    g.lineTo(x, y);
-    g.stroke();
-  };
-  const up = () => {
-    if (!drawing.current) return;
-    drawing.current = false;
-    setStrokeCount((s) => s + 1);
-    sfx("tap");
-  };
-  const undo = () => {
-    const last = history.current.pop();
-    if (last) {
-      canvas.current!.getContext("2d")!.putImageData(last, 0, 0);
-      setStrokeCount((s) => Math.max(0, s - 1));
-    }
-  };
-  const save = () => {
-    onSave(canvas.current!.toDataURL("image/png"), fav);
-    setSaved(true);
-    sfx("chime");
-  };
-
-  const cur = Math.min(strokeCount, strokes.length - 1);
-
-  return (
-    <Modal title={t("deskTitle")} onClose={onClose} wide>
-      <div className="grid gap-5 md:grid-cols-[auto_1fr]">
-        <div className="flex flex-col items-center gap-3">
-          <div className="flex gap-2">
-            <button className={`btn-game px-4 py-1 ${mode === "trace" ? "" : "btn-ghost"}`} onClick={() => setMode("trace")}>{t("trace")}</button>
-            <button className={`btn-game px-4 py-1 ${mode === "free" ? "" : "btn-ghost"}`} disabled={!traceDone && mode === "trace"} onClick={() => setMode("free")}>{t("freeWrite")}</button>
-          </div>
-          <div className="relative h-[min(52vh,340px)] w-[min(52vh,340px)] rounded-xl border-4 border-wood bg-paper">
-            <svg viewBox="0 0 100 100" className="pointer-events-none absolute inset-0 h-full w-full">
-              <line x1="50" y1="0" x2="50" y2="100" className="stroke-border" strokeDasharray="2 3" strokeWidth="0.5" />
-              <line x1="0" y1="50" x2="100" y2="50" className="stroke-border" strokeDasharray="2 3" strokeWidth="0.5" />
-              {(mode === "trace" || showRef) &&
-                strokes.map((d, i) => (
-                  <path key={i} d={d} fill="none" strokeLinecap="round" strokeWidth="8"
-                    className={mode === "trace" && i === cur && !traceDone ? "stroke-accent/60" : "stroke-muted-foreground/20"} />
-                ))}
-              {mode === "trace" && !traceDone && (() => {
-                const m = (strokes[cur] ?? "").match(/M(\d+) (\d+)/) ?? ["", "0", "0"];
-                return (
-                  <g>
-                    <circle cx={m[1]} cy={m[2]} r="4" className="fill-accent animate-glow" />
-                    <text x={Number(m[1]) + 5} y={Number(m[2]) - 4} className="fill-accent font-bold" fontSize="7">{cur + 1}</text>
-                  </g>
-                );
-              })()}
-            </svg>
-            <canvas
-              ref={canvas}
-              width={400}
-              height={400}
-              className="absolute inset-0 h-full w-full touch-none"
-              onPointerDown={down}
-              onPointerMove={move}
-              onPointerUp={up}
-              onPointerLeave={up}
-            />
-          </div>
-          <div className="flex flex-wrap justify-center gap-2">
-            <button className="btn-game btn-ghost px-3 py-1" onClick={undo}>{t("undo")}</button>
-            <button className="btn-game btn-ghost px-3 py-1" onClick={clear}>{t("clear")}</button>
-            {mode === "free" && (
-              <button className="btn-game btn-ghost px-3 py-1" onClick={() => setShowRef((v) => !v)}>
-                {showRef ? t("hideGuide") : t("showGuide")}
-              </button>
-            )}
-          </div>
-        </div>
-        <div className="flex flex-col gap-3">
-          {mode === "trace" ? (
-            <>
-              <p>{t("followStroke", { cur: Math.min(strokeCount + 1, strokes.length), total: strokes.length })}</p>
-              <StrokeDemo strokes={strokes} size={140} />
-              {traceDone && (
-                <button className="btn-game btn-accent animate-pop" onClick={() => setMode("free")}>
-                  {t("greatNowWrite")}
-                </button>
-              )}
-            </>
-          ) : (
-            <>
-              <p>{t("writeFromMemory", { char: kanji.char, cur: strokeCount, total: strokes.length })}</p>
-              <label className="flex items-center gap-2">
-                <button className={`btn-game px-3 py-1 ${fav ? "btn-accent" : "btn-ghost"}`} onClick={() => setFav((f) => !f)}>
-                  {fav ? t("favoriteOn") : t("favoriteOff")}
-                </button>
-              </label>
-              <button className="btn-game" disabled={strokeCount < strokes.length || saved} onClick={save}>
-                {saved ? t("savedToJournal") : t("saveToJournal")}
-              </button>
-              {saved && <button className="btn-game btn-accent animate-pop" onClick={onClose}>{t("returnToForest")}</button>}
-            </>
-          )}
-          {journal.length > 0 && <JournalStrip journal={journal} onToggleFav={onToggleFav} />}
-        </div>
-      </div>
-    </Modal>
-  );
-}
-
-function JournalStrip({ journal, onToggleFav }: { journal: Writing[]; onToggleFav: (id: string) => void }) {
-  const t = useT();
-  return (
-    <div>
-      <h3 className="mb-1 font-bold text-wood">{t("memoryJournal")}</h3>
-      <div className="flex flex-wrap gap-2">
-        {journal.map((w) => (
-          <div key={w.id} className="relative">
-            <img src={w.image} alt={`Your ${w.kanji}`} className="h-20 w-20 rounded-lg border-2 border-wood bg-paper" />
-            <button onClick={() => onToggleFav(w.id)} className="absolute -right-1 -top-1 rounded-full bg-card px-1 text-accent" aria-label={t("toggleFavorite")}>
-              {w.favorite ? "♥" : "♡"}
-            </button>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-export function JournalModal({ journal, discovered, pieces, onToggleFav, onClose }: {
-  journal: Writing[]; discovered: string[]; pieces: Piece[]; onToggleFav: (id: string) => void; onClose: () => void;
+  onPracticeKanji?: () => void;
+  onClose: () => void;
 }) {
   const t = useT();
   const lang = useLang();
-  const [onlyFav, setOnlyFav] = useState(false);
-  const list = onlyFav ? journal.filter((w) => w.favorite) : journal;
-  const radicalMeaning = (c: string) => (RADICALS[c] ? pick(RADICALS[c].meaning, lang) : "");
+  const [tab, setTab] = useState<"kanji" | "calligraphy" | "vocab" | "components" | "favorites">(
+    "kanji",
+  );
+  const [selectedKanji, setSelectedKanji] = useState<string>(
+    discovered[0] ?? CHAPTERS[0]!.kanji.char,
+  );
+
+  const activeChapter =
+    CHAPTERS.find((c) => c.kanji.char === selectedKanji) ?? CHAPTERS[0]!;
+  const radicalMeaning = (c: string) =>
+    RADICALS[c] ? pick(RADICALS[c].meaning, lang) : "";
+
   return (
-    <Modal title={t("journalTitle")} onClose={onClose} wide>
-      <div className="grid gap-5 md:grid-cols-2">
-        <div>
-          <h3 className="mb-2 font-bold text-wood">{t("radicalPouch")}</h3>
-          <div className="flex flex-wrap gap-2">
-            {pieces.length === 0 && <p className="text-muted-foreground">{t("emptyGoDig")}</p>}
-            {pieces.map((p) => (
-              <div key={p.id} className="tile h-16 w-16 flex-col text-3xl">
-                {p.char}
-                <span className="font-sans text-[10px]">{radicalMeaning(p.char)}</span>
+    <Modal title={`📖 ${t("journalTitle")}`} onClose={onClose} wide>
+      <div className="grid gap-5 md:grid-cols-[200px_1fr]">
+        {/* Left Sidebar Tabs matching game-ui-design.png */}
+        <div className="flex flex-row flex-wrap gap-1.5 md:flex-col">
+          {(
+            [
+              ["kanji", "🈶", "Kanji"],
+              ["calligraphy", "🖌", t("calligraphy")],
+              ["vocab", "💬", t("vocabTab")],
+              ["components", "🧩", t("componentsTab")],
+              ["favorites", "⭐", t("favorites")],
+            ] as const
+          ).map(([id, icon, label]) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => {
+                sfx("tap");
+                setTab(id);
+              }}
+              className={`flex items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-left text-sm font-bold transition ${
+                tab === id
+                  ? "bg-[#4b8b55] text-white shadow-sm"
+                  : "bg-[#ecd9b4] text-[#3b2818] hover:bg-[#e1c89b]"
+              }`}
+            >
+              <span>{icon}</span>
+              <span>{label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Right Content Area */}
+        <div className="rounded-2xl border-2 border-[#c8b28e] bg-[#fbf5e6] p-4">
+          {tab === "kanji" && (
+            <div className="space-y-4">
+              <div className="flex flex-wrap gap-2">
+                {CHAPTERS.map((ch) => {
+                  const unlocked = discovered.includes(ch.kanji.char);
+                  return (
+                    <button
+                      key={ch.id}
+                      type="button"
+                      onClick={() => {
+                        sfx("tap");
+                        setSelectedKanji(ch.kanji.char);
+                      }}
+                      className={`tile h-12 w-12 text-2xl transition ${
+                        selectedKanji === ch.kanji.char ? "ring-3 ring-[#4b8b55]" : ""
+                      } ${unlocked ? "" : "opacity-50"}`}
+                    >
+                      {ch.kanji.char}
+                    </button>
+                  );
+                })}
               </div>
-            ))}
-          </div>
-          <h3 className="mb-2 mt-4 font-bold text-wood">{t("kanjiLearned")}</h3>
-          <div className="flex gap-2">
-            {discovered.length === 0 && <p className="text-muted-foreground">{t("noneYet")}</p>}
-            {discovered.map((k) => <div key={k} className="tile h-16 w-16 text-4xl">{k}</div>)}
-          </div>
+
+              <div className="grid gap-4 sm:grid-cols-[1fr_180px]">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-4">
+                    <div className="font-kanji text-6xl font-bold text-[#3b2818]">
+                      {activeChapter.kanji.char}
+                    </div>
+                    <div>
+                      <div className="text-sm font-bold text-[#6e4f35]">
+                        {activeChapter.kanji.on} · {activeChapter.kanji.kun}
+                      </div>
+                      <div className="font-display text-2xl font-bold text-[#3b2818]">
+                        {pick(activeChapter.kanji.meaning, lang)}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="mb-1.5 text-xs font-bold uppercase text-[#6e4f35]">
+                      {t("componentsTab")}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <ShapedRadicalTile char={activeChapter.digChars[0]} compact />
+                      <span className="font-display text-xl font-bold text-[#5c3e26]">+</span>
+                      <ShapedRadicalTile char={activeChapter.digChars[1]} compact />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col justify-between gap-2">
+                  <MemoryScene scene={activeChapter.scene} />
+                  {onPracticeKanji && (
+                    <button
+                      type="button"
+                      onClick={onPracticeKanji}
+                      className="flex items-center justify-center gap-1.5 rounded-xl bg-[#4b8b55] py-2 font-bold text-white shadow-sm hover:bg-[#3f7848]"
+                    >
+                      📖 {t("practiceBtn")}
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {tab === "calligraphy" && (
+            <div>
+              <h3 className="mb-3 font-bold text-wood">{t("calligraphy")}</h3>
+              {journal.length === 0 ? (
+                <p className="text-muted-foreground">{t("noWritings")}</p>
+              ) : (
+                <JournalStrip journal={journal} onToggleFav={onToggleFav} />
+              )}
+            </div>
+          )}
+
+          {tab === "vocab" && (
+            <div className="grid gap-2 sm:grid-cols-2">
+              {CHAPTERS.flatMap((ch) => ch.kanji.vocab).map((v) => (
+                <div
+                  key={v.jp}
+                  className="flex items-center justify-between rounded-xl border border-[#d4be98] bg-[#f6ebd4] px-3 py-2"
+                >
+                  <div>
+                    <div className="font-kanji text-lg font-bold text-[#3b2818]">{v.jp}</div>
+                    <div className="text-xs text-[#6e4f35]">{v.kana}</div>
+                  </div>
+                  <div className="text-sm font-bold text-[#4b8b55]">{pick(v.en, lang)}</div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {tab === "components" && (
+            <div>
+              <h3 className="mb-3 font-bold text-wood">{t("radicalPouch")}</h3>
+              {pieces.length === 0 ? (
+                <p className="text-muted-foreground">{t("emptyGoDig")}</p>
+              ) : (
+                <div className="flex flex-wrap gap-3">
+                  {pieces.map((p) => (
+                    <div key={p.id} className="flex flex-col items-center gap-1">
+                      <ShapedRadicalTile char={p.char} compact />
+                      <span className="text-[11px] font-bold text-[#5c3e26]">
+                        {radicalMeaning(p.char)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {tab === "favorites" && (
+            <div>
+              <h3 className="mb-3 font-bold text-wood">{t("favorites")}</h3>
+              {journal.filter((w) => w.favorite).length === 0 ? (
+                <p className="text-muted-foreground">{t("noWritings")}</p>
+              ) : (
+                <JournalStrip
+                  journal={journal.filter((w) => w.favorite)}
+                  onToggleFav={onToggleFav}
+                />
+              )}
+            </div>
+          )}
         </div>
-        <div>
-          <div className="mb-2 flex items-center justify-between">
-            <h3 className="font-bold text-wood">{t("calligraphy")}</h3>
-            <button className={`btn-game px-3 py-1 text-sm ${onlyFav ? "btn-accent" : "btn-ghost"}`} onClick={() => setOnlyFav((v) => !v)}>{t("favorites")}</button>
+      </div>
+    </Modal>
+  );
+}
+
+/** World Map Modal styled after new-design/image 12.svg for switching between Village & Mine. */
+export function WorldMapModal({
+  currentMap,
+  onSelectMap,
+  onClose,
+}: {
+  currentMap: MapName;
+  onSelectMap: (map: MapName) => void;
+  onClose: () => void;
+}) {
+  const t = useT();
+  return (
+    <Modal title={`🗺 ${t("mapBtn")} · Kotoba Forest`} onClose={onClose} wide>
+      <div className="grid gap-4 sm:grid-cols-2">
+        {/* Map 1: Mochi Village */}
+        <button
+          type="button"
+          onClick={() => {
+            onSelectMap("village");
+            onClose();
+          }}
+          className={`group overflow-hidden rounded-2xl border-4 p-2 text-left transition hover:scale-[1.01] ${
+            currentMap === "village"
+              ? "border-[#4b8b55] bg-[#e6f2e3]"
+              : "border-[#6e4b2a] bg-[#fbf5e6]"
+          }`}
+        >
+          <div className="relative h-44 w-full overflow-hidden rounded-xl border-2 border-[#6e4b2a]">
+            <img src={mapImg} alt={t("mochiVillage")} className="h-full w-full object-cover" />
+            {currentMap === "village" && (
+              <span className="absolute right-2 top-2 rounded-full bg-[#4b8b55] px-2.5 py-0.5 text-xs font-bold text-white shadow">
+                ● Current Location
+              </span>
+            )}
           </div>
-          {list.length === 0 ? <p className="text-muted-foreground">{t("noWritings")}</p> : <JournalStrip journal={list} onToggleFav={onToggleFav} />}
-        </div>
+          <div className="mt-2 flex items-center justify-between px-1">
+            <div>
+              <div className="font-display text-lg font-bold text-[#3b2818]">
+                🏡 {t("mochiVillage")}
+              </div>
+              <div className="text-xs text-[#6e4f35]">
+                {t("greatKanjiTree")} · {t("pictureForest")} · {t("calligraphyDojo")}
+              </div>
+            </div>
+            <span className="rounded-lg bg-[#ecd9b4] px-2.5 py-1 text-xs font-bold text-[#3b2818]">
+              Travel →
+            </span>
+          </div>
+        </button>
+
+        {/* Map 2: Radical Mine */}
+        <button
+          type="button"
+          onClick={() => {
+            onSelectMap("mine");
+            onClose();
+          }}
+          className={`group overflow-hidden rounded-2xl border-4 p-2 text-left transition hover:scale-[1.01] ${
+            currentMap === "mine"
+              ? "border-[#4b8b55] bg-[#e6f2e3]"
+              : "border-[#6e4b2a] bg-[#fbf5e6]"
+          }`}
+        >
+          <div className="relative h-44 w-full overflow-hidden rounded-xl border-2 border-[#6e4b2a]">
+            <img src={mineMapImg} alt={t("radicalMine")} className="h-full w-full object-cover" />
+            {currentMap === "mine" && (
+              <span className="absolute right-2 top-2 rounded-full bg-[#4b8b55] px-2.5 py-0.5 text-xs font-bold text-white shadow">
+                ● Current Location
+              </span>
+            )}
+          </div>
+          <div className="mt-2 flex items-center justify-between px-1">
+            <div>
+              <div className="font-display text-lg font-bold text-[#3b2818]">
+                ⛏ {t("radicalMine")}
+              </div>
+              <div className="text-xs text-[#6e4f35]">
+                Stardew-style Radical Artifact Excavation (1×3, 2×2, 1×4)
+              </div>
+            </div>
+            <span className="rounded-lg bg-[#ecd9b4] px-2.5 py-1 text-xs font-bold text-[#3b2818]">
+              Travel →
+            </span>
+          </div>
+        </button>
       </div>
     </Modal>
   );
@@ -530,7 +894,9 @@ export function CatalogModal({ level, onClose }: { level: number; onClose: () =>
       const u = new SpeechSynthesisUtterance(text);
       u.lang = "ja-JP";
       speechSynthesis.speak(u);
-    } catch { /* unsupported */ }
+    } catch {
+      /* unsupported */
+    }
   };
   return (
     <Modal title={t("catalogTitle")} onClose={onClose} wide>
@@ -538,24 +904,39 @@ export function CatalogModal({ level, onClose }: { level: number; onClose: () =>
         {CATALOG.map((c) => {
           const locked = level < c.level;
           return (
-            <div key={c.title.en} className={`rounded-xl border-2 border-border bg-card p-3 ${locked ? "opacity-50" : ""}`}>
+            <div
+              key={c.title.en}
+              className={`rounded-xl border-2 border-border bg-card p-3 ${
+                locked ? "opacity-50" : ""
+              }`}
+            >
               <div className="mb-2 flex items-center justify-between">
                 <h3 className="font-bold">{pick(c.title, lang)}</h3>
-                <span className="rounded-full bg-muted px-2 text-xs">{t("lv", { n: c.level })}</span>
+                <span className="rounded-full bg-muted px-2 text-xs">
+                  {t("lv", { n: c.level })}
+                </span>
               </div>
               {locked ? (
                 <p className="text-muted-foreground">{t("reachLevel", { n: c.level })}</p>
               ) : (
                 c.lines.map((l) => (
-                  <button key={l.jp} onClick={() => speak(l.jp)} className="mb-1 block w-full rounded-lg px-2 py-1 text-left hover:bg-muted">
+                  <button
+                    key={l.jp}
+                    onClick={() => speak(l.jp)}
+                    className="mb-1 block w-full rounded-lg px-2 py-1 text-left hover:bg-muted"
+                  >
                     <span className="text-xs font-bold text-accent">{l.who}</span>
                     <div className="font-kanji text-xl">
-                      {lang === "ja" && isFuriganaEnabled() && l.kana
-                        ? <Furigana text={l.jp} kana={l.kana} className="furigana" />
-                        : l.jp}{" "}
+                      {lang === "ja" && isFuriganaEnabled() && l.kana ? (
+                        <Furigana text={l.jp} kana={l.kana} className="furigana" />
+                      ) : (
+                        l.jp
+                      )}{" "}
                       <span className="text-sm">🔊</span>
                     </div>
-                    <div className="text-xs text-muted-foreground">{l.romaji} — {pick(l.en, lang)}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {l.romaji} — {pick(l.en, lang)}
+                    </div>
                   </button>
                 ))
               )}
